@@ -348,7 +348,7 @@ Type-checking evidence:
     30 passed in 22.25s
 
     uv run pyright src tests/typing
-    0 errors, 0 warnings, 0 informations
+    0 errors, 0 warnings, 0 information
 
     uv run mypy src tests/typing
     Success: no issues found in 26 source files

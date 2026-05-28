@@ -25,13 +25,18 @@ CUDA-capable GPU environment.
 - [x] (2026-05-28 13:29Z) Created branch `codex/hook-ci-hygiene` in worktree
   `/Users/ale/Code/bearshape-hook-ci-hygiene`, stacked on
   `codex/baseline-audit`.
-- [ ] Push the branch and open a draft PR targeting `codex/baseline-audit`.
-- [ ] Reproduce the local `uv run prek run -a` failure in this clean worktree.
-- [ ] Reproduce or inspect the PR spelling failure on `npt.NDArray`.
-- [ ] Decide the smallest configuration or content changes that make hook and
-  CI behavior intentional.
-- [ ] Implement the scoped hygiene fixes.
-- [ ] Validate local hooks and relevant CI checks.
+- [x] (2026-05-28 13:32Z) Pushed the branch and opened draft PR #5 targeting
+  `codex/baseline-audit`.
+- [x] (2026-05-28 13:34Z) Reproduced the local `uv run prek run -a` failure in
+  this clean worktree.
+- [x] (2026-05-28 13:35Z) Inspected the spelling behavior for `npt.NDArray`.
+- [x] (2026-05-28 13:36Z) Decided the smallest configuration changes that make
+  hook and CI behavior intentional.
+- [x] (2026-05-28 13:37Z) Implemented the scoped hygiene fixes.
+- [x] (2026-05-28 13:39Z) Validated local hooks, typing integration, and docs
+  build.
+- [ ] Push the cleanup commit and inspect PR checks.
+- [ ] Update this plan with final PR check evidence and follow-up work.
 - [ ] Update this plan with evidence and follow-up work.
 
 ## Surprises & Discoveries
@@ -40,6 +45,21 @@ CUDA-capable GPU environment.
   Evidence: the baseline audit PR contains `AGENTS.md`, `PLANS.md`, and the
   baseline ExecPlan; those files are needed for the workflow but are not yet on
   `main`.
+- Observation: `uv sync` succeeded in this worktree and installed the locked
+  development environment, with only the existing packaging warning about the
+  deprecated MIT license classifier.
+- Observation: The first `uv run prek run -a` failed because hooks rewrote or
+  rejected non-product files. Evidence: `end-of-file-fixer` touched `PLANS.md`,
+  markdown hooks failed on `PLANS.md` and plan files, `typos` wanted to rewrite
+  valid `npt.NDArray` notebook text, and Prettier rewrote the large
+  `docs/assets/js/tesseract.js` asset.
+- Observation: `uv run typos .` is not available from the project environment.
+  Evidence: the command failed to spawn `typos`. The usable local spelling path
+  is the configured `prek` hook, and PR CI runs its own `typos .` action.
+- Observation: `docs/stylesheets/extra.css` and `mkdocs.yml` receive small,
+  deterministic Prettier normalizations. Evidence: the CSS diff only wraps long
+  declarations and radial-gradient arguments; the MkDocs diff normalizes nested
+  nav indentation. `uv run mkdocs build --clean` still succeeds.
 
 ## Decision Log
 
@@ -52,13 +72,35 @@ CUDA-capable GPU environment.
   Rationale: CuPy requires CUDA GPU support. This plan is about hook and CI
   hygiene that can be validated locally and in ordinary PR CI.
   Date/Author: 2026-05-28 / Codex
+- Decision: Exclude `AGENTS.md`, `PLANS.md`, and `plans/*.md` from `mdformat`
+  and `markdownlint-fix`.
+  Rationale: These files are workflow instructions and living ExecPlans with
+  intentionally prescriptive formatting. Generic markdown reflow and lint rules
+  were rewriting or rejecting plan structure instead of finding product issues.
+  The exclusion is narrow and keeps markdown hooks active for docs and README
+  files.
+  Date/Author: 2026-05-28 / Codex
+- Decision: Add `ND` to `tool.typos.default.extend-words`.
+  Rationale: `npt.NDArray` is valid NumPy typing syntax and must not be
+  rewritten to `npt.ANDArray`. A narrow accepted word preserves the public
+  typing example without disabling spelling checks elsewhere.
+  Date/Author: 2026-05-28 / Codex
+- Decision: Exclude `docs/assets/js/tesseract.js` from Prettier.
+  Rationale: The hook rewrites a large visual asset in a branch whose purpose is
+  CI hygiene. That churn would obscure the actual fix. Smaller Prettier
+  normalizations in CSS and MkDocs configuration are kept because they are
+  deterministic, readable, and validated by the docs build.
+  Date/Author: 2026-05-28 / Codex
 
 ## Outcomes & Retrospective
 
-This section is incomplete until the fixes and validation are done. It should
-state exactly which local hooks and PR checks are green, which checks remain
-deferred or intentionally failing, and what follow-up work should happen before
-the Bearshape rename.
+Local hook hygiene is now explicit. `uv run prek run -a` passes from a clean
+hook hygiene worktree after the narrow exclusions and spelling configuration.
+The typing integration suite still passes, and the docs still build.
+
+PR check evidence is pending until the cleanup commit is pushed. CuPy runtime
+validation remains intentionally deferred because the local machine has no CUDA
+GPU.
 
 ## Context and Orientation
 
@@ -189,6 +231,38 @@ Known failure evidence from the baseline audit:
     markdownlint-fix failed on PLANS.md and the baseline audit ExecPlan.
     The PR spelling job failed on npt.NDArray in examples/shapix_tour.ipynb.
 
+Draft PR evidence:
+
+    PR: https://github.com/acecchini/bearshape/pull/5
+    Base: codex/baseline-audit
+
+Reproduction evidence:
+
+    uv sync
+    Resolved 99 packages and built shapix-rt successfully.
+    Warning: License classifiers are deprecated; use license expressions.
+
+    uv run prek run -a
+    end-of-file-fixer modified PLANS.md.
+    markdownlint-fix failed on PLANS.md and plan files.
+    typos wanted to rewrite npt.NDArray to npt.ANDArray.
+    prettier rewrote docs/assets/js/tesseract.js.
+
+    uv run typos .
+    Failed to spawn: typos
+
+Validation evidence:
+
+    uv run prek run -a
+    All configured hooks passed.
+
+    uv run pytest -n auto tests/test_typecheck.py
+    30 passed in 36.91s
+
+    uv run mkdocs build --clean
+    Documentation built successfully in 0.29 seconds.
+    MkDocs emitted the existing Material for MkDocs 2.0 compatibility warning.
+
 ## Interfaces and Dependencies
 
 The plan should use the existing toolchain: `uv`, `prek`, `typos`,
@@ -204,3 +278,7 @@ possibly the notebook or docs files that trigger spelling or formatter issues.
 
 - 2026-05-28: Created the initial hook and CI hygiene ExecPlan stacked on the
   baseline audit branch.
+- 2026-05-28: Updated the plan after reproducing local hook failures, applying
+  narrow hook configuration fixes, and validating local hooks, type-check
+  integration, and docs build. The plan still needs final PR check evidence
+  after the cleanup commit is pushed.
