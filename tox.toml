@@ -1,16 +1,25 @@
 requires = ["tox>=4.40", "tox-uv>=1.33"]
 env_list = [
   "dev",
-  # Runtime: {python}-{beartype}-{backend}
-  # Oldest + newest of each axis — intermediate versions can be tested manually.
-  { product = [
-    ["py310", "py311", "py312", "py313"],
-    ["bt020", "bt022"],
-    ["numpy22", "numpy24",
-     "jax05", "jax09",
-     "torch26", "torch210",
-     "optree014", "optree019"],
-  ] },
+  # Runtime: {python}-{beartype}-{backend}. Keep default environments
+  # installable as backend Python floors and ceilings move independently.
+  # Intermediate and cross-axis versions can still be tested manually.
+  "py310-bt020-numpy22",
+  "py310-bt020-jax05",
+  "py310-bt020-torch26",
+  "py310-bt020-optree014",
+  "py310-bt022-numpy22",
+  "py310-bt022-jax05",
+  "py310-bt022-torch26",
+  "py310-bt022-optree014",
+  "py313-bt020-numpy24",
+  "py313-bt020-jax09",
+  "py313-bt020-torch210",
+  "py313-bt020-optree019",
+  "py313-bt022-numpy24",
+  "py313-bt022-jax09",
+  "py313-bt022-torch210",
+  "py313-bt022-optree019",
   # Typecheck: latest Python + latest beartype only (type stubs are version-independent)
   { product = [
     ["py313"],

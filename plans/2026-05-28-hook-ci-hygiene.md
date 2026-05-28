@@ -35,9 +35,15 @@ CUDA-capable GPU environment.
 - [x] (2026-05-28 13:37Z) Implemented the scoped hygiene fixes.
 - [x] (2026-05-28 13:39Z) Validated local hooks, typing integration, and docs
   build.
-- [ ] Push the cleanup commit and inspect PR checks.
-- [ ] Update this plan with final PR check evidence and follow-up work.
-- [ ] Update this plan with evidence and follow-up work.
+- [x] (2026-05-28 13:42Z) Pushed the cleanup commit and inspected PR checks.
+- [x] (2026-05-28 13:51Z) Diagnosed remaining compatibility-matrix failures.
+- [x] (2026-05-28 14:26Z) Replaced impossible Python/backend matrix products
+  with explicit installable CI and tox environments.
+- [x] (2026-05-28 14:33Z) Validated hooks and the Python 3.10 replacement
+  backend jobs locally.
+- [x] (2026-05-28 14:39Z) Pushed the matrix fix and inspected PR checks.
+- [x] (2026-05-28 14:39Z) Updated this plan with final PR check evidence and
+  follow-up work.
 
 ## Surprises & Discoveries
 
@@ -60,6 +66,11 @@ CUDA-capable GPU environment.
   deterministic Prettier normalizations. Evidence: the CSS diff only wraps long
   declarations and radial-gradient arguments; the MkDocs diff normalizes nested
   nav indentation. `uv run mkdocs build --clean` still succeeds.
+- Observation: After the hook cleanup commit, PR #5 passed spelling, ruff,
+  typecheck, typecheck-compat, locked dev tests, and most compatibility jobs,
+  but failed `py310-bt022-numpy24` and `py310-bt022-jax09` before tests ran.
+  Evidence: CI logs show NumPy 2.4.1+ and JAX 0.9 require Python 3.11+, while
+  those jobs ran on Python 3.10.20.
 
 ## Decision Log
 
@@ -91,6 +102,13 @@ CUDA-capable GPU environment.
   normalizations in CSS and MkDocs configuration are kept because they are
   deterministic, readable, and validated by the docs build.
   Date/Author: 2026-05-28 / Codex
+- Decision: Use explicit CI and default tox compatibility environments instead
+  of product matrices that generate unsatisfiable Python/backend pairs.
+  Rationale: Python support and backend release floors move independently.
+  Python 3.10 should still be covered with supported backend floor versions,
+  while Python 3.12 and 3.13 cover current backend ceiling versions. This keeps
+  CI meaningful without pretending Python 3.10 can install NumPy 2.4 or JAX 0.9.
+  Date/Author: 2026-05-28 / Codex
 
 ## Outcomes & Retrospective
 
@@ -98,9 +116,13 @@ Local hook hygiene is now explicit. `uv run prek run -a` passes from a clean
 hook hygiene worktree after the narrow exclusions and spelling configuration.
 The typing integration suite still passes, and the docs still build.
 
-PR check evidence is pending until the cleanup commit is pushed. CuPy runtime
-validation remains intentionally deferred because the local machine has no CUDA
-GPU.
+The first PR check pass proved that the hook hygiene failures are fixed. The
+remaining red checks were compatibility-matrix dependency resolution failures,
+not product test failures. The matrix now enumerates installable floor and
+ceiling jobs explicitly, and PR #5 is green after the matrix fix.
+
+CuPy runtime validation remains intentionally deferred because the local machine
+has no CUDA GPU.
 
 ## Context and Orientation
 
@@ -263,6 +285,66 @@ Validation evidence:
     Documentation built successfully in 0.29 seconds.
     MkDocs emitted the existing Material for MkDocs 2.0 compatibility warning.
 
+PR check evidence after the hook cleanup commit:
+
+    Spell Check with Typos: passed
+    ruff: passed
+    typecheck: passed
+    typecheck-compat: passed
+    test: passed
+    py310-bt022-numpy24: failed during dependency resolution
+    py310-bt022-jax09: failed during dependency resolution
+
+Compatibility failure evidence:
+
+    py310-bt022-numpy24 tried to install numpy>=2.4,<2.5 on Python 3.10.20.
+    NumPy 2.4.0 is yanked and NumPy 2.4.1+ requires Python >=3.11.
+
+    py310-bt022-jax09 tried to install jax[cpu]>=0.9,<0.10 on Python 3.10.20.
+    JAX 0.9 requires Python >=3.11.
+
+Matrix fix validation evidence:
+
+    uv run tox list
+    Listed explicit default tox environments without the unsatisfiable
+    Python 3.10 latest-backend pairs.
+
+    uv run prek run -a
+    All configured hooks passed.
+
+    uv run tox run -e py310-bt022-numpy22
+    690 passed, 46 skipped
+
+    uv run tox run -e py310-bt022-jax05
+    206 passed, 21 skipped, 18 warnings
+
+    uv run tox run -e py310-bt022-torch26
+    206 passed, 24 skipped
+
+    uv run tox run -e py310-bt022-optree014
+    202 passed, 33 skipped
+
+PR check evidence after the matrix fix:
+
+    GitGuardian Security Checks: passed
+    Spell Check with Typos: passed
+    ruff: passed
+    typecheck: passed
+    typecheck-compat: passed
+    test: passed
+    py310-bt022-numpy22: passed
+    py310-bt022-jax05: passed
+    py310-bt022-torch26: passed
+    py310-bt022-optree014: passed
+    py313-bt022-numpy24: passed
+    py313-bt022-jax09: passed
+    py313-bt022-torch210: passed
+    py313-bt022-optree019: passed
+    py313-bt022-type-pyright1408: passed
+    py313-bt022-type-mypy119: passed
+    py313-bt022-type-ty: passed
+    push-only matrix jobs: skipped on pull_request, as expected
+
 ## Interfaces and Dependencies
 
 The plan should use the existing toolchain: `uv`, `prek`, `typos`,
@@ -282,3 +364,8 @@ possibly the notebook or docs files that trigger spelling or formatter issues.
   narrow hook configuration fixes, and validating local hooks, type-check
   integration, and docs build. The plan still needs final PR check evidence
   after the cleanup commit is pushed.
+- 2026-05-28: Updated the plan after diagnosing PR compatibility-matrix
+  failures and replacing unsatisfiable product matrices with explicit
+  floor-on-Python-3.10 and ceiling-on-newer-Python environments.
+- 2026-05-28: Updated the plan with final PR check evidence after the matrix
+  fix turned PR #5 green.
