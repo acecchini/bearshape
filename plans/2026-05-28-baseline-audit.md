@@ -92,17 +92,20 @@ should become separate follow-up plans.
 
 ## Decision Log
 
-- Decision: Start with a baseline audit rather than a rename. Rationale:
-    Renaming first would mix pre-existing failures with rename regressions. The
-    audit creates a factual starting point. Date/Author: 2026-05-28 / Codex
-- Decision: Defer CuPy runtime validation locally. Rationale: CuPy needs a
-    CUDA-capable GPU, and the current machine does not have one. CuPy coverage
-    must be tracked explicitly instead of implied by CPU test runs. Date/Author:
-    2026-05-28 / Codex
-- Decision: Keep this PR mostly non-invasive. Rationale: The purpose is to
-    observe the current baseline. Fixes discovered during the audit should
-    become separate, scoped plans unless a small workflow fix is required to
-    complete the audit itself. Date/Author: 2026-05-28 / Codex
+- Decision: Start with a baseline audit rather than a rename.
+  Rationale: Renaming first would mix pre-existing failures with rename
+  regressions. The audit creates a factual starting point.
+  Date/Author: 2026-05-28 / Codex
+- Decision: Defer CuPy runtime validation locally.
+  Rationale: CuPy needs a CUDA-capable GPU, and the current machine does not
+  have one. CuPy coverage must be tracked explicitly instead of implied by CPU
+  test runs.
+  Date/Author: 2026-05-28 / Codex
+- Decision: Keep this PR mostly non-invasive.
+  Rationale: The purpose is to observe the current baseline. Fixes discovered
+  during the audit should become separate, scoped plans unless a small workflow
+  fix is required to complete the audit itself.
+  Date/Author: 2026-05-28 / Codex
 
 ## Outcomes & Retrospective
 
@@ -180,52 +183,46 @@ identify follow-up plans, not implement all fixes in one PR.
 
 Run all commands from the repository root of the audit worktree:
 
-```
-cd /Users/ale/Code/bearshape-baseline-audit
-```
+    cd /Users/ale/Code/bearshape-baseline-audit
 
 Confirm branch and status:
 
-```
-git branch --show-current
-git status --short --branch
-git remote -v
-```
+    git branch --show-current
+    git status --short --branch
+    git remote -v
 
 Install the current locked development environment:
 
-```
-uv sync
-```
+    uv sync
 
 Run local runtime tests except CuPy:
 
-```
-uv run pytest -n auto tests/test_decorator.py tests/test_memo.py tests/test_dimensions.py tests/test_shape.py tests/test_dtypes.py tests/test_numpy.py tests/test_jax.py tests/test_torch.py tests/test_tree.py tests/test_coverage_edges.py
-```
+    uv run pytest -n auto \
+      tests/test_decorator.py tests/test_memo.py tests/test_dimensions.py \
+      tests/test_shape.py tests/test_dtypes.py tests/test_numpy.py \
+      tests/test_jax.py tests/test_torch.py tests/test_tree.py \
+      tests/test_coverage_edges.py
 
 Run the typing contract:
 
-```
-uv run pytest -n auto tests/test_typecheck.py
-uv run pyright src tests/typing
-uv run mypy src tests/typing
-uv run ty check src tests/typing
-```
+    uv run pytest -n auto tests/test_typecheck.py
+    uv run pyright src tests/typing
+    uv run mypy src tests/typing
+    uv run ty check src tests/typing
 
 Run hooks:
 
-```
-uv run prek run -a
-```
+    uv run prek run -a
 
 Inspect repo contract artifacts:
 
-```
-rg -n "shapix|shapix-rt|Shapix|bearshape|Bearshape" pyproject.toml tox.toml README.md CHANGELOG.md CONTRIBUTING.md docs src tests .github
-rg -n "cupy|CuPy|CUDA|gpu|GPU" pyproject.toml tox.toml README.md docs tests .github
-rg -n "pyright|mypy|ty|pyrefly|zuban" pyproject.toml tox.toml tests docs .github
-```
+    rg -n "shapix|shapix-rt|Shapix|bearshape|Bearshape" \
+      pyproject.toml tox.toml README.md CHANGELOG.md CONTRIBUTING.md \
+      docs src tests .github
+    rg -n "cupy|CuPy|CUDA|gpu|GPU" \
+      pyproject.toml tox.toml README.md docs tests .github
+    rg -n "pyright|mypy|ty|pyrefly|zuban" \
+      pyproject.toml tox.toml tests docs .github
 
 ## Validation and Acceptance
 
@@ -313,105 +310,87 @@ separate plan approves that work.
 If local GitHub PR creation remains blocked, use the pushed branch URL as the
 recovery path:
 
-```
-https://github.com/acecchini/bearshape/pull/new/codex/baseline-audit
-```
+    https://github.com/acecchini/bearshape/pull/new/codex/baseline-audit
 
 ## Artifacts and Notes
 
 Initial branch evidence:
 
-```
-Worktree: /Users/ale/Code/bearshape-baseline-audit
-Branch: codex/baseline-audit
-Initial commit: 2c5f93f Add agent workflow instructions
-Pushed branch: origin/codex/baseline-audit
-Remote move notice: https://github.com/acecchini/bearshape.git
-```
+    Worktree: /Users/ale/Code/bearshape-baseline-audit
+    Branch: codex/baseline-audit
+    Initial commit: 2c5f93f Add agent workflow instructions
+    Pushed branch: origin/codex/baseline-audit
+    Remote move notice: https://github.com/acecchini/bearshape.git
 
 PR creation evidence:
 
-```
-gh auth status reported an invalid local token for acecchini.
-The GitHub connector timed out during startup twice.
-After rechecking gh auth outside the read-only sandbox, gh pr create opened:
-https://github.com/acecchini/bearshape/pull/4
-```
+    gh auth status reported an invalid local token for acecchini.
+    The GitHub connector timed out during startup twice.
+    After rechecking gh auth outside the read-only sandbox, gh pr create opened:
+    https://github.com/acecchini/bearshape/pull/4
 
 uv sync evidence:
 
-```
-uv sync completed successfully.
-Python used: CPython 3.10.20
-Project installed: shapix-rt==0.0.1 from the local checkout.
-Notable warning: the MIT license classifier is deprecated under PEP 639.
-```
+    uv sync completed successfully.
+    Python used: CPython 3.10.20
+    Project installed: shapix-rt==0.0.1 from the local checkout.
+    Notable warning: the MIT license classifier is deprecated under PEP 639.
 
 Non-CuPy pytest evidence:
 
-```
-uv run pytest -n auto tests/test_decorator.py tests/test_memo.py ...
-1033 passed, 4 skipped in 16.92s
-Skipped: platform float128/longdouble and complex256/clongdouble variants.
-```
+    uv run pytest -n auto tests/test_decorator.py tests/test_memo.py ...
+    1033 passed, 4 skipped in 16.92s
+    Skipped: platform float128/longdouble and complex256/clongdouble variants.
 
 Type-checking evidence:
 
-```
-uv run pytest -n auto tests/test_typecheck.py
-30 passed in 22.25s
+    uv run pytest -n auto tests/test_typecheck.py
+    30 passed in 22.25s
 
-uv run pyright src tests/typing
-0 errors, 0 warnings, 0 informations
+    uv run pyright src tests/typing
+    0 errors, 0 warnings, 0 informations
 
-uv run mypy src tests/typing
-Success: no issues found in 26 source files
+    uv run mypy src tests/typing
+    Success: no issues found in 26 source files
 
-uv run ty check src tests/typing
-All checks passed!
-```
+    uv run ty check src tests/typing
+    All checks passed!
 
 Tox dev evidence:
 
-```
-uv run tox run -e dev
-1063 passed, 5 skipped in 55.67s
-Coverage: 91.28%, above the 90% threshold.
-CuPy skip: tests/test_cupy.py could not import cupy.
-```
+    uv run tox run -e dev
+    1063 passed, 5 skipped in 55.67s
+    Coverage: 91.28%, above the 90% threshold.
+    CuPy skip: tests/test_cupy.py could not import cupy.
 
 Hook evidence:
 
-```
-uv run prek run -a
-Failed.
-end-of-file-fixer modified PLANS.md.
-markdownlint-fix failed on PLANS.md and plans/2026-05-28-baseline-audit.md.
-Hook run also modified AGENTS.md, docs assets, the notebook, and mkdocs.yml.
-```
+    uv run prek run -a
+    Failed.
+    end-of-file-fixer modified PLANS.md.
+    markdownlint-fix failed on PLANS.md and plans/2026-05-28-baseline-audit.md.
+    Hook run also modified AGENTS.md, docs assets, the notebook, and mkdocs.yml.
 
 Draft PR CI evidence:
 
-```
-gh pr checks 4 --repo acecchini/bearshape
-ruff: pass
-typecheck: pass
-typecheck-compat: pass
-Spell Check with Typos: fail
+    gh pr checks 4 --repo acecchini/bearshape
+    ruff: pass
+    typecheck: pass
+    typecheck-compat: pass
+    Spell Check with Typos: fail
 
-The spelling job runs typos . and fails on npt.NDArray in examples/shapix_tour.ipynb.
-```
+    The spelling job runs typos . and fails on npt.NDArray in
+    examples/shapix_tour.ipynb.
 
 Rename inventory evidence:
 
-```
-rg -o "shapix|shapix-rt|Shapix" ... | wc -l
-1102
+    rg -o "shapix|shapix-rt|Shapix" ... | wc -l
+    1102
 
-No bearshape/Bearshape matches were found in the checked contract artifacts.
-Explicit stale identity locations include pyproject.toml, mkdocs.yml, README.md,
-CHANGELOG.md, docs, examples, tests, src/shapix, and .github/workflows/pypi.yml.
-```
+    No bearshape/Bearshape matches were found in the checked contract artifacts.
+    Explicit stale identity locations include pyproject.toml, mkdocs.yml,
+    README.md, CHANGELOG.md, docs, examples, tests, src/shapix, and
+    .github/workflows/pypi.yml.
 
 ## Interfaces and Dependencies
 
@@ -440,3 +419,5 @@ The main files and directories under inspection are:
     PR creation blocker, and CuPy deferral.
 - 2026-05-28: Updated the plan with local pytest, type checker, tox, hook, CI,
     rename inventory, contract map, and follow-up plan evidence.
+- 2026-05-28: Reworked command and evidence snippets to use indented examples
+    and expanded the decision log to match the required `PLANS.md` format.
