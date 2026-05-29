@@ -2,12 +2,12 @@
 description: CuPy array aliases, Like aliases, and ScalarLike re-exports.
 ---
 
-# `shapix.cupy`
+# `bearshape.cupy`
 
-`shapix.cupy` provides CuPy-native array aliases based on `cupy.ndarray`.
+`bearshape.cupy` provides CuPy-native array aliases based on `cupy.ndarray`.
 
 ```python
-from shapix.cupy import (
+from bearshape.cupy import (
   F32, I64, Int, Shaped,
   F32Like, I64Like,
   U8ScalarLike, make_scalar_like_type,
@@ -37,7 +37,7 @@ Other exports:
 
 ## Backend limits
 
-`shapix.cupy` does **not** export:
+`bearshape.cupy` does **not** export:
 
 - `BF16`
 - `F128`
@@ -63,8 +63,8 @@ Static type checkers still see the result as `cupy.ndarray`.
 
 ## `ScalarLike` re-exports
 
-`ScalarLike` aliases are re-exported from `shapix.numpy`. They validate Python
-and NumPy scalar values, not CuPy 0-D arrays.
+`ScalarLike` aliases are re-exported from `bearshape.numpy`. They validate
+Python and NumPy scalar values, not CuPy 0-D arrays.
 
 For CuPy scalar arrays, prefer a `Like` alias with `Scalar`, for example
 `F32Like[Scalar]`.

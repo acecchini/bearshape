@@ -1,17 +1,17 @@
 """Dimension symbols for readable array shape annotations.
 
-Dimensions are the building blocks of shapix type annotations. Import
+Dimensions are the building blocks of bearshape type annotations. Import
 pre-defined symbols or create your own::
 
-    from shapix import N, C, H, W, Dimension
+    from bearshape import N, C, H, W, Dimension
 
     Vocab = Dimension("Vocab")
     Embed = Dimension("Embed")
 
 Dimensions support full Python arithmetic to express derived shapes::
 
-    from shapix import N
-    from shapix.numpy import F32
+    from bearshape import N
+    from bearshape.numpy import F32
 
 
     @beartype

@@ -14,16 +14,16 @@ Import `Tree` from an explicit backend module:
 === "OpTree"
 
     ```python
-    from shapix.optree import Tree
+    from bearshape.optree import Tree
     ```
 
 === "JAX"
 
     ```python
-    from shapix.jax import Tree
+    from bearshape.jax import Tree
     ```
 
-The root `shapix` module exports `Structure`, `T`, and `S`, but not `Tree`
+The root `bearshape` module exports `Structure`, `T`, and `S`, but not `Tree`
 itself.
 
 ## Basic leaf checking
@@ -33,9 +33,9 @@ itself.
 ```python
 import numpy as np
 from beartype import beartype
-from shapix import N, C
-from shapix.numpy import F32
-from shapix.optree import Tree
+from bearshape import N, C
+from bearshape.numpy import F32
+from bearshape.optree import Tree
 
 @beartype
 def process(data: Tree[F32[N, C]]) -> Tree[F32[N, C]]:
@@ -58,9 +58,9 @@ identical tree shapes:
 ```python
 import numpy as np
 from beartype import beartype
-from shapix import N, T
-from shapix.numpy import F32
-from shapix.optree import Tree
+from bearshape import N, T
+from bearshape.numpy import F32
+from bearshape.optree import Tree
 
 @beartype
 def add_trees(
@@ -130,9 +130,9 @@ Create your own with `Structure`:
 
 ```python
 from beartype import beartype
-from shapix import N, Structure
-from shapix.numpy import F32, I64
-from shapix.optree import Tree
+from bearshape import N, Structure
+from bearshape.numpy import F32, I64
+from bearshape.optree import Tree
 
 Params = Structure("Params")
 State = Structure("State")

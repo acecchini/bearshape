@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/shapix-rt
+      url: https://pypi.org/p/bearshape
     permissions:
       id-token: write
     steps:

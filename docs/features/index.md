@@ -1,10 +1,10 @@
 ---
-description: Explore Shapix's runtime contracts, typing model, and backend-specific tools.
+description: Explore Bearshape's runtime contracts, typing model, and backend-specific tools.
 ---
 
 # Features
 
-Shapix layers several pieces together:
+Bearshape layers several pieces together:
 
 - a shape language built from Python objects such as `N`, `Scalar`, and
     `Value("size")`
@@ -27,7 +27,7 @@ Shapix layers several pieces together:
     `ScalarLike` aliases.
 - :material-file-tree: **[Tree Annotations](tree-annotations.md)** — Validate
     all leaves and enforce structure consistency in nested containers.
-- :material-wrench: **[Decorator & Memo](decorator.md)** — `@shapix.check`,
+- :material-wrench: **[Decorator & Memo](decorator.md)** — `@bearshape.check`,
     `check_context`, async behavior, and when explicit memo scope is worth it.
 - :material-hook: **[Import Hook](claw.md)** — Package-wide instrumentation with
     `beartype.claw`.

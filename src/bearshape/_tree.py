@@ -5,7 +5,7 @@ A tree (pytree) is a nested container structure (dicts, lists, tuples,
 namedtuples, etc.) whose leaves are typed arrays. This module provides a
 ``Tree`` annotation that validates leaves and optionally enforces structure
 consistency across arguments, following the same patterns as jaxtyping.
-At runtime ``Tree[...]`` produces a shapix runtime hint, so beartype can report
+At runtime ``Tree[...]`` produces a bearshape runtime hint, so beartype can report
 readable leaf and structure failures without changing the public syntax.
 
 Requires ``optree`` or ``jax`` for tree traversal. Install with
@@ -21,14 +21,14 @@ Requires ``optree`` or ``jax`` for tree traversal. Install with
 
 Import ``Tree`` from an explicit backend module::
 
-    from shapix.optree import Tree  # backed by optree
-    from shapix.jax import Tree  # backed by jax.tree_util
+    from bearshape.optree import Tree  # backed by optree
+    from bearshape.jax import Tree  # backed by jax.tree_util
 
 Usage patterns::
 
-    from shapix import T, S, N, C
-    from shapix.optree import Tree
-    from shapix.numpy import F32
+    from bearshape import T, S, N, C
+    from bearshape.optree import Tree
+    from bearshape.numpy import F32
 
 
     # Basic — all leaves must be F32[N, C]
@@ -80,9 +80,9 @@ class Structure(str):
 
   Create symbols and use them in Tree type annotations::
 
-      from shapix import Structure, N, C
-      from shapix.optree import Tree
-      from shapix.numpy import F32
+      from bearshape import Structure, N, C
+      from bearshape.optree import Tree
+      from bearshape.numpy import F32
 
       Params = Structure("Params")
 

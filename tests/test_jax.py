@@ -1,5 +1,5 @@
 # pyright: reportArgumentType=false, reportGeneralTypeIssues=false, reportUnusedImport=false
-"""Tests for shapix.jax — JAX array types, Like types, and dtype handling."""
+"""Tests for bearshape.jax — JAX array types, Like types, and dtype handling."""
 
 from __future__ import annotations
 
@@ -16,9 +16,9 @@ from beartype.roar import (
   BeartypeCallHintReturnViolation,
 )
 
-import shapix
-from shapix import B, C, Dimension, N, Value, __
-from shapix.jax import (
+import bearshape
+from bearshape import B, C, Dimension, N, Value, __
+from bearshape.jax import (
   BF16,
   F16,
   F32,
@@ -266,7 +266,7 @@ class TestJax64Bit:
     jax.config.update("jax_enable_x64", False)
 
   def test_f64(self) -> None:
-    from shapix.jax import F64
+    from bearshape.jax import F64
 
     @beartype
     def f(x: F64[N]) -> F64[N]:
@@ -275,7 +275,7 @@ class TestJax64Bit:
     f(jnp.ones(5, dtype=jnp.float64))
 
   def test_i64(self) -> None:
-    from shapix.jax import I64
+    from bearshape.jax import I64
 
     @beartype
     def f(x: I64[N]) -> I64[N]:
@@ -299,7 +299,7 @@ class TestJaxCrossBackendRejection:
       f(np.ones(3, dtype=np.float32))
 
   def test_numpy_type_rejects_jax(self) -> None:
-    from shapix.numpy import F32 as NpF32
+    from bearshape.numpy import F32 as NpF32
 
     @beartype
     def f(x: NpF32[N]) -> NpF32[N]:
@@ -376,7 +376,7 @@ class TestJaxLikeTypes:
 
 class TestJaxLikeDiagnostics:
   def test_f32like_runtime_hint_module_is_backend_correct(self) -> None:
-    assert F32Like[N].__module__ == "shapix.jax"
+    assert F32Like[N].__module__ == "bearshape.jax"
 
   def test_f32like_violation_uses_jax_backend_label(self) -> None:
     @beartype
@@ -387,7 +387,7 @@ class TestJaxLikeDiagnostics:
       f(jnp.ones((2, 2), dtype=jnp.float32))
 
     text = str(exc_info.value)
-    assert "<class 'shapix.jax.F32Like[N]'>" in text
+    assert "<class 'bearshape.jax.F32Like[N]'>" in text
     assert "numpy.F32Like[N]" not in text
 
 
@@ -411,7 +411,7 @@ class TestJaxArrayProtocol:
 
   def test_jax_array_protocol_wrong_dtype_rejected(self) -> None:
     """__jax_array__ object with wrong dtype should be rejected."""
-    from shapix.jax import I64Like
+    from bearshape.jax import I64Like
 
     class MyArray:
       def __init__(self, data: object) -> None:
@@ -451,7 +451,7 @@ class TestJaxLikeTrustScope:
 
   def test_jax_array_is_fast_path_trusted(self) -> None:
     """jax.Array should be trusted (fast path) by JAX Like types."""
-    from shapix.jax import _JAX_TRUSTED
+    from bearshape.jax import _JAX_TRUSTED
 
     assert jax.Array in _JAX_TRUSTED
     assert np.ndarray in _JAX_TRUSTED
@@ -459,7 +459,7 @@ class TestJaxLikeTrustScope:
   def test_torch_tensor_not_in_jax_trusted(self) -> None:
     """torch.Tensor must NOT be in JAX trusted types."""
     torch = pytest.importorskip("torch")
-    from shapix.jax import _JAX_TRUSTED
+    from bearshape.jax import _JAX_TRUSTED
 
     assert torch.Tensor not in _JAX_TRUSTED
 
@@ -476,8 +476,8 @@ class TestJaxLikeTrustScope:
 
 
 class TestJaxDecoratorIntegration:
-  def test_shapix_check(self) -> None:
-    @shapix.check
+  def test_bearshape_check(self) -> None:
+    @bearshape.check
     @beartype
     def f(x: F32[N], y: F32[N]) -> F32[N]:
       return x + y
@@ -487,7 +487,7 @@ class TestJaxDecoratorIntegration:
       f(jnp.ones(3, dtype=jnp.float32), jnp.ones(5, dtype=jnp.float32))
 
   def test_check_context(self) -> None:
-    with shapix.check_context():
+    with bearshape.check_context():
       x = jnp.ones((4, 3), dtype=jnp.float32)
       y = jnp.ones((5, 3), dtype=jnp.float32)
       assert is_bearable(x, F32[N, C])
@@ -528,7 +528,7 @@ class TestJaxCustomDimensions:
 class TestJaxMixedAnnotations:
   def test_jax_input_numpy_return(self) -> None:
     """Function takes JAX input, returns numpy — return type must match."""
-    from shapix.numpy import F32 as NpF32
+    from bearshape.numpy import F32 as NpF32
 
     @beartype
     def f(x: F32[N]) -> NpF32[N]:
@@ -579,19 +579,19 @@ class TestJaxScalarLikeReexports:
     ],
   )
   def test_identity(self, name: str) -> None:
-    import shapix.jax as jax_mod
-    import shapix.numpy as np_mod
+    import bearshape.jax as jax_mod
+    import bearshape.numpy as np_mod
 
     assert getattr(jax_mod, name) is getattr(np_mod, name)
 
   def test_make_scalar_like_type_reexport(self) -> None:
-    from shapix.jax import make_scalar_like_type
+    from bearshape.jax import make_scalar_like_type
 
     T = make_scalar_like_type(np.float32, casting="same_kind")
     assert is_bearable(1.0, T)
 
   def test_u8_scalar_like_from_jax(self) -> None:
-    from shapix.jax import U8ScalarLike
+    from bearshape.jax import U8ScalarLike
 
     assert is_bearable(0, U8ScalarLike)
     assert is_bearable(255, U8ScalarLike)
@@ -599,7 +599,7 @@ class TestJaxScalarLikeReexports:
 
   def test_0d_jax_array_not_scalar_like(self) -> None:
     """Backend 0-D arrays are not ScalarLike (use Like[Scalar] instead)."""
-    from shapix.jax import F32ScalarLike
+    from bearshape.jax import F32ScalarLike
 
     assert not is_bearable(jnp.float32(1.0), F32ScalarLike)
 
@@ -611,16 +611,16 @@ class TestJaxScalarLikeReexports:
 
 class TestJaxLikeCastingVariants:
   def test_like_same_kind_jax_array(self) -> None:
-    from shapix._array_types import make_array_like_type
-    from shapix._dtypes import FLOAT32
+    from bearshape._array_types import make_array_like_type
+    from bearshape._dtypes import FLOAT32
 
     T = make_array_like_type(FLOAT32, casting="same_kind")
     assert is_bearable(jnp.ones(3, dtype=jnp.float32), T[...])
     assert not is_bearable(jnp.ones(3, dtype=jnp.complex64), T[...])
 
   def test_like_no_casting_jax_array(self) -> None:
-    from shapix._array_types import make_array_like_type
-    from shapix._dtypes import FLOAT32
+    from bearshape._array_types import make_array_like_type
+    from bearshape._dtypes import FLOAT32
 
     T = make_array_like_type(FLOAT32, casting="no")
     assert is_bearable(jnp.ones(3, dtype=jnp.float32), T[...])
@@ -631,7 +631,7 @@ class TestJaxValueResolution:
   def test_value_with_check(self) -> None:
     """Value("size") resolves under @check with JAX arrays."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(size: int) -> F32[Value("size")]:  # type: ignore[valid-type]
       return jnp.ones(size, dtype=jnp.float32)
@@ -641,7 +641,7 @@ class TestJaxValueResolution:
   def test_value_cross_arg(self) -> None:
     """Value + dim under @check with JAX arrays."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: F32[N], pad: int) -> F32[N + Value("pad")]:  # type: ignore[valid-type]
       return jnp.ones(x.shape[0] + pad, dtype=jnp.float32)
@@ -652,9 +652,9 @@ class TestJaxValueResolution:
 
 class TestJaxTreeBackend:
   def test_jax_tree_basic(self) -> None:
-    from shapix.jax import Tree as JaxTree
+    from bearshape.jax import Tree as JaxTree
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: JaxTree[F32[N]]) -> JaxTree[F32[N]]:
       return x
@@ -663,13 +663,13 @@ class TestJaxTreeBackend:
     f(data)
 
   def test_jax_tree_repr(self) -> None:
-    from shapix.jax import Tree as JaxTree
+    from bearshape.jax import Tree as JaxTree
 
     assert repr(JaxTree) == "Tree"
 
 
 class TestJaxNumericScalarBoolRejection:
   def test_i64_scalar_rejects_bool(self) -> None:
-    from shapix.jax import I64ScalarLike
+    from bearshape.jax import I64ScalarLike
 
     assert not is_bearable(True, I64ScalarLike)

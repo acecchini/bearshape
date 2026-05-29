@@ -1,4 +1,4 @@
-"""Verify shapix.check preserves function signatures for type checkers.
+"""Verify bearshape.check preserves function signatures for type checkers.
 
 Tested with: pyright, mypy, ty
 """
@@ -6,7 +6,7 @@ Tested with: pyright, mypy, ty
 import numpy as np
 from numpy.typing import NDArray
 
-from shapix import check, check_context
+from bearshape import check, check_context
 
 # ---------------------------------------------------------------------------
 # Basic @check — preserves NDArray signature

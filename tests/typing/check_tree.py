@@ -7,9 +7,9 @@ from __future__ import annotations
 
 import typing as tp
 
-from shapix import C, N, Structure
-from shapix.numpy import F32
-from shapix.optree import Tree
+from bearshape import C, N, Structure
+from bearshape.numpy import F32
+from bearshape.optree import Tree
 
 # ---------------------------------------------------------------------------
 # Import validation

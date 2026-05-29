@@ -1,11 +1,12 @@
 ---
-description: How shapix annotations map onto pyright, mypy, and ty.
+description: How bearshape annotations map onto pyright, mypy, and ty.
 ---
 
 # Static Typing
 
-Shapix supports **pyright**, **mypy**, and **ty**. The repository runs all three
-against the typing fixtures in `tests/typing/` via `tests/test_typecheck.py`.
+Bearshape supports **pyright**, **mypy**, and **ty**. The repository runs all
+three against the typing fixtures in `tests/typing/` via
+`tests/test_typecheck.py`.
 
 At a high level:
 
@@ -23,8 +24,8 @@ These patterns are part of the tested public typing surface:
 
 ```python
 from beartype import beartype
-from shapix import C, N, Scalar, __, check
-from shapix.numpy import F32
+from bearshape import C, N, Scalar, __, check
+from bearshape.numpy import F32
 
 @beartype
 def f(x: F32[N, C]) -> F32[N, C]:
@@ -45,7 +46,7 @@ async def async_identity(x: F32[N]) -> F32[N]:
 
 This also extends to:
 
-- backend aliases from `shapix.jax`, `shapix.torch`, and `shapix.cupy`
+- backend aliases from `bearshape.jax`, `bearshape.torch`, and `bearshape.cupy`
 - `Like` aliases such as `F32Like[N, C]`
 - leaf-only tree annotations such as `Tree[F32[N, C]]`
 - the public `ArrayLike` template and backend `ScalarLike` aliases
@@ -73,8 +74,8 @@ Example:
 
 ```python
 from beartype import beartype
-from shapix import N, Value
-from shapix.numpy import F32
+from bearshape import N, Value
+from bearshape.numpy import F32
 
 @beartype
 def pad(x: F32[N]) -> F32[N + 2]:  # type: ignore[valid-type]
@@ -101,8 +102,8 @@ real runtime token in the `else` branch.
 ```python
 import typing as tp
 from beartype import beartype
-from shapix import Dimension, H, N, W
-from shapix.numpy import F32
+from bearshape import Dimension, H, N, W
+from bearshape.numpy import F32
 
 if tp.TYPE_CHECKING:
   Three = tp.Literal[3]
@@ -119,8 +120,8 @@ def process_rgb(x: F32[N, Three, H, W]) -> F32[N, Three, H, W]:
 ```python
 import typing as tp
 from beartype import beartype
-from shapix import B, C, N
-from shapix.numpy import F32
+from bearshape import B, C, N
+from bearshape.numpy import F32
 
 if tp.TYPE_CHECKING:
   VariadicBatch = tp.Literal["VariadicBatch"]
@@ -160,8 +161,8 @@ all three checkers, define a checker-only alias:
 ```python
 import typing as tp
 from beartype import beartype
-from shapix import Dimension, N
-from shapix.numpy import F32, I64
+from bearshape import Dimension, N
+from bearshape.numpy import F32, I64
 
 if tp.TYPE_CHECKING:
   type Vocab = int
@@ -187,9 +188,9 @@ keep in their toolbox first.
     are runtime-only and need a targeted ignore
 
 ```python
-from shapix import N, T
-from shapix.numpy import F32
-from shapix.optree import Tree
+from bearshape import N, T
+from bearshape.numpy import F32
+from bearshape.optree import Tree
 
 def leaves_only(x: Tree[F32[N]]) -> Tree[F32[N]]:
   return x
@@ -202,9 +203,9 @@ def structure_checked(x: Tree[F32[N], T]) -> Tree[F32[N]]:  # type: ignore[valid
 
 The typing model differs slightly from runtime behavior:
 
-- `shapix.jax.F32Like[...]` and `shapix.torch.F32Like[...]` accept scalars and
-    nested sequences at runtime, but static checkers see them as `jax.Array` and
-    `torch.Tensor`
+- `bearshape.jax.F32Like[...]` and `bearshape.torch.F32Like[...]` accept scalars
+    and nested sequences at runtime, but static checkers see them as `jax.Array`
+    and `torch.Tensor`
 - `Shaped[...]` and `ShapedLike[...]` accept any dtype at runtime, while their
     static aliases are approximations
 - backend `ScalarLike` aliases validate Python and NumPy scalar values, not

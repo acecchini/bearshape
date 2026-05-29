@@ -1,19 +1,19 @@
 ---
-description: Install shapix, pick a backend, and learn the runtime and typing model.
+description: Install bearshape, pick a backend, and learn the runtime and typing model.
 ---
 
 # Getting Started
 
-Shapix turns annotations like `F32[N, C]` into runtime-validated contracts by
+Bearshape turns annotations like `F32[N, C]` into runtime-validated contracts by
 generating small runtime hint classes for arrays and trees. Beartype validates
-those hints through `__instancecheck__()`, and shapix provides readable failures
-through `__instancecheck_str__()`.
+those hints through `__instancecheck__()`, and bearshape provides readable
+failures through `__instancecheck_str__()`.
 
-The root `shapix` module is intentionally lightweight: it exports dimension
+The root `bearshape` module is intentionally lightweight: it exports dimension
 symbols, tree structure symbols, `DtypeSpec`, the custom array factories, and
-the memo helpers. Backend modules such as `shapix.numpy`, `shapix.jax`,
-`shapix.torch`, and `shapix.cupy` add concrete array aliases once you install
-those dependencies.
+the memo helpers. Backend modules such as `bearshape.numpy`, `bearshape.jax`,
+`bearshape.torch`, and `bearshape.cupy` add concrete array aliases once you
+install those dependencies.
 
 ## Start here
 
@@ -26,7 +26,7 @@ those dependencies.
     What passes on pyright, mypy, and ty, and what still needs targeted
     runtime-only workarounds.
 
-## What Shapix gives you
+## What Bearshape gives you
 
 - Standard `@beartype` support. No custom decorator is required for normal shape
     checking.

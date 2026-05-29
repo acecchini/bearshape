@@ -16,12 +16,14 @@ and this project follows
 
 ### Changed
 
+- Renamed the distribution, import package, documentation, examples, tests, and
+    release metadata to Bearshape.
 - Hardened nearest-wrapper memo and scope resolution for plain `@beartype` usage
     in decorated call stacks.
 - Array and tree runtime hints now report readable validation failures through
     custom beartype diagnostics instead of boolean-only validator output.
 - Backend `Like[...]` diagnostics now identify JAX, PyTorch, and CuPy hints with
-    their owning `shapix` backend module instead of `numpy`.
+    their owning `bearshape` backend module instead of `numpy`.
 
 ## [0.0.1] - 2026-03-31
 
@@ -32,7 +34,7 @@ and this project follows
 - Symbolic dimension syntax including named dimensions, anonymous dimensions,
     `Scalar`, arithmetic dimension expressions, and constrained `Value(...)`
     checks.
-- `Tree[...]` validation helpers, explicit `@shapix.check` support, and
+- `Tree[...]` validation helpers, explicit `@bearshape.check` support, and
     `check_context()` for shared manual bearability checks.
 - Multi-checker typing coverage across pyright, mypy, and ty, with CI, tox, and
     pre-commit validation for runtime and typing behavior.
@@ -41,10 +43,8 @@ and this project follows
 
 ### Notes
 
-- The PyPI distribution for this release is `shapix-rt`, where `rt` means
-    `runtime`; the import path remains `shapix`.
-- The root `shapix` module intentionally stays lightweight and
+- The root `bearshape` module intentionally stays lightweight and
     optional-dependency-safe; backend-specific aliases and factories live in
-    `shapix.numpy`, `shapix.jax`, `shapix.torch`, and `shapix.cupy`.
+    `bearshape.numpy`, `bearshape.jax`, `bearshape.torch`, and `bearshape.cupy`.
 - CuPy support remains optional at install time and requires a compatible CuPy
     environment when used at runtime.

@@ -1,5 +1,5 @@
 ---
-title: Shapix
+title: Bearshape
 description: Elegant runtime shape and dtype checking for NumPy, JAX, PyTorch, and CuPy arrays — powered by beartype.
 hide:
   - navigation
@@ -27,7 +27,7 @@ html { overflow-x: hidden; }
 body { background: transparent !important; }
 
 /* ── Full-page visual canvas ── */
-#shapix-visual {
+#bearshape-visual {
   position: fixed;
   inset: 0;
   z-index: 0;
@@ -368,14 +368,14 @@ a.backend-logo:hover {
 }
 </style>
 
-<div id="shapix-visual"></div>
+<div id="bearshape-visual"></div>
 
 <div class="hero">
 <div class="hero__content" markdown>
 
 <div class="hero__logo">
-<canvas id="shapix-logo" width="220" height="220"></canvas>
-<div class="hero__title" id="shapix-title">Shapix</div>
+<canvas id="bearshape-logo" width="220" height="220"></canvas>
+<div class="hero__title" id="bearshape-title">Bearshape</div>
 </div>
 
 <div class="hero__tagline">Runtime shape checking for array code</div>
@@ -440,7 +440,7 @@ runtime-only syntax such as fixed literal dims and symbolic shapes.
 
 ### :material-cog: Full BeartypeConf Support
 
-Unlike jaxtyping, shapix doesn't replace your beartype configuration. Full
+Unlike jaxtyping, bearshape doesn't replace your beartype configuration. Full
 `BeartypeConf` support out of the box.
 
 </div>
@@ -450,7 +450,7 @@ Unlike jaxtyping, shapix doesn't replace your beartype configuration. Full
 ### :material-shield-lock: Thread-Safe & Async-Safe
 
 Automatic memo discovery is thread-safe, and the explicit memo stack used by
-`@shapix.check` and `check_context()` is async-safe too.
+`@bearshape.check` and `check_context()` is async-safe too.
 
 </div>
 

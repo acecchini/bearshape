@@ -1,5 +1,5 @@
 # pyright: reportArgumentType=false, reportGeneralTypeIssues=false, reportUnusedImport=false
-"""Tests for shapix.torch — PyTorch tensor types, Like types, and dtype handling."""
+"""Tests for bearshape.torch — PyTorch tensor types, Like types, and dtype handling."""
 
 from __future__ import annotations
 
@@ -15,9 +15,9 @@ from beartype.roar import (
   BeartypeCallHintReturnViolation,
 )
 
-import shapix
-from shapix import B, C, Dimension, N, Value, __
-from shapix.torch import (
+import bearshape
+from bearshape import B, C, Dimension, N, Value, __
+from bearshape.torch import (
   BF16,
   F16,
   F32,
@@ -270,7 +270,7 @@ class TestTorchCrossBackendRejection:
       f(np.ones(3, dtype=np.float32))
 
   def test_numpy_type_rejects_torch(self) -> None:
-    from shapix.numpy import F32 as NpF32
+    from bearshape.numpy import F32 as NpF32
 
     @beartype
     def f(x: NpF32[N]) -> NpF32[N]:
@@ -358,7 +358,7 @@ class TestTorchLikeTypes:
 
 class TestTorchLikeDiagnostics:
   def test_f32like_runtime_hint_module_is_backend_correct(self) -> None:
-    assert F32Like[N].__module__ == "shapix.torch"
+    assert F32Like[N].__module__ == "bearshape.torch"
 
   def test_f32like_violation_uses_torch_backend_label(self) -> None:
     @beartype
@@ -369,7 +369,7 @@ class TestTorchLikeDiagnostics:
       f(torch.ones((2, 2), dtype=torch.float32))
 
     text = str(exc_info.value)
-    assert "<class 'shapix.torch.F32Like[N]'>" in text
+    assert "<class 'bearshape.torch.F32Like[N]'>" in text
     assert "numpy.F32Like[N]" not in text
 
 
@@ -431,7 +431,7 @@ class TestTorchLikeTrustScope:
 
   def test_torch_tensor_is_fast_path_trusted(self) -> None:
     """torch.Tensor should be trusted (fast path) by Torch Like types."""
-    from shapix.torch import _TORCH_TRUSTED
+    from bearshape.torch import _TORCH_TRUSTED
 
     assert torch.Tensor in _TORCH_TRUSTED
     assert np.ndarray in _TORCH_TRUSTED
@@ -439,7 +439,7 @@ class TestTorchLikeTrustScope:
   def test_jax_array_not_in_torch_trusted(self) -> None:
     """jax.Array must NOT be in Torch trusted types."""
     jax = pytest.importorskip("jax")
-    from shapix.torch import _TORCH_TRUSTED
+    from bearshape.torch import _TORCH_TRUSTED
 
     assert jax.Array not in _TORCH_TRUSTED
 
@@ -458,8 +458,8 @@ class TestTorchLikeTrustScope:
 
 
 class TestTorchDecoratorIntegration:
-  def test_shapix_check(self) -> None:
-    @shapix.check
+  def test_bearshape_check(self) -> None:
+    @bearshape.check
     @beartype
     def f(x: F32[N], y: F32[N]) -> F32[N]:
       return x + y
@@ -469,7 +469,7 @@ class TestTorchDecoratorIntegration:
       f(torch.ones(3, dtype=torch.float32), torch.ones(5, dtype=torch.float32))
 
   def test_check_context(self) -> None:
-    with shapix.check_context():
+    with bearshape.check_context():
       x = torch.ones(4, 3, dtype=torch.float32)
       y = torch.ones(5, 3, dtype=torch.float32)
       assert is_bearable(x, F32[N, C])
@@ -509,7 +509,7 @@ class TestTorchCustomDimensions:
 
 class TestTorchMixedAnnotations:
   def test_torch_input_numpy_return(self) -> None:
-    from shapix.numpy import F32 as NpF32
+    from bearshape.numpy import F32 as NpF32
 
     @beartype
     def f(x: F32[N]) -> NpF32[N]:
@@ -591,19 +591,19 @@ class TestTorchScalarLikeReexports:
     ],
   )
   def test_identity(self, name: str) -> None:
-    import shapix.numpy as np_mod
-    import shapix.torch as torch_mod
+    import bearshape.numpy as np_mod
+    import bearshape.torch as torch_mod
 
     assert getattr(torch_mod, name) is getattr(np_mod, name)
 
   def test_make_scalar_like_type_reexport(self) -> None:
-    from shapix.torch import make_scalar_like_type
+    from bearshape.torch import make_scalar_like_type
 
     T = make_scalar_like_type(np.float32, casting="same_kind")
     assert is_bearable(1.0, T)
 
   def test_i8_scalar_like_from_torch(self) -> None:
-    from shapix.torch import I8ScalarLike
+    from bearshape.torch import I8ScalarLike
 
     assert is_bearable(-128, I8ScalarLike)
     assert is_bearable(127, I8ScalarLike)
@@ -611,7 +611,7 @@ class TestTorchScalarLikeReexports:
 
   def test_0d_torch_tensor_not_scalar_like(self) -> None:
     """Backend 0-D tensors are not ScalarLike (use Like[Scalar] instead)."""
-    from shapix.torch import F32ScalarLike
+    from bearshape.torch import F32ScalarLike
 
     assert not is_bearable(torch.tensor(1.0, dtype=torch.float32), F32ScalarLike)
 
@@ -623,16 +623,16 @@ class TestTorchScalarLikeReexports:
 
 class TestTorchLikeCastingVariants:
   def test_like_same_kind_torch_tensor(self) -> None:
-    from shapix._array_types import make_array_like_type
-    from shapix._dtypes import FLOAT32
+    from bearshape._array_types import make_array_like_type
+    from bearshape._dtypes import FLOAT32
 
     T = make_array_like_type(FLOAT32, casting="same_kind")
     assert is_bearable(torch.ones(3, dtype=torch.float32), T[...])
     assert not is_bearable(torch.ones(3, dtype=torch.complex64), T[...])
 
   def test_like_no_casting_torch_tensor(self) -> None:
-    from shapix._array_types import make_array_like_type
-    from shapix._dtypes import FLOAT32
+    from bearshape._array_types import make_array_like_type
+    from bearshape._dtypes import FLOAT32
 
     T = make_array_like_type(FLOAT32, casting="no")
     assert is_bearable(torch.ones(3, dtype=torch.float32), T[...])
@@ -643,7 +643,7 @@ class TestTorchValueResolution:
   def test_value_with_check(self) -> None:
     """Value("size") resolves under @check with Torch tensors."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(size: int) -> F32[Value("size")]:  # type: ignore[valid-type]
       return torch.ones(size, dtype=torch.float32)
@@ -653,7 +653,7 @@ class TestTorchValueResolution:
   def test_value_cross_arg(self) -> None:
     """Value + dim under @check with Torch tensors."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: F32[N], pad: int) -> F32[N + Value("pad")]:  # type: ignore[valid-type]
       return torch.ones(x.shape[0] + pad, dtype=torch.float32)
@@ -664,6 +664,6 @@ class TestTorchValueResolution:
 
 class TestTorchNumericScalarBoolRejection:
   def test_i64_scalar_rejects_bool(self) -> None:
-    from shapix.torch import I64ScalarLike
+    from bearshape.torch import I64ScalarLike
 
     assert not is_bearable(True, I64ScalarLike)

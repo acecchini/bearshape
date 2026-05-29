@@ -7,15 +7,15 @@ description: Dtype-checked array aliases for NumPy, JAX, PyTorch, CuPy, and cust
 # Array Types
 
 Array aliases such as `F32[N, C]` or `DT64[...]` are the core "strict array"
-side of shapix. They enforce both:
+side of bearshape. They enforce both:
 
 - the concrete backend array class
 - the allowed dtype family
 - the shape specification in the subscript
 
-At runtime these aliases become shapix runtime hint classes rather than
+At runtime these aliases become bearshape runtime hint classes rather than
 `Annotated[...]` wrappers. Standard `@beartype` checks them through
-`__instancecheck__()`, and shapix supplies readable failure text through
+`__instancecheck__()`, and bearshape supplies readable failure text through
 `__instancecheck_str__()`.
 
 ## Built-in backends
@@ -23,7 +23,7 @@ At runtime these aliases become shapix runtime hint classes rather than
 === "NumPy"
 
     ```python
-    from shapix.numpy import F32, I64, Shaped
+    from bearshape.numpy import F32, I64, Shaped
     ```
 
     Concrete dtypes:
@@ -65,10 +65,10 @@ At runtime these aliases become shapix runtime hint classes rather than
 === "JAX"
 
     ```python
-    from shapix.jax import F32, BF16
+    from bearshape.jax import F32, BF16
     ```
 
-    `shapix.jax` uses `jax.Array` as the base array class.
+    `bearshape.jax` uses `jax.Array` as the base array class.
 
     It exports:
 
@@ -83,10 +83,10 @@ At runtime these aliases become shapix runtime hint classes rather than
 === "PyTorch"
 
     ```python
-    from shapix.torch import F32, BF16
+    from bearshape.torch import F32, BF16
     ```
 
-    `shapix.torch` uses `torch.Tensor` as the base array class.
+    `bearshape.torch` uses `torch.Tensor` as the base array class.
 
     It exports:
 
@@ -101,10 +101,10 @@ At runtime these aliases become shapix runtime hint classes rather than
 === "CuPy"
 
     ```python
-    from shapix.cupy import F32, I64
+    from bearshape.cupy import F32, I64
     ```
 
-    `shapix.cupy` uses `cupy.ndarray` as the base array class.
+    `bearshape.cupy` uses `cupy.ndarray` as the base array class.
 
     It exports:
 
@@ -122,8 +122,8 @@ Use `Structured()` for NumPy structured (record) dtypes:
 ```python
 import numpy as np
 from beartype import beartype
-from shapix import N
-from shapix.numpy import Structured
+from bearshape import N
+from bearshape.numpy import Structured
 
 Point = Structured([("x", np.float32), ("y", np.float32)])
 
@@ -146,8 +146,8 @@ using `make_array_type` with endianness `DtypeSpec` constants:
 ```python
 import numpy as np
 from beartype import beartype
-from shapix import N, C, make_array_type
-from shapix._dtypes import FLOAT32_LE
+from bearshape import N, C, make_array_type
+from bearshape._dtypes import FLOAT32_LE
 
 F32LE = make_array_type(np.ndarray, FLOAT32_LE)
 
@@ -168,7 +168,7 @@ array classes or dtype combinations:
 
 ```python
 import numpy as np
-from shapix import DtypeSpec, make_array_like_type, make_array_type
+from bearshape import DtypeSpec, make_array_like_type, make_array_type
 
 MIXED = DtypeSpec("MixedPrecision", frozenset({"float16", "float32"}))
 

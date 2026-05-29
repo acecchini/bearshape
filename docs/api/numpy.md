@@ -2,9 +2,9 @@
 description: NumPy array aliases, Like aliases, ScalarLike aliases, and NumPy-specific helpers.
 ---
 
-# `shapix.numpy`
+# `bearshape.numpy`
 
-`shapix.numpy` is the main NumPy-facing module. It exports:
+`bearshape.numpy` is the main NumPy-facing module. It exports:
 
 - strict array aliases such as `F32[N, C]`
 - `Like` aliases such as `F32Like[...]`
@@ -14,7 +14,7 @@ description: NumPy array aliases, Like aliases, ScalarLike aliases, and NumPy-sp
 - `make_scalar_like_type(...)`
 
 ```python
-from shapix.numpy import (
+from bearshape.numpy import (
   F32, I64, DT64, TD64, Shaped, Structured,
   F32Like, IntLike,
   U8ScalarLike, ArrayLike, make_scalar_like_type,
@@ -59,8 +59,8 @@ dtype.
 
 ```python
 import numpy as np
-from shapix import N
-from shapix.numpy import Structured
+from bearshape import N
+from bearshape.numpy import Structured
 
 Point = Structured([("x", np.float32), ("y", np.float32)])
 ```
@@ -105,7 +105,7 @@ when the built-in scalar aliases are close but not exact enough.
 
 ```python
 import numpy as np
-from shapix.numpy import make_scalar_like_type
+from bearshape.numpy import make_scalar_like_type
 
 F32ScalarStrict = make_scalar_like_type(np.float32, casting="no")
 F32ScalarSafe = make_scalar_like_type(np.float32, casting="safe")
@@ -132,10 +132,10 @@ surface:
 
 ```python
 import numpy as np
-from shapix.numpy import ArrayLike
+from bearshape.numpy import ArrayLike
 
 type MyInput = ArrayLike[float, np.float32]
 ```
 
 It is useful when you want a checker-friendly custom alias that still follows
-the shapix "scalar or nested sequence or array" model.
+the bearshape "scalar or nested sequence or array" model.

@@ -4,15 +4,15 @@
 
 Usage::
 
-    from shapix import N, C, H, W
-    from shapix.cupy import F32
+    from bearshape import N, C, H, W
+    from bearshape.cupy import F32
 
 
     @beartype
     def forward(x: F32[N, C, H, W]) -> F32[N, C, H, W]: ...
 
 ScalarLike types (range-validated scalars) and ``make_scalar_like_type``
-are re-exported from ``shapix.numpy`` for convenience.
+are re-exported from ``bearshape.numpy`` for convenience.
 """
 
 from __future__ import annotations
@@ -22,12 +22,12 @@ import typing as tp
 from ._imports import require_attr, require_module
 
 _CUPY_INSTALL_HINT = (
-  "shapix.cupy requires 'cupy' at runtime. "
-  "Install it alongside shapix (e.g. `pip install shapix numpy cupy`)."
+  "bearshape.cupy requires 'cupy' at runtime. "
+  "Install it alongside bearshape (e.g. `pip install bearshape numpy cupy`)."
 )
 _NUMPY_INSTALL_HINT = (
-  "shapix.cupy requires 'numpy' at runtime. "
-  "Install it alongside shapix (e.g. `pip install shapix numpy cupy`)."
+  "bearshape.cupy requires 'numpy' at runtime. "
+  "Install it alongside bearshape (e.g. `pip install bearshape numpy cupy`)."
 )
 
 if tp.TYPE_CHECKING:
@@ -215,7 +215,7 @@ def make_array_like_type(
   asarray: tp.Callable[[object], object] | None = _cupy_asarray,
   trusted_types: tuple[type[object], ...] | None = _CUPY_TRUSTED,
 ) -> tp.Any:
-  """CuPy-aware version of :func:`shapix.make_array_like_type`.
+  """CuPy-aware version of :func:`bearshape.make_array_like_type`.
 
   Defaults to ``cp.asarray`` for the slow path, so CuPy arrays, NumPy arrays,
   Python scalars, and nested sequences are accepted.
@@ -228,7 +228,7 @@ def make_array_like_type(
 
 
 # ---------------------------------------------------------------------------
-# Array types (shape-checked via shapix runtime hints)
+# Array types (shape-checked via bearshape runtime hints)
 # ---------------------------------------------------------------------------
 
 if tp.TYPE_CHECKING:

@@ -1,5 +1,5 @@
 # pyright: reportArgumentType=false, reportGeneralTypeIssues=false, reportUnusedImport=false
-"""Tests for shapix.cupy — CuPy ndarray types, Like types, and dtype handling."""
+"""Tests for bearshape.cupy — CuPy ndarray types, Like types, and dtype handling."""
 
 from __future__ import annotations
 
@@ -15,9 +15,9 @@ from beartype.roar import (
   BeartypeCallHintReturnViolation,
 )
 
-import shapix
-from shapix import B, C, Dimension, N, Value, __
-from shapix.cupy import (
+import bearshape
+from bearshape import B, C, Dimension, N, Value, __
+from bearshape.cupy import (
   F16,
   F32,
   F64,
@@ -236,7 +236,7 @@ class TestCuPyCrossBackendRejection:
       f(np.ones(3, dtype=np.float32))
 
   def test_numpy_type_rejects_cupy(self) -> None:
-    from shapix.numpy import F32 as NpF32
+    from bearshape.numpy import F32 as NpF32
 
     @beartype
     def f(x: NpF32[N]) -> NpF32[N]:
@@ -295,7 +295,7 @@ class TestCuPyLikeTypes:
 
 class TestCuPyLikeDiagnostics:
   def test_f32like_runtime_hint_module_is_backend_correct(self) -> None:
-    assert F32Like[N].__module__ == "shapix.cupy"
+    assert F32Like[N].__module__ == "bearshape.cupy"
 
   def test_f32like_violation_uses_cupy_backend_label(self) -> None:
     @beartype
@@ -306,7 +306,7 @@ class TestCuPyLikeDiagnostics:
       f(cp.ones((2, 2), dtype=cp.float32))
 
     text = str(exc_info.value)
-    assert "<class 'shapix.cupy.F32Like[N]'>" in text
+    assert "<class 'bearshape.cupy.F32Like[N]'>" in text
     assert "numpy.F32Like[N]" not in text
 
 
@@ -331,7 +331,7 @@ class TestCuPyLikeTrustScope:
   """CuPy Like fast path trusts only np.ndarray and cupy.ndarray."""
 
   def test_cupy_ndarray_is_fast_path_trusted(self) -> None:
-    from shapix.cupy import _CUPY_TRUSTED
+    from bearshape.cupy import _CUPY_TRUSTED
 
     assert cp.ndarray in _CUPY_TRUSTED
     assert np.ndarray in _CUPY_TRUSTED
@@ -343,8 +343,8 @@ class TestCuPyLikeTrustScope:
 
 
 class TestCuPyDecoratorIntegration:
-  def test_shapix_check(self) -> None:
-    @shapix.check
+  def test_bearshape_check(self) -> None:
+    @bearshape.check
     @beartype
     def f(x: F32[N], y: F32[N]) -> F32[N]:
       return x + y
@@ -354,7 +354,7 @@ class TestCuPyDecoratorIntegration:
       f(cp.ones(3, dtype=cp.float32), cp.ones(5, dtype=cp.float32))
 
   def test_check_context(self) -> None:
-    with shapix.check_context():
+    with bearshape.check_context():
       x = cp.ones((4, 3), dtype=cp.float32)
       y = cp.ones((5, 3), dtype=cp.float32)
       assert is_bearable(x, F32[N, C])
@@ -458,19 +458,19 @@ class TestCuPyScalarLikeReexports:
     ],
   )
   def test_identity(self, name: str) -> None:
-    import shapix.cupy as cupy_mod
-    import shapix.numpy as np_mod
+    import bearshape.cupy as cupy_mod
+    import bearshape.numpy as np_mod
 
     assert getattr(cupy_mod, name) is getattr(np_mod, name)
 
   def test_make_scalar_like_type_reexport(self) -> None:
-    from shapix.cupy import make_scalar_like_type
+    from bearshape.cupy import make_scalar_like_type
 
     T = make_scalar_like_type(np.float32, casting="same_kind")
     assert is_bearable(1.0, T)
 
   def test_i8_scalar_like_from_cupy(self) -> None:
-    from shapix.cupy import I8ScalarLike
+    from bearshape.cupy import I8ScalarLike
 
     assert is_bearable(-128, I8ScalarLike)
     assert is_bearable(127, I8ScalarLike)
@@ -486,7 +486,7 @@ class TestCuPyValueResolution:
   def test_value_with_check(self) -> None:
     """Value("size") resolves under @check with CuPy arrays."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(size: int) -> F32[Value("size")]:  # type: ignore[valid-type]
       return cp.ones(size, dtype=cp.float32)
@@ -496,7 +496,7 @@ class TestCuPyValueResolution:
   def test_value_cross_arg(self) -> None:
     """Value + dim under @check with CuPy arrays."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: F32[N], pad: int) -> F32[N + Value("pad")]:  # type: ignore[valid-type]
       return cp.ones(x.shape[0] + pad, dtype=cp.float32)
@@ -507,6 +507,6 @@ class TestCuPyValueResolution:
 
 class TestCuPyNumericScalarBoolRejection:
   def test_i64_scalar_rejects_bool(self) -> None:
-    from shapix.cupy import I64ScalarLike
+    from bearshape.cupy import I64ScalarLike
 
     assert not is_bearable(True, I64ScalarLike)

@@ -9,9 +9,9 @@ import pytest
 from beartype import beartype
 from beartype.roar import BeartypeCallHintParamViolation
 
-from shapix import C, N, Value
-from shapix._memo import ShapeMemo, get_memo, pop_memo, push_memo
-from shapix.numpy import F32
+from bearshape import C, N, Value
+from bearshape._memo import ShapeMemo, get_memo, pop_memo, push_memo
+from bearshape.numpy import F32
 
 
 class TestExplicitMemo:
@@ -48,8 +48,8 @@ class TestFrameBasedMemo:
     """Plain is_bearable() should anchor memos to the generated checker frame."""
     from beartype.door import is_bearable
 
-    import shapix._array_types as array_types
-    import shapix._memo as memo_mod
+    import bearshape._array_types as array_types
+    import bearshape._memo as memo_mod
 
     seen_frames: list[str | None] = []
     original_get_memo = array_types.get_memo
@@ -169,13 +169,13 @@ class TestThreadSafety:
 
 class TestMemoEdgeCases:
   def test_bindings_str_empty(self) -> None:
-    from shapix._memo import bindings_str
+    from bearshape._memo import bindings_str
 
     memo = ShapeMemo()
     assert bindings_str(memo) == ""
 
   def test_bindings_str_with_structures(self) -> None:
-    from shapix._memo import bindings_str
+    from bearshape._memo import bindings_str
 
     memo = ShapeMemo(single={"N": 3}, structures={"T": "some_spec"})
     formatted = bindings_str(memo)
@@ -184,7 +184,7 @@ class TestMemoEdgeCases:
     assert "T" not in formatted
 
   def test_pop_empty_is_safe(self) -> None:
-    from shapix._memo import _explicit_stack, pop_memo
+    from bearshape._memo import _explicit_stack, pop_memo
 
     # Ensure stack is empty, then verify pop on empty doesn't corrupt state
     assert _explicit_stack.get() == ()

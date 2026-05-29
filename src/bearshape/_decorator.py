@@ -43,13 +43,13 @@ def check(
   Usage::
 
       # Memo only — pair with @beartype
-      @shapix.check
+      @bearshape.check
       @beartype
       def f(x: Float32Array[N, C]) -> Float32Array[N, C]: ...
 
 
       # Memo + beartype combined
-      @shapix.check(conf=BeartypeConf(strategy=BeartypeStrategy.On))
+      @bearshape.check(conf=BeartypeConf(strategy=BeartypeStrategy.On))
       def f(x: Float32Array[N, C]) -> Float32Array[N, C]: ...
 
   .. note::
@@ -59,10 +59,10 @@ def check(
 
   def decorator(fn: Callable[P, tp.Any]) -> Callable[P, tp.Any]:
     if inspect.isasyncgenfunction(fn):
-      msg = "@shapix.check does not support async generator functions"
+      msg = "@bearshape.check does not support async generator functions"
       raise TypeError(msg)
     if inspect.isgeneratorfunction(fn):
-      msg = "@shapix.check does not support generator functions"
+      msg = "@bearshape.check does not support generator functions"
       raise TypeError(msg)
 
     inner: Callable[P, tp.Any] = fn
@@ -114,11 +114,11 @@ class check_context:
 
       from beartype.door import is_bearable
 
-      with shapix.check_context():
+      with bearshape.check_context():
         assert is_bearable(x, Float32Array[N, C])
         assert is_bearable(y, Float32Array[N])  # same N
 
-      async with shapix.check_context():
+      async with bearshape.check_context():
         assert is_bearable(x, Float32Array[N, C])
 
   .. note::

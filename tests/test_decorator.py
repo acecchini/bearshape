@@ -1,5 +1,5 @@
 # pyright: reportArgumentType=false, reportGeneralTypeIssues=false
-"""Tests for _decorator.py — @shapix.check and check_context."""
+"""Tests for _decorator.py — @bearshape.check and check_context."""
 
 from __future__ import annotations
 
@@ -8,14 +8,14 @@ import pytest
 from beartype import beartype
 from beartype.roar import BeartypeCallHintParamViolation
 
-import shapix
-from shapix import C, N, T, Value
-from shapix.numpy import F32
+import bearshape
+from bearshape import C, N, T, Value
+from bearshape.numpy import F32
 
 
 class TestCheckDecorator:
   def test_basic_usage(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: F32[N, C], y: F32[N, C]) -> F32[N, C]:
       return x + y
@@ -24,7 +24,7 @@ class TestCheckDecorator:
     assert result.shape == (4, 3)
 
   def test_cross_arg_mismatch(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: F32[N], y: F32[N]) -> F32[N]:
       return x + y
@@ -35,7 +35,7 @@ class TestCheckDecorator:
   def test_with_conf(self) -> None:
     from beartype import BeartypeConf
 
-    @shapix.check(conf=BeartypeConf())
+    @bearshape.check(conf=BeartypeConf())
     def f(x: F32[N]) -> F32[N]:
       return x
 
@@ -43,7 +43,7 @@ class TestCheckDecorator:
     assert result.shape == (5,)
 
   def test_sequential_calls(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def g(x: F32[N]) -> F32[N]:
       return x
@@ -57,7 +57,7 @@ class TestCheckContext:
     from beartype.door import is_bearable
 
     arr = np.ones((4, 3), dtype=np.float32)
-    with shapix.check_context():
+    with bearshape.check_context():
       assert is_bearable(arr, F32[N, C])
 
   def test_isinstance_cross_check(self) -> None:
@@ -65,7 +65,7 @@ class TestCheckContext:
 
     x = np.ones((4, 3), dtype=np.float32)
     y = np.ones((4, 5), dtype=np.float32)
-    with shapix.check_context():
+    with bearshape.check_context():
       assert is_bearable(x, F32[N, C])
       # y has N=4 (matches) but different C=5 (should fail)
       assert not is_bearable(y, F32[N, C])
@@ -74,18 +74,18 @@ class TestCheckContext:
     """After exiting the context, a new context gets a fresh memo."""
     from beartype.door import is_bearable
 
-    with shapix.check_context():
+    with bearshape.check_context():
       x = np.ones((4,), dtype=np.float32)
       assert is_bearable(x, F32[N])
 
     # New context — N should not be bound to 4
-    with shapix.check_context():
+    with bearshape.check_context():
       y = np.ones((10,), dtype=np.float32)
       assert is_bearable(y, F32[N])
 
   def test_check_context_returns_self(self) -> None:
     """check_context() works as a context manager and returns itself."""
-    ctx = shapix.check_context()
+    ctx = bearshape.check_context()
     with ctx as result:
       assert result is ctx
 
@@ -94,7 +94,7 @@ class TestDecoratorEdgeCases:
   def test_exception_cleanup(self) -> None:
     """@check cleans memo even when the decorated function raises."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def boom(x: F32[N]) -> F32[N]:
       msg = "boom"
@@ -104,7 +104,7 @@ class TestDecoratorEdgeCases:
       boom(np.ones(5, dtype=np.float32))
 
     # Should not leak memo state — next call should work independently
-    @shapix.check
+    @bearshape.check
     @beartype
     def ok(x: F32[N]) -> F32[N]:
       return x
@@ -114,7 +114,7 @@ class TestDecoratorEdgeCases:
   def test_metadata_preserved(self) -> None:
     """@check preserves __name__ and __doc__."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def my_func(x: F32[N]) -> F32[N]:
       """My docstring."""
@@ -127,9 +127,9 @@ class TestDecoratorEdgeCases:
     """Two nested contexts have independent bindings."""
     from beartype.door import is_bearable
 
-    with shapix.check_context():
+    with bearshape.check_context():
       assert is_bearable(np.ones(4, dtype=np.float32), F32[N])
-      with shapix.check_context():
+      with bearshape.check_context():
         # Inner context: N should not be bound to 4
         assert is_bearable(np.ones(10, dtype=np.float32), F32[N])
       # Outer context: N should still be 4
@@ -137,25 +137,25 @@ class TestDecoratorEdgeCases:
 
   def test_empty_check_context(self) -> None:
     """Enter/exit with no checks should not raise."""
-    with shapix.check_context():
+    with bearshape.check_context():
       pass
 
 
 class TestValueWithCheckDecorator:
-  def test_value_with_shapix_check(self) -> None:
-    """Value expressions work with @shapix.check (explicit scope)."""
+  def test_value_with_bearshape_check(self) -> None:
+    """Value expressions work with @bearshape.check (explicit scope)."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(size: int) -> F32[Value("size")]:  # type: ignore[valid-type]
       return np.ones(size, dtype=np.float32)
 
     assert f(4).shape == (4,)
 
-  def test_value_with_shapix_check_violation(self) -> None:
+  def test_value_with_bearshape_check_violation(self) -> None:
     from beartype.roar import BeartypeCallHintReturnViolation
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(size: int) -> F32[Value("size")]:  # type: ignore[valid-type]
       return np.ones(999, dtype=np.float32)
@@ -163,20 +163,20 @@ class TestValueWithCheckDecorator:
     with pytest.raises(BeartypeCallHintReturnViolation):
       f(4)
 
-  def test_value_add_dim_with_shapix_check(self) -> None:
-    """Value + Dimension arithmetic works under @shapix.check."""
+  def test_value_add_dim_with_bearshape_check(self) -> None:
+    """Value + Dimension arithmetic works under @bearshape.check."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: F32[N], pad: int) -> F32[N + Value("pad")]:  # type: ignore[valid-type]
       return np.ones(x.shape[0] + pad, dtype=np.float32)
 
     assert f(np.ones(4, dtype=np.float32), 2).shape == (6,)
 
-  def test_value_add_dim_with_shapix_check_violation(self) -> None:
+  def test_value_add_dim_with_bearshape_check_violation(self) -> None:
     from beartype.roar import BeartypeCallHintReturnViolation
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: F32[N], pad: int) -> F32[N + Value("pad")]:  # type: ignore[valid-type]
       return np.ones(999, dtype=np.float32)
@@ -184,13 +184,13 @@ class TestValueWithCheckDecorator:
     with pytest.raises(BeartypeCallHintReturnViolation):
       f(np.ones(4, dtype=np.float32), 2)
 
-  def test_value_self_attr_with_shapix_check(self) -> None:
-    """Value("self.x") works with @shapix.check."""
+  def test_value_self_attr_with_bearshape_check(self) -> None:
+    """Value("self.x") works with @bearshape.check."""
 
     class Obj:
       size = 5
 
-      @shapix.check
+      @bearshape.check
       @beartype
       def f(self) -> F32[Value("self.size")]:  # type: ignore[valid-type]
         return np.ones(self.size, dtype=np.float32)
@@ -198,10 +198,10 @@ class TestValueWithCheckDecorator:
     assert Obj().f().shape == (5,)
 
   def test_value_with_conf(self) -> None:
-    """Value works with @shapix.check(conf=...)."""
+    """Value works with @bearshape.check(conf=...)."""
     from beartype import BeartypeConf
 
-    @shapix.check(conf=BeartypeConf())
+    @bearshape.check(conf=BeartypeConf())
     def f(size: int) -> F32[Value("size")]:  # type: ignore[valid-type]
       return np.ones(size, dtype=np.float32)
 
@@ -209,16 +209,16 @@ class TestValueWithCheckDecorator:
 
 
 class TestMemoIsolation:
-  """Explicit memo from @shapix.check must not leak to nested @beartype helpers."""
+  """Explicit memo from @bearshape.check must not leak to nested @beartype helpers."""
 
   def test_check_outer_plain_beartype_inner_independent_dims(self) -> None:
-    """Outer @shapix.check binds N=4, inner plain @beartype binds N=7."""
+    """Outer @bearshape.check binds N=4, inner plain @beartype binds N=7."""
 
     @beartype
     def inner(x: F32[N]) -> F32[N]:
       return x
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def outer(x: F32[N]) -> F32[N]:
       # Call inner with a different N — must succeed independently
@@ -234,7 +234,7 @@ class TestMemoIsolation:
     def inner(size: int) -> F32[Value("size")]:  # type: ignore[valid-type]
       return np.ones(size, dtype=np.float32)
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def outer(dummy: int) -> F32[Value("dummy")]:  # type: ignore[valid-type]
       inner(7)
@@ -249,7 +249,7 @@ class TestMemoIsolation:
     def helper(x: F32[N]) -> F32[N]:
       return x
 
-    with shapix.check_context():
+    with bearshape.check_context():
       from beartype.door import is_bearable
 
       assert is_bearable(np.ones(4, dtype=np.float32), F32[N])
@@ -259,14 +259,14 @@ class TestMemoIsolation:
         helper(np.ones(7, dtype=np.float32))  # different N — fails
 
   def test_async_check_outer_plain_beartype_inner(self) -> None:
-    """Async variant: outer @shapix.check does not leak to inner @beartype."""
+    """Async variant: outer @bearshape.check does not leak to inner @beartype."""
     import asyncio
 
     @beartype
     def inner(x: F32[N]) -> F32[N]:
       return x
 
-    @shapix.check
+    @bearshape.check
     @beartype
     async def outer(x: F32[N]) -> F32[N]:
       inner(np.ones(7, dtype=np.float32))
@@ -275,10 +275,10 @@ class TestMemoIsolation:
     asyncio.run(outer(np.ones(4, dtype=np.float32)))
 
   def test_async_child_task_independent_memo(self) -> None:
-    """Child task spawned inside @shapix.check gets isolated memo after parent returns."""
+    """Child task spawned inside @bearshape.check gets isolated memo after parent returns."""
     import asyncio
 
-    @shapix.check
+    @bearshape.check
     @beartype
     async def parent(x: F32[N]) -> F32[N]:
       return x
@@ -299,7 +299,7 @@ class TestAsyncCheckContext:
     from beartype.door import is_bearable
 
     async def run() -> None:
-      async with shapix.check_context():
+      async with bearshape.check_context():
         assert is_bearable(np.ones((4, 3), dtype=np.float32), F32[N, C])
         assert not is_bearable(np.ones((4, 5), dtype=np.float32), F32[N, C])
 
@@ -312,10 +312,10 @@ class TestAsyncCheckContext:
     from beartype.door import is_bearable
 
     async def run() -> None:
-      async with shapix.check_context():
+      async with bearshape.check_context():
         assert is_bearable(np.ones((4,), dtype=np.float32), F32[N])
 
-      async with shapix.check_context():
+      async with bearshape.check_context():
         assert is_bearable(np.ones((10,), dtype=np.float32), F32[N])
 
     asyncio.run(run())
@@ -327,12 +327,12 @@ class TestAsyncCheckContext:
     from beartype.door import is_bearable
 
     async def task_a() -> bool:
-      async with shapix.check_context():
+      async with bearshape.check_context():
         await asyncio.sleep(0)
         return is_bearable(np.ones((4,), dtype=np.float32), F32[N])
 
     async def task_b() -> bool:
-      async with shapix.check_context():
+      async with bearshape.check_context():
         await asyncio.sleep(0)
         return is_bearable(np.ones((10,), dtype=np.float32), F32[N])
 
@@ -350,7 +350,7 @@ class TestAsyncCheckDecorator:
     import asyncio
     import inspect
 
-    @shapix.check
+    @bearshape.check
     @beartype
     async def f(x: F32[N, C], y: F32[N, C]) -> F32[N, C]:
       return x + y
@@ -365,7 +365,7 @@ class TestAsyncCheckDecorator:
     """Shape mismatch raises for async functions."""
     import asyncio
 
-    @shapix.check
+    @bearshape.check
     @beartype
     async def f(x: F32[N], y: F32[N]) -> F32[N]:
       return x + y
@@ -379,7 +379,7 @@ class TestAsyncCheckDecorator:
 
     from beartype.roar import BeartypeCallHintReturnViolation
 
-    @shapix.check
+    @bearshape.check
     @beartype
     async def f(x: F32[N]) -> F32[N]:
       return np.ones(999, dtype=np.float32)
@@ -394,7 +394,7 @@ class TestAsyncCheckDecorator:
 
     from beartype import BeartypeConf
 
-    @shapix.check(conf=BeartypeConf())
+    @bearshape.check(conf=BeartypeConf())
     async def f(x: F32[N]) -> F32[N]:
       return x
 
@@ -406,7 +406,7 @@ class TestAsyncCheckDecorator:
     """Value("size") resolves during await."""
     import asyncio
 
-    @shapix.check
+    @bearshape.check
     @beartype
     async def f(size: int) -> F32[Value("size")]:  # type: ignore[valid-type]
       return np.ones(size, dtype=np.float32)
@@ -418,7 +418,7 @@ class TestAsyncCheckDecorator:
     """Concurrent @check tasks see independent memos."""
     import asyncio
 
-    @shapix.check
+    @bearshape.check
     @beartype
     async def task_fn(x: F32[N]) -> F32[N]:
       await asyncio.sleep(0)
@@ -441,7 +441,7 @@ class TestAsyncCheckDecorator:
       def __init__(self, size: int) -> None:
         self.size = size
 
-      @shapix.check
+      @bearshape.check
       @beartype
       async def f(self) -> F32[Value("self.size")]:  # type: ignore[valid-type]
         await asyncio.sleep(0)
@@ -458,7 +458,7 @@ class TestAsyncCheckDecorator:
     """Memo is cleaned up when async function raises."""
     import asyncio
 
-    @shapix.check
+    @bearshape.check
     @beartype
     async def boom(x: F32[N]) -> F32[N]:
       msg = "boom"
@@ -468,7 +468,7 @@ class TestAsyncCheckDecorator:
       asyncio.run(boom(np.ones(5, dtype=np.float32)))
 
     # Should not leak — next call works independently
-    @shapix.check
+    @bearshape.check
     @beartype
     async def ok(x: F32[N]) -> F32[N]:
       return x
@@ -480,7 +480,7 @@ class TestAsyncCheckDecorator:
     """Memo is cleaned up when task is cancelled."""
     import asyncio
 
-    @shapix.check
+    @bearshape.check
     @beartype
     async def slow(x: F32[N]) -> F32[N]:
       await asyncio.sleep(100)
@@ -494,7 +494,7 @@ class TestAsyncCheckDecorator:
         await task
 
       # Memo should not be leaked — a new call works fine
-      @shapix.check
+      @bearshape.check
       @beartype
       async def ok(x: F32[N]) -> F32[N]:
         return x
@@ -513,10 +513,10 @@ class TestAsyncCheckDecorator:
     """
     import asyncio
 
-    from shapix._memo import _explicit_stack
+    from bearshape._memo import _explicit_stack
 
     async def run() -> None:
-      async with shapix.check_context():
+      async with bearshape.check_context():
         from beartype.door import is_bearable
 
         # Bind N=4 in the parent context
@@ -563,31 +563,31 @@ class TestCheckContextFreshRecheck:
     arr = np.ones((4,), dtype=np.float32)
 
     # Context 1: bind N=3 first, then arr (shape 4) must fail
-    with shapix.check_context():
+    with bearshape.check_context():
       assert is_bearable(np.ones((3,), dtype=np.float32), hint)  # bind N=3
       assert not is_bearable(arr, hint)  # fails: N=3 but shape is 4
 
     # Context 2: fresh memo, N is unbound — arr (shape 4) should pass
-    with shapix.check_context():
+    with bearshape.check_context():
       assert is_bearable(arr, hint)  # must not be poisoned
 
   def test_arraylike_checker_same_object_fresh_context(self) -> None:
     """ArrayLike object that fails in one context must pass in a fresh one."""
     from beartype.door import is_bearable
 
-    from shapix.numpy import F32Like
+    from bearshape.numpy import F32Like
 
     hint = F32Like[N]
 
     arr = np.ones((4,), dtype=np.float32)
 
     # Context 1: bind N=3, then arr (shape 4) fails
-    with shapix.check_context():
+    with bearshape.check_context():
       assert is_bearable(np.ones((3,), dtype=np.float32), hint)  # bind N=3
       assert not is_bearable(arr, hint)  # fails: shape mismatch
 
     # Context 2: fresh memo — arr should pass
-    with shapix.check_context():
+    with bearshape.check_context():
       assert is_bearable(arr, hint)  # must not be poisoned
 
   def test_tree_checker_same_object_fresh_context(self) -> None:
@@ -595,8 +595,8 @@ class TestCheckContextFreshRecheck:
     pytest.importorskip("optree")
     from beartype.door import is_bearable
 
-    from shapix import T
-    from shapix.optree import Tree
+    from bearshape import T
+    from bearshape.optree import Tree
 
     hint = Tree[F32[N], T]  # type: ignore[type-arg]
 
@@ -604,12 +604,12 @@ class TestCheckContextFreshRecheck:
     y_list = [np.ones(3, dtype=np.float32)]
 
     # Context 1: bind T to dict structure via x_dict, then y_list fails
-    with shapix.check_context():
+    with bearshape.check_context():
       assert is_bearable(x_dict, hint)  # bind T = dict structure
       assert not is_bearable(y_list, hint)  # fails: list != dict
 
     # Context 2: fresh memo — y_list should pass (T unbound)
-    with shapix.check_context():
+    with bearshape.check_context():
       assert is_bearable(y_list, hint)  # must not be poisoned
 
 
@@ -630,7 +630,7 @@ class TestReplayGuardRevalidation:
     """List that fails then is shortened must pass on recheck."""
     from beartype.door import is_bearable
 
-    from shapix.numpy import F32Like
+    from bearshape.numpy import F32Like
 
     hint = F32Like[3]
     lst = [1.0, 2.0, 3.0, 4.0]
@@ -643,7 +643,7 @@ class TestReplayGuardRevalidation:
     pytest.importorskip("optree")
     from beartype.door import is_bearable
 
-    from shapix.optree import Tree
+    from bearshape.optree import Tree
 
     hint = Tree[F32[3]]  # type: ignore[type-arg]
     tree = {"a": np.ones(4, dtype=np.float32)}
@@ -659,7 +659,7 @@ class TestReplayGuardCrossArg:
     """Object that fails cross-arg check passes in a fresh call with compatible binding."""
     b = np.ones(3, dtype=np.float32)  # shape (3,)
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(a: F32[N], b: F32[N]) -> None:
       pass
@@ -673,11 +673,11 @@ class TestReplayGuardCrossArg:
 
   def test_arraylike_checker_cross_arg_revalidation(self) -> None:
     """ArrayLike object that fails cross-arg passes after mutation in a fresh call."""
-    from shapix.numpy import F32Like
+    from bearshape.numpy import F32Like
 
     lst = [1.0, 2.0, 3.0, 4.0]
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(a: F32Like[N], b: F32Like[N]) -> None:
       pass
@@ -691,11 +691,11 @@ class TestReplayGuardCrossArg:
   def test_tree_checker_cross_arg_revalidation(self) -> None:
     """Tree that fails cross-structure check passes in a fresh call."""
     pytest.importorskip("optree")
-    from shapix.optree import Tree
+    from bearshape.optree import Tree
 
     y = [np.ones(3, dtype=np.float32)]
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T]) -> None:  # type: ignore[valid-type]
       pass
@@ -704,7 +704,7 @@ class TestReplayGuardCrossArg:
       f({"a": np.ones(3, dtype=np.float32)}, y)  # y fails: list != dict
 
     # Same y object, but in a fresh call where T is unbound — should pass
-    @shapix.check
+    @bearshape.check
     @beartype
     def g(x: Tree[F32[N], T]) -> None:  # type: ignore[valid-type]
       pass
@@ -722,7 +722,7 @@ class TestReplayGuardReusedHint:
     Hint = F32[N]
     b = np.ones(3, dtype=np.float32)
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def pair(a: Hint, b: Hint) -> None:
       pass
@@ -736,12 +736,12 @@ class TestReplayGuardReusedHint:
     """is_bearable passes for reused F32Like[N] hint after cross-arg failure."""
     from beartype.door import is_bearable
 
-    from shapix.numpy import F32Like
+    from bearshape.numpy import F32Like
 
     Hint = F32Like[N]
     lst = [1.0, 2.0, 3.0]
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def pair(a: Hint, b: Hint) -> None:
       pass
@@ -756,12 +756,12 @@ class TestReplayGuardReusedHint:
     pytest.importorskip("optree")
     from beartype.door import is_bearable
 
-    from shapix.optree import Tree
+    from bearshape.optree import Tree
 
     Hint = Tree[F32[N], T]  # type: ignore[type-arg]
     y = [np.ones(3, dtype=np.float32)]
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def pair(x: Hint, y: Hint) -> None:  # type: ignore[valid-type]
       pass
@@ -782,7 +782,7 @@ class TestReplayGuardCheckContext:
     Hint = F32[N]
     arr = np.ones(4, dtype=np.float32)
 
-    with shapix.check_context():
+    with bearshape.check_context():
       assert is_bearable(np.ones(3, dtype=np.float32), Hint)  # binds N=3
       assert not is_bearable(arr, Hint)  # fails: N=3 vs (4,)
 
@@ -792,12 +792,12 @@ class TestReplayGuardCheckContext:
     """Fresh standalone ArrayLike validation passes after check_context failure."""
     from beartype.door import is_bearable
 
-    from shapix.numpy import F32Like
+    from bearshape.numpy import F32Like
 
     Hint = F32Like[N]
     lst = [1.0, 2.0, 3.0, 4.0]
 
-    with shapix.check_context():
+    with bearshape.check_context():
       assert is_bearable([1.0, 2.0, 3.0], Hint)  # binds N=3
       assert not is_bearable(lst, Hint)  # fails: N=3 vs len 4
 
@@ -808,12 +808,12 @@ class TestReplayGuardCheckContext:
     pytest.importorskip("optree")
     from beartype.door import is_bearable
 
-    from shapix.optree import Tree
+    from bearshape.optree import Tree
 
     Hint = Tree[F32[N], T]  # type: ignore[type-arg]
     y = [np.ones(3, dtype=np.float32)]
 
-    with shapix.check_context():
+    with bearshape.check_context():
       x_dict = {"a": np.ones(3, dtype=np.float32)}
       assert is_bearable(x_dict, Hint)  # binds T=dict
       assert not is_bearable(y, Hint)  # fails: list != dict
@@ -825,14 +825,14 @@ class TestCheckRejectsGenerators:
   def test_rejects_sync_generator(self) -> None:
     with pytest.raises(TypeError, match="generator"):
 
-      @shapix.check
+      @bearshape.check
       def f(x: F32[N]) -> F32[N]:  # type: ignore[misc]
         yield x
 
   def test_rejects_async_generator(self) -> None:
     with pytest.raises(TypeError, match="async generator"):
 
-      @shapix.check
+      @bearshape.check
       async def f(x: F32[N]) -> F32[N]:  # type: ignore[misc]
         yield x
 
@@ -841,7 +841,7 @@ class TestCheckRejectsGenerators:
 
     with pytest.raises(TypeError, match="generator"):
 
-      @shapix.check(conf=BeartypeConf())
+      @bearshape.check(conf=BeartypeConf())
       def f(x: F32[N]) -> F32[N]:  # type: ignore[misc]
         yield x
 
@@ -850,6 +850,6 @@ class TestCheckRejectsGenerators:
 
     with pytest.raises(TypeError, match="async generator"):
 
-      @shapix.check(conf=BeartypeConf())
+      @bearshape.check(conf=BeartypeConf())
       async def f(x: F32[N]) -> F32[N]:  # type: ignore[misc]
         yield x

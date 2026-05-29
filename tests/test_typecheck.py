@@ -66,7 +66,7 @@ def _run(tool: str, *args: str, cwd: Path = ROOT) -> subprocess.CompletedProcess
 def _run_mypy(*args: str, cwd: Path = ROOT) -> subprocess.CompletedProcess[str]:
   # Give each invocation its own cache directory so xdist workers do not race
   # through the shared .mypy_cache during the typecheck suite.
-  with tempfile.TemporaryDirectory(prefix="shapix-mypy-cache-") as cache_dir:
+  with tempfile.TemporaryDirectory(prefix="bearshape-mypy-cache-") as cache_dir:
     return _run("mypy", "--show-traceback", "--cache-dir", cache_dir, *args, cwd=cwd)
 
 

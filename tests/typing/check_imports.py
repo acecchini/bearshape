@@ -6,9 +6,9 @@ Tested with: pyright, mypy, ty
 import typing as tp
 
 # ---------------------------------------------------------------------------
-# All public exports from shapix
+# All public exports from bearshape
 # ---------------------------------------------------------------------------
-from shapix import (
+from bearshape import (
   B,
   C,
   Dimension,

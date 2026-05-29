@@ -5,7 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from shapix._dtypes import (
+from bearshape._dtypes import (
   BOOL,
   COMPLEX,
   COMPLEX64,
@@ -281,13 +281,13 @@ class TestDatetimeTimedelta:
     assert extract_dtype_str(arr) == expected
 
   def test_datetime64_spec_matches_unit_qualified(self) -> None:
-    from shapix._dtypes import DATETIME64
+    from bearshape._dtypes import DATETIME64
 
     assert DATETIME64.matches(np.zeros(2, dtype="datetime64[ns]"))
     assert DATETIME64.matches(np.zeros(2, dtype="datetime64[D]"))
 
   def test_timedelta64_spec_matches_unit_qualified(self) -> None:
-    from shapix._dtypes import TIMEDELTA64
+    from bearshape._dtypes import TIMEDELTA64
 
     assert TIMEDELTA64.matches(np.zeros(2, dtype="timedelta64[ms]"))
     assert TIMEDELTA64.matches(np.zeros(2, dtype="timedelta64[s]"))
@@ -327,31 +327,31 @@ class TestDtypeEdgeCases:
 
 class TestByteorderMatching:
   def test_le_accepts_little_endian(self) -> None:
-    from shapix._dtypes import FLOAT32_LE
+    from bearshape._dtypes import FLOAT32_LE
 
     arr = np.zeros(2, dtype="<f4")
     assert FLOAT32_LE.matches(arr)
 
   def test_le_rejects_big_endian(self) -> None:
-    from shapix._dtypes import FLOAT32_LE
+    from bearshape._dtypes import FLOAT32_LE
 
     arr = np.zeros(2, dtype=">f4")
     assert not FLOAT32_LE.matches(arr)
 
   def test_be_accepts_big_endian(self) -> None:
-    from shapix._dtypes import FLOAT32_BE
+    from bearshape._dtypes import FLOAT32_BE
 
     arr = np.zeros(2, dtype=">f4")
     assert FLOAT32_BE.matches(arr)
 
   def test_be_rejects_little_endian(self) -> None:
-    from shapix._dtypes import FLOAT32_BE
+    from bearshape._dtypes import FLOAT32_BE
 
     arr = np.zeros(2, dtype="<f4")
     assert not FLOAT32_BE.matches(arr)
 
   def test_native_accepts_native(self) -> None:
-    from shapix._dtypes import FLOAT32_N
+    from bearshape._dtypes import FLOAT32_N
 
     arr = np.zeros(2, dtype=np.float32)
     assert FLOAT32_N.matches(arr)
@@ -363,14 +363,14 @@ class TestByteorderMatching:
     assert FLOAT32.matches(arr_be)
 
   def test_single_byte_always_passes(self) -> None:
-    from shapix._dtypes import INT8
+    from bearshape._dtypes import INT8
 
     arr = np.zeros(2, dtype=np.int8)
     # Single-byte dtype has "|" byte order, should pass any constraint
     assert INT8.matches(arr)
 
   def test_le_category_group(self) -> None:
-    from shapix._dtypes import FLOAT_LE
+    from bearshape._dtypes import FLOAT_LE
 
     arr_le = np.zeros(2, dtype="<f4")
     arr_be = np.zeros(2, dtype=">f4")
@@ -378,7 +378,7 @@ class TestByteorderMatching:
     assert not FLOAT_LE.matches(arr_be)
 
   def test_shaped_le_accepts_any_dtype_le(self) -> None:
-    from shapix._dtypes import SHAPED_LE
+    from bearshape._dtypes import SHAPED_LE
 
     arr_le = np.zeros(2, dtype="<f4")
     arr_be = np.zeros(2, dtype=">f4")
@@ -387,14 +387,14 @@ class TestByteorderMatching:
 
   def test_byteorder_no_dtype_attr_passes(self) -> None:
     """Objects without .dtype always pass byteorder checks."""
-    from shapix._dtypes import FLOAT32_LE
+    from bearshape._dtypes import FLOAT32_LE
 
     # Manually check: no dtype attr → _check_byteorder returns True
     assert FLOAT32_LE._check_byteorder(42)
 
   def test_byteorder_empty_str_passes(self) -> None:
     """Dtype with empty .str always passes."""
-    from shapix._dtypes import FLOAT32_LE
+    from bearshape._dtypes import FLOAT32_LE
 
     class FakeDtype:
       str = ""

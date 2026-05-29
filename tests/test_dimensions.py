@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from shapix._dimensions import Dimension, Value
-from shapix._shape import (
+from bearshape._dimensions import Dimension, Value
+from bearshape._shape import (
   ANONYMOUS,
   ANONYMOUS_VARIADIC,
   FixedDim,
@@ -320,7 +320,7 @@ class TestUnaryPosRejection:
   """Unary + rejects Scalar, anonymous, and variadic targets."""
 
   def test_pos_scalar_raises(self) -> None:
-    from shapix import Scalar
+    from bearshape import Scalar
 
     with pytest.raises(TypeError, match="Cannot apply .* to Scalar"):
       +Scalar  # noqa: B018
@@ -354,19 +354,19 @@ class TestBooleanDimRejection:
       Dimension(False)  # type: ignore[arg-type]
 
   def test_shape_spec_rejects_true(self) -> None:
-    from shapix.numpy import F32
+    from bearshape.numpy import F32
 
     with pytest.raises(TypeError, match="bool.*is not a valid shape token"):
       F32[True]
 
   def test_shape_spec_rejects_false(self) -> None:
-    from shapix.numpy import F32
+    from bearshape.numpy import F32
 
     with pytest.raises(TypeError, match="bool.*is not a valid shape token"):
       F32[False]
 
   def test_shape_spec_rejects_bool_mixed(self) -> None:
-    from shapix.numpy import F32
+    from bearshape.numpy import F32
 
     with pytest.raises(TypeError, match="bool.*is not a valid shape token"):
       F32[Dimension("N"), True]
@@ -509,7 +509,7 @@ class TestValueArithmetic:
     C = Dimension("C")
     r = N + C
     assert isinstance(r, Dimension)
-    from shapix._dimensions import _ValueExpr
+    from bearshape._dimensions import _ValueExpr
 
     assert not isinstance(r, _ValueExpr)
 
@@ -518,98 +518,98 @@ class TestMixedScalarRejection:
   """Scalar must be the only shape token — mixed use must raise."""
 
   def test_n_scalar_raises(self) -> None:
-    from shapix import N, Scalar
-    from shapix.numpy import F32
+    from bearshape import N, Scalar
+    from bearshape.numpy import F32
 
     with pytest.raises(TypeError, match="Scalar must be the only shape token"):
       F32[N, Scalar]
 
   def test_scalar_n_raises(self) -> None:
-    from shapix import N, Scalar
-    from shapix.numpy import F32
+    from bearshape import N, Scalar
+    from bearshape.numpy import F32
 
     with pytest.raises(TypeError, match="Scalar must be the only shape token"):
       F32[Scalar, N]
 
   def test_ellipsis_scalar_raises(self) -> None:
-    from shapix import Scalar
-    from shapix.numpy import F32
+    from bearshape import Scalar
+    from bearshape.numpy import F32
 
     with pytest.raises(TypeError, match="Scalar must be the only shape token"):
       F32[..., Scalar]
 
   def test_scalar_ellipsis_raises(self) -> None:
-    from shapix import Scalar
-    from shapix.numpy import F32
+    from bearshape import Scalar
+    from bearshape.numpy import F32
 
     with pytest.raises(TypeError, match="Scalar must be the only shape token"):
       F32[Scalar, ...]
 
   def test_scalar_int_raises(self) -> None:
-    from shapix import Scalar
-    from shapix.numpy import F32
+    from bearshape import Scalar
+    from bearshape.numpy import F32
 
     with pytest.raises(TypeError, match="Scalar must be the only shape token"):
       F32[Scalar, 3]
 
   def test_scalar_alone_works(self) -> None:
-    from shapix import Scalar
-    from shapix.numpy import F32
+    from bearshape import Scalar
+    from bearshape.numpy import F32
 
     hint = F32[Scalar]
     assert hasattr(hint, "__metadata__")
 
   def test_dimension_empty_n_raises(self) -> None:
     """Dimension("") (equivalent to Scalar) mixed with N must raise."""
-    from shapix import N
-    from shapix.numpy import F32
+    from bearshape import N
+    from bearshape.numpy import F32
 
     with pytest.raises(TypeError, match="Scalar must be the only shape token"):
       F32[Dimension(""), N]
 
   def test_n_dimension_empty_raises(self) -> None:
-    from shapix import N
-    from shapix.numpy import F32
+    from bearshape import N
+    from bearshape.numpy import F32
 
     with pytest.raises(TypeError, match="Scalar must be the only shape token"):
       F32[N, Dimension("")]
 
   def test_ellipsis_dimension_empty_raises(self) -> None:
-    from shapix.numpy import F32
+    from bearshape.numpy import F32
 
     with pytest.raises(TypeError, match="Scalar must be the only shape token"):
       F32[..., Dimension("")]
 
   def test_dimension_empty_ellipsis_raises(self) -> None:
-    from shapix.numpy import F32
+    from bearshape.numpy import F32
 
     with pytest.raises(TypeError, match="Scalar must be the only shape token"):
       F32[Dimension(""), ...]
 
   def test_dimension_empty_alone_works(self) -> None:
     """Dimension("") by itself is valid (equivalent to Scalar)."""
-    from shapix.numpy import F32
+    from bearshape.numpy import F32
 
     hint = F32[Dimension("")]
     assert hasattr(hint, "__metadata__")
 
   def test_negative_fixed_dim_rejected_in_shape_spec(self) -> None:
     """Dimension('-3') must be rejected when used in array shape spec."""
-    from shapix._array_types import _to_shape_spec
+    from bearshape._array_types import _to_shape_spec
 
     with pytest.raises(TypeError, match="Negative dimension"):
       _to_shape_spec((Dimension("-3"),))
 
   def test_negative_dim_in_mixed_spec_rejected(self) -> None:
     """Dimension('-1') mixed with named dims is rejected."""
-    from shapix._array_types import _to_shape_spec
+    from bearshape._array_types import _to_shape_spec
 
     with pytest.raises(TypeError, match="Negative dimension"):
       _to_shape_spec((Dimension("-1"), Dimension("N")))
 
   def test_array_factory_rejects_negative_dimension(self) -> None:
     """F32[Dimension('-3')] must raise TypeError like F32[-3]."""
-    from shapix.numpy import F32
+    from bearshape.numpy import F32
 
     with pytest.raises(TypeError, match="Negative dimension"):
       F32[Dimension("-3")]
@@ -619,37 +619,37 @@ class TestScalarArithmeticRejection:
   """Scalar must not be used in arithmetic expressions."""
 
   def test_scalar_add_raises(self) -> None:
-    from shapix import Scalar
+    from bearshape import Scalar
 
     with pytest.raises(TypeError, match="Cannot use Scalar"):
       Scalar + 1
 
   def test_scalar_sub_raises(self) -> None:
-    from shapix import Scalar
+    from bearshape import Scalar
 
     with pytest.raises(TypeError, match="Cannot use Scalar"):
       Scalar - 1
 
   def test_scalar_mul_raises(self) -> None:
-    from shapix import Scalar
+    from bearshape import Scalar
 
     with pytest.raises(TypeError, match="Cannot use Scalar"):
       Scalar * 2
 
   def test_scalar_neg_raises(self) -> None:
-    from shapix import Scalar
+    from bearshape import Scalar
 
     with pytest.raises(TypeError, match="Cannot use Scalar"):
       -Scalar  # noqa: B018
 
   def test_int_add_scalar_raises(self) -> None:
-    from shapix import Scalar
+    from bearshape import Scalar
 
     with pytest.raises(TypeError, match="Cannot use Scalar"):
       1 + Scalar  # type: ignore[operator]
 
   def test_int_sub_scalar_raises(self) -> None:
-    from shapix import Scalar
+    from bearshape import Scalar
 
     with pytest.raises(TypeError, match="Cannot use Scalar"):
       1 - Scalar  # type: ignore[operator]

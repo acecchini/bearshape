@@ -2,12 +2,12 @@
 description: PyTorch tensor aliases, Like aliases, and ScalarLike re-exports.
 ---
 
-# `shapix.torch`
+# `bearshape.torch`
 
-`shapix.torch` provides PyTorch-native array aliases based on `torch.Tensor`.
+`bearshape.torch` provides PyTorch-native array aliases based on `torch.Tensor`.
 
 ```python
-from shapix.torch import (
+from bearshape.torch import (
   F32, BF16, Int, Shaped,
   F32Like, BF16Like,
   U8ScalarLike, make_scalar_like_type,
@@ -38,7 +38,7 @@ Other exports:
 
 ## Backend limits
 
-`shapix.torch` does **not** export NumPy-only aliases such as:
+`bearshape.torch` does **not** export NumPy-only aliases such as:
 
 - `F128`
 - `C256`
@@ -63,18 +63,18 @@ Static type checkers still see the result as `torch.Tensor`.
 
 ## `ScalarLike` re-exports
 
-`ScalarLike` aliases are re-exported from `shapix.numpy`. They validate Python
-and NumPy scalar values, not Torch 0-D tensors.
+`ScalarLike` aliases are re-exported from `bearshape.numpy`. They validate
+Python and NumPy scalar values, not Torch 0-D tensors.
 
 For Torch scalar tensors, prefer a `Like` alias with `Scalar`, for example
 `F32Like[Scalar]`.
 
 ## Trees
 
-`shapix.torch` does not export `Tree`.
+`bearshape.torch` does not export `Tree`.
 
 If you want tree annotations in a Torch project, import:
 
-- `Tree` from `shapix.optree` for an explicit OpTree backend
-- or `Tree` from `shapix.jax` if your project already depends on JAX's tree
+- `Tree` from `bearshape.optree` for an explicit OpTree backend
+- or `Tree` from `bearshape.jax` if your project already depends on JAX's tree
     utilities

@@ -1,4 +1,4 @@
-"""Core array type factories — the heart of shapix.
+"""Core array type factories — the heart of bearshape.
 
 Transforms ``F32[N, C, H, W]`` into custom runtime hint classes so that
 standard ``@beartype`` performs both dtype and shape validation automatically
@@ -6,7 +6,7 @@ and can surface readable diagnostics on failure.
 
 The main components are:
 
-- :class:`_ArrayChecker` — validator attached to a shapix runtime hint for
+- :class:`_ArrayChecker` — validator attached to a bearshape runtime hint for
   strict array types. Checks dtype, then validates shape against the spec while
   maintaining cross-argument dimension consistency via the memo.
 
@@ -123,9 +123,9 @@ def _infer_arraylike_hint_module(
   asarray: Callable[[object], object] | None, trusted_types: tuple[type, ...] | None
 ) -> str:
   # Backend Like factories pass a backend-scoped converter wrapper (for example
-  # ``shapix.jax._jax_asarray``) but often keep ``np.ndarray`` first in
+  # ``bearshape.jax._jax_asarray``) but often keep ``np.ndarray`` first in
   # ``trusted_types``. Prefer the explicit converter module so diagnostics
-  # identify the owning shapix backend rather than falling back to NumPy.
+  # identify the owning bearshape backend rather than falling back to NumPy.
   if asarray is not None:
     return getattr(asarray, "__module__", __name__)
   if trusted_types:
@@ -169,7 +169,7 @@ def _dtype_mismatch(
 
 
 # ---------------------------------------------------------------------------
-# Runtime validators used by shapix's beartype hint classes
+# Runtime validators used by bearshape's beartype hint classes
 # ---------------------------------------------------------------------------
 
 
@@ -316,7 +316,7 @@ def make_array_type(array_type: type, dtype_spec: DtypeSpec) -> _ArrayFactory:
       The base array class (e.g. ``np.ndarray``, ``jax.Array``,
       ``torch.Tensor``, or any class with ``.dtype`` and ``.shape``).
   dtype_spec:
-      A :class:`~shapix._dtypes.DtypeSpec` defining the allowed dtypes.
+      A :class:`~bearshape._dtypes.DtypeSpec` defining the allowed dtypes.
 
   Returns
   -------
@@ -327,7 +327,7 @@ def make_array_type(array_type: type, dtype_spec: DtypeSpec) -> _ArrayFactory:
   Example::
 
       import numpy as np
-      from shapix._dtypes import FLOAT32
+      from bearshape._dtypes import FLOAT32
 
       Float32Array = make_array_type(np.ndarray, FLOAT32)
       Float32Array[N, C, H, W]  # → runtime hint class
@@ -625,7 +625,7 @@ def make_array_like_type(
   Parameters
   ----------
   dtype_spec:
-      A :class:`~shapix._dtypes.DtypeSpec` defining the allowed dtypes.
+      A :class:`~bearshape._dtypes.DtypeSpec` defining the allowed dtypes.
   casting:
       NumPy casting rule: ``"no"`` | ``"equiv"`` | ``"safe"``
       | ``"same_kind"`` | ``"unsafe"``.  Controls how strictly dtype
@@ -652,7 +652,7 @@ def make_array_like_type(
 
   Example::
 
-      from shapix._dtypes import FLOAT32
+      from bearshape._dtypes import FLOAT32
 
       F32Like = make_array_like_type(FLOAT32, name="F32Like")
       F32Like[N, C, H, W]  # → runtime hint class

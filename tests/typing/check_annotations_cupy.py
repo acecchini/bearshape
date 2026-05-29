@@ -1,7 +1,7 @@
 # pyright: reportMissingImports=false, reportInvalidTypeForm=false
 """Verify CuPy array type annotations type-check cleanly.
 
-Tests the full shapix annotation pattern with CuPy backend types.
+Tests the full bearshape annotation pattern with CuPy backend types.
 
 Tested with: pyright, mypy, ty
 """
@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING, TypeAlias
 
 from beartype import beartype
 
-from shapix import B, C, Dimension, H, N, Scalar, W, __, check
-from shapix.cupy import (
+from bearshape import B, C, Dimension, H, N, Scalar, W, __, check
+from bearshape.cupy import (
   F16,
   F32,
   F64,

@@ -2,12 +2,12 @@
 description: JAX array aliases, Like aliases, ScalarLike re-exports, and JAX Tree support.
 ---
 
-# `shapix.jax`
+# `bearshape.jax`
 
-`shapix.jax` provides JAX-native array aliases based on `jax.Array`.
+`bearshape.jax` provides JAX-native array aliases based on `jax.Array`.
 
 ```python
-from shapix.jax import (
+from bearshape.jax import (
   F32, BF16, Int, Shaped,
   F32Like, BF16Like,
   U8ScalarLike, make_scalar_like_type,
@@ -41,7 +41,7 @@ Other exports:
 
 ## Backend limits
 
-`shapix.jax` does **not** export NumPy-only aliases such as:
+`bearshape.jax` does **not** export NumPy-only aliases such as:
 
 - `F128`
 - `C256`
@@ -67,20 +67,20 @@ Static type checkers still see the result as `jax.Array`.
 
 ## `ScalarLike` re-exports
 
-`ScalarLike` aliases are re-exported from `shapix.numpy`. They validate Python
-and NumPy scalar values, not JAX 0-D arrays.
+`ScalarLike` aliases are re-exported from `bearshape.numpy`. They validate
+Python and NumPy scalar values, not JAX 0-D arrays.
 
 For JAX scalar arrays, prefer a `Like` alias with `Scalar`, for example
 `F32Like[Scalar]`.
 
 ## `Tree`
 
-`shapix.jax.Tree` is the JAX-backed pytree annotation.
+`bearshape.jax.Tree` is the JAX-backed pytree annotation.
 
 ```python
 from beartype import beartype
-from shapix import N, T
-from shapix.jax import F32, Tree
+from bearshape import N, T
+from bearshape.jax import F32, Tree
 
 @beartype
 def process(params: Tree[F32[N], T],

@@ -3,7 +3,7 @@
 This module defines the internal dimension spec types that the shape checker
 operates on, and the :func:`check_shape` function that validates a concrete
 shape tuple against a spec tuple while maintaining dimension bindings in a
-:class:`~shapix._memo.ShapeMemo`.
+:class:`~bearshape._memo.ShapeMemo`.
 
 Dimension spec types:
 

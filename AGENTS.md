@@ -1,8 +1,8 @@
 # Bearshape Agents
 
 Bearshape is the new project name for the library currently still named
-`shapix` in parts of the tree. The package is moving from `shapix-rt` /
-`shapix` to `bearshape`, with the goal of a production-ready release under the
+`bearshape` in parts of the tree. The package is moving from `bearshape` /
+`bearshape` to `bearshape`, with the goal of a production-ready release under the
 beartype organization.
 
 This file is for Codex and Claude agents. Keep it short, directive, and free of

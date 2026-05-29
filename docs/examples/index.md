@@ -1,10 +1,10 @@
 ---
-description: Copyable examples covering the main shapix runtime and typing patterns.
+description: Copyable examples covering the main bearshape runtime and typing patterns.
 ---
 
 # Examples
 
-## Shapix Tour Notebook
+## Bearshape Tour Notebook
 
 The tour notebook is still the broadest runnable walkthrough in the repository:
 
@@ -19,7 +19,7 @@ The tour notebook is still the broadest runnable walkthrough in the repository:
 - explicit memo helpers
 - tree annotations
 
-[:material-notebook: View on GitHub](https://github.com/acecchini/shapix/blob/main/examples/shapix_tour.ipynb){
+[:material-notebook: View on GitHub](https://github.com/acecchini/bearshape/blob/main/examples/bearshape_tour.ipynb){
 .md-button .md-button--primary }
 
 ## Example 1: Plain `@beartype`
@@ -27,8 +27,8 @@ The tour notebook is still the broadest runnable walkthrough in the repository:
 ```python
 import numpy as np
 from beartype import beartype
-from shapix import C, N
-from shapix.numpy import F32
+from bearshape import C, N
+from bearshape.numpy import F32
 
 @beartype
 def normalize(x: F32[N, C]) -> F32[N, C]:
@@ -38,15 +38,15 @@ normalize(np.ones((4, 3), dtype=np.float32))  # OK
 normalize(np.ones((4,), dtype=np.float32))  # Raises
 ```
 
-## Example 2: `@shapix.check` when plain `@beartype` is not enough
+## Example 2: `@bearshape.check` when plain `@beartype` is not enough
 
 ```python
-import shapix
+import bearshape
 from beartype import beartype
-from shapix import Value
-from shapix.numpy import F32
+from bearshape import Value
+from bearshape.numpy import F32
 
-@shapix.check
+@bearshape.check
 @beartype
 async def make_batch(size: int) -> F32[Value("size")]:  # type: ignore[valid-type]
   ...
@@ -63,8 +63,8 @@ Use this pattern when:
 ```python
 import typing as tp
 from beartype import beartype
-from shapix import Dimension, N
-from shapix.numpy import F32, I64
+from bearshape import Dimension, N
+from bearshape.numpy import F32, I64
 
 if tp.TYPE_CHECKING:
   type Vocab = int
@@ -82,9 +82,9 @@ def embed_lookup(tokens: I64[N], table: F32[Vocab, Embed]) -> F32[N, Embed]:
 
 ```python
 from beartype import beartype
-from shapix import N, T
-from shapix.numpy import F32
-from shapix.optree import Tree
+from bearshape import N, T
+from bearshape.numpy import F32
+from bearshape.optree import Tree
 
 @beartype
 def accumulate(params: Tree[F32[N], T],
@@ -99,8 +99,8 @@ symbols like `T` when you want runtime structure equality too.
 
 ```python
 from beartype import beartype
-from shapix import Scalar
-from shapix.numpy import F32Like, U8ScalarLike
+from bearshape import Scalar
+from bearshape.numpy import F32Like, U8ScalarLike
 
 @beartype
 def to_scalar_array(x: F32Like[Scalar]) -> float:
