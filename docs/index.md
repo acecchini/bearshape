@@ -444,6 +444,60 @@ a.backend-logo:hover {
     font-size: 1.07rem;
   }
 }
+
+@media (min-width: 1350px) and (max-width: 2200px) and (max-height: 930px) {
+  .md-main__inner { margin-top: -3.6rem; }
+
+  .hero__actions {
+    gap: 0.65rem;
+    margin-bottom: 0.08rem;
+  }
+
+  .features-grid {
+    gap: 0.24rem;
+  }
+
+  .feature-card {
+    padding: 0.26rem 0.75rem;
+  }
+
+  .feature-card p {
+    font-size: 0.74rem;
+    line-height: 1.45;
+  }
+
+  .backends {
+    padding: 0.22rem 1.5rem 0.6rem;
+  }
+
+  .backends__logos {
+    gap: 2.25rem;
+    margin-top: 0.35rem;
+  }
+
+  .backend-logo svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .backend-logo .jax-logo-img {
+    height: 27px;
+  }
+
+  .backend-logo .cupy-logo-img {
+    width: 29px;
+    height: 29px;
+  }
+
+  .backend-logo--optree svg {
+    width: 31px;
+    height: 31px;
+  }
+
+  .backend-logo span {
+    font-size: 1rem;
+  }
+}
 </style>
 
 <div id="bearshape-visual"></div>
