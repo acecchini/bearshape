@@ -83,6 +83,7 @@ repos:
     rev: 1.0.0
     hooks:
       - id: mdformat
+        exclude: ^(AGENTS\.md|PLANS\.md|plans/.*\.md)$
         language: python # means renovate will also update `additional_dependencies`
         args:
           - --wrap
@@ -100,12 +101,14 @@ repos:
     rev: v0.48.0
     hooks:
       - id: markdownlint-fix
+        exclude: ^(AGENTS\.md|PLANS\.md|plans/.*\.md)$
         priority: 40
 
   - repo: https://github.com/rbubley/mirrors-prettier
     rev: v3.8.1
     hooks:
       - id: prettier
+        exclude: ^docs/assets/js/tesseract\.js$
         types_or: [json, yaml, html, css, javascript]
         priority: 30
 

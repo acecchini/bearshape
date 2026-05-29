@@ -1,7 +1,8 @@
 /* ── Modern typography & spacing ── */
 
 :root {
-  --md-text-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --md-text-font:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --md-code-font: "JetBrains Mono", "Fira Code", monospace;
 }
 
@@ -76,7 +77,9 @@
 .md-typeset .grid.cards > ol > li {
   border-radius: 12px;
   border: 1px solid var(--md-default-fg-color--lightest);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .md-typeset .grid.cards > ul > li:hover,
@@ -183,15 +186,31 @@
 
 [data-md-color-scheme="default"] body {
   background:
-    radial-gradient(circle at 14% 8%, rgba(124, 77, 255, 0.08), transparent 26%),
-    radial-gradient(circle at 82% 10%, rgba(179, 136, 255, 0.07), transparent 24%),
+    radial-gradient(
+      circle at 14% 8%,
+      rgba(124, 77, 255, 0.08),
+      transparent 26%
+    ),
+    radial-gradient(
+      circle at 82% 10%,
+      rgba(179, 136, 255, 0.07),
+      transparent 24%
+    ),
     var(--md-default-bg-color) !important;
 }
 
 [data-md-color-scheme="slate"] body {
   background:
-    radial-gradient(circle at 16% 7%, rgba(124, 77, 255, 0.14), transparent 24%),
-    radial-gradient(circle at 84% 12%, rgba(179, 136, 255, 0.1), transparent 22%),
+    radial-gradient(
+      circle at 16% 7%,
+      rgba(124, 77, 255, 0.14),
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 84% 12%,
+      rgba(179, 136, 255, 0.1),
+      transparent 22%
+    ),
     var(--md-default-bg-color) !important;
 }
 

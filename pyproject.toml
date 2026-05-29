@@ -79,6 +79,9 @@ explicit = true
 skip = "uv.lock,*.ipynb,.venv,.tox"
 ignore-words-list = "numbe"
 
+[tool.typos.default.extend-words]
+ND = "ND"
+
 [tool.pyright]
 typeCheckingMode = "strict"
 include = ["src", "tests/typing"]

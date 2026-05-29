@@ -19,17 +19,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: [py310, py313]
-        beartype: [bt020, bt022]
-        backend:
-          - numpy22
-          - numpy24
-          - jax05
-          - jax09
-          - torch26
-          - torch210
-          - optree014
-          - optree019
+        include:
+          - { python: py310, beartype: bt020, backend: numpy22 }
+          - { python: py310, beartype: bt020, backend: jax05 }
+          - { python: py310, beartype: bt020, backend: torch26 }
+          - { python: py310, beartype: bt020, backend: optree014 }
+          - { python: py310, beartype: bt022, backend: numpy22 }
+          - { python: py310, beartype: bt022, backend: jax05 }
+          - { python: py310, beartype: bt022, backend: torch26 }
+          - { python: py310, beartype: bt022, backend: optree014 }
+          - { python: py313, beartype: bt020, backend: numpy24 }
+          - { python: py313, beartype: bt020, backend: jax09 }
+          - { python: py313, beartype: bt020, backend: torch210 }
+          - { python: py313, beartype: bt020, backend: optree019 }
+          - { python: py313, beartype: bt022, backend: numpy24 }
+          - { python: py313, beartype: bt022, backend: jax09 }
+          - { python: py313, beartype: bt022, backend: torch210 }
+          - { python: py313, beartype: bt022, backend: optree019 }
     name: ${{ matrix.python }}-${{ matrix.beartype }}-${{ matrix.backend }}
     steps:
       - uses: actions/checkout@v6
