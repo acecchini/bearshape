@@ -1,9 +1,8 @@
-# Bearshape Agents
+# bearshape agents
 
-Bearshape is the new project name for the library currently still named
-`bearshape` in parts of the tree. The package is moving from `bearshape` /
-`bearshape` to `bearshape`, with the goal of a production-ready release under the
-beartype organization.
+bearshape is a runtime shape and dtype checking library moving toward a
+production-ready release under the beartype organization. The package, docs,
+examples, and site use the lowercase public identity `bearshape` everywhere.
 
 This file is for Codex and Claude agents. Keep it short, directive, and free of
 AI slop. Humans should learn the project from `README.md` and `docs/`; agents
@@ -80,7 +79,7 @@ user clearly asks for a narrow edit and the risk is low.
 
 ## Product Contract
 
-Bearshape provides runtime shape and dtype checking powered by beartype.
+bearshape provides runtime shape and dtype checking powered by beartype.
 Annotations such as named dimensions, anonymous dimensions, fixed integer
 dimensions, arithmetic dimensions, broadcastable dimensions, `Scalar`,
 `Value(...)`, backend array aliases, `Like[...]`, scalar-like aliases, and

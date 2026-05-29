@@ -4,7 +4,7 @@ description: Copyable examples covering the main bearshape runtime and typing pa
 
 # Examples
 
-## Bearshape Tour Notebook
+## bearshape Tour Notebook
 
 The tour notebook is still the broadest runnable walkthrough in the repository:
 

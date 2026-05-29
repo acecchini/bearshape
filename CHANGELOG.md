@@ -17,9 +17,14 @@ and this project follows
 ### Changed
 
 - Renamed the distribution, import package, documentation, examples, tests, and
-    release metadata to Bearshape.
+    release metadata to bearshape.
+- Normalized product-facing branding to lowercase `bearshape`.
+- Switched the documentation build from direct MkDocs usage to Zensical while
+    preserving the existing Material-style site proportions and theme.
 - Hardened nearest-wrapper memo and scope resolution for plain `@beartype` usage
     in decorated call stacks.
+- Hardened standalone `is_bearable()` memo identity against recycled checker
+    frame objects.
 - Array and tree runtime hints now report readable validation failures through
     custom beartype diagnostics instead of boolean-only validator output.
 - Backend `Like[...]` diagnostics now identify JAX, PyTorch, and CuPy hints with

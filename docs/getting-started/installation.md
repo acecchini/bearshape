@@ -23,7 +23,7 @@ The distribution name and import package are both `bearshape`:
 import bearshape
 ```
 
-Bearshape intentionally does **not** use extras such as `bearshape[numpy]`.
+bearshape intentionally does **not** use extras such as `bearshape[numpy]`.
 Install `bearshape` and your backend packages explicitly.
 
 === "NumPy"

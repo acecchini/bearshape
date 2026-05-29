@@ -1,8 +1,8 @@
-# Bearshape
+# bearshape
 
 [![Python 3.10-3.14](docs/assets/images/python_versions_badge.svg)](https://www.python.org/)
 ![Coverage 91%](https://img.shields.io/badge/coverage-91%25-34D058?style=flat-square&logo=codecov&logoColor=F01F7A&labelColor=1F2937)
-[![Docs](https://img.shields.io/badge/docs-live-526CFE?style=flat-square&logo=materialformkdocs&logoColor=white&labelColor=1F2937)](https://acecchini.github.io/bearshape/)
+[![Docs](https://img.shields.io/badge/docs-live-526CFE?style=flat-square&logo=readthedocs&logoColor=white&labelColor=1F2937)](https://acecchini.github.io/bearshape/)
 
 Runtime shape and dtype checking for NumPy, JAX, PyTorch, CuPy, and
 tree-structured containers, powered by
@@ -19,7 +19,7 @@ def normalize(x: F32[N, C]) -> F32[N, C]:
   return x / x.sum(axis=1, keepdims=True)
 ```
 
-Bearshape turns annotations such as `F32[N, C]`, `F32Like[~B, C]`,
+bearshape turns annotations such as `F32[N, C]`, `F32Like[~B, C]`,
 `F32[Value("size")]`, and `Tree[F32[N], T]` into runtime-validated contracts.
 Named dimensions are shared within a function call, so mismatched shapes fail at
 the boundary instead of later in array code.
@@ -30,7 +30,7 @@ the boundary instead of later in array code.
 pip install bearshape
 ```
 
-Bearshape keeps the root import lightweight. Install the array backend packages
+bearshape keeps the root import lightweight. Install the array backend packages
 you use explicitly:
 
 ```bash

@@ -4,7 +4,7 @@ description: Install bearshape, pick a backend, and learn the runtime and typing
 
 # Getting Started
 
-Bearshape turns annotations like `F32[N, C]` into runtime-validated contracts by
+bearshape turns annotations like `F32[N, C]` into runtime-validated contracts by
 generating small runtime hint classes for arrays and trees. Beartype validates
 those hints through `__instancecheck__()`, and bearshape provides readable
 failures through `__instancecheck_str__()`.
@@ -26,7 +26,7 @@ install those dependencies.
     What passes on pyright, mypy, and ty, and what still needs targeted
     runtime-only workarounds.
 
-## What Bearshape gives you
+## What bearshape gives you
 
 - Standard `@beartype` support. No custom decorator is required for normal shape
     checking.

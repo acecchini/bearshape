@@ -1,5 +1,5 @@
 ---
-title: Bearshape
+title: bearshape
 description: Elegant runtime shape and dtype checking for NumPy, JAX, PyTorch, and CuPy arrays — powered by beartype.
 hide:
   - navigation
@@ -366,6 +366,138 @@ a.backend-logo:hover {
   .hero__logo canvas { width: 140px; height: 140px; }
   .backends__logos { gap: 1.5rem; }
 }
+
+@media (min-width: 1350px) and (max-width: 2200px) and (max-height: 1060px) {
+  .md-main__inner { margin-top: clamp(-3.9rem, -4.3vh, -2.2rem); }
+
+  .hero__logo canvas {
+    width: clamp(115px, 12.8vh, 190px);
+    height: clamp(115px, 12.8vh, 190px);
+    margin-bottom: clamp(-42px, -4.8vh, -20px);
+  }
+
+  .hero__letter { font-size: clamp(2.25rem, 3.2vh, 3.25rem); }
+  .hero__subtitle { font-size: 0.96rem; line-height: 1.25; }
+  .hero__powered .beartype-link { font-size: clamp(1.3rem, 1.85vh, 1.85rem); }
+
+  .beartype-logo-inline {
+    height: clamp(26px, 3.2vh, 40px) !important;
+    max-height: 40px !important;
+  }
+
+  .hero__actions {
+    gap: 0.75rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .features-section {
+    padding: 0 1.5rem 0.15rem;
+  }
+
+  .features-grid {
+    gap: 0.32rem;
+  }
+
+  .feature-card {
+    padding: 0.32rem 0.78rem;
+  }
+
+  .feature-card h3 {
+    font-size: 0.9rem;
+    line-height: 1.3;
+  }
+
+  .feature-card p {
+    font-size: 0.77rem;
+    line-height: 1.55;
+  }
+
+  .backends {
+    padding: 0.28rem 1.5rem 0.8rem;
+  }
+
+  .backends__logos {
+    gap: 2.5rem;
+    margin-top: 0.45rem;
+  }
+
+  .backend-logo svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .backend-logo .jax-logo-img {
+    height: 29px;
+  }
+
+  .backend-logo .cupy-logo-img {
+    width: 31px;
+    height: 31px;
+  }
+
+  .backend-logo--optree svg {
+    width: 34px;
+    height: 34px;
+  }
+
+  .backend-logo span {
+    font-size: 1.07rem;
+  }
+}
+
+@media (min-width: 1350px) and (max-width: 2200px) and (max-height: 930px) {
+  .md-main__inner { margin-top: -3.6rem; }
+
+  .hero__actions {
+    gap: 0.65rem;
+    margin-bottom: 0.08rem;
+  }
+
+  .features-grid {
+    gap: 0.24rem;
+  }
+
+  .feature-card {
+    padding: 0.26rem 0.75rem;
+  }
+
+  .feature-card p {
+    font-size: 0.74rem;
+    line-height: 1.45;
+  }
+
+  .backends {
+    padding: 0.22rem 1.5rem 0.6rem;
+  }
+
+  .backends__logos {
+    gap: 2.25rem;
+    margin-top: 0.35rem;
+  }
+
+  .backend-logo svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .backend-logo .jax-logo-img {
+    height: 27px;
+  }
+
+  .backend-logo .cupy-logo-img {
+    width: 29px;
+    height: 29px;
+  }
+
+  .backend-logo--optree svg {
+    width: 31px;
+    height: 31px;
+  }
+
+  .backend-logo span {
+    font-size: 1rem;
+  }
+}
 </style>
 
 <div id="bearshape-visual"></div>
@@ -375,7 +507,7 @@ a.backend-logo:hover {
 
 <div class="hero__logo">
 <canvas id="bearshape-logo" width="220" height="220"></canvas>
-<div class="hero__title" id="bearshape-title">Bearshape</div>
+<div class="hero__title" id="bearshape-title">bearshape</div>
 </div>
 
 <div class="hero__tagline">Runtime shape checking for array code</div>

@@ -4,7 +4,7 @@ description: Input-validation types for array-like data and range-validated scal
 
 # Like Types
 
-Bearshape has two broad input-contract families:
+bearshape has two broad input-contract families:
 
 - `Like` types such as `F32Like[N, C]`
 - `ScalarLike` types such as `U8ScalarLike`

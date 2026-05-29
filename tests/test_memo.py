@@ -81,6 +81,36 @@ class TestFrameBasedMemo:
     # Third call: N=1
     g(np.ones((1,), dtype=np.float32))
 
+  def test_recycled_checker_frame_gets_fresh_memo(
+    self, monkeypatch: pytest.MonkeyPatch
+  ) -> None:
+    """Frame-id reuse across checker calls must not reuse stale bindings."""
+    import bearshape._memo as memo_mod
+
+    class FakeFrame:
+      def __init__(self) -> None:
+        self.f_code = object()
+        self.f_lasti = 6
+        self.f_locals = {"__beartype_pith_0": object()}
+
+    fake = FakeFrame()
+
+    monkeypatch.setattr(memo_mod._local, "frame_stack", [], raising=False)
+    monkeypatch.setattr(
+      memo_mod, "_find_beartype_wrapper_frame", lambda *, _depth: fake
+    )
+
+    first = get_memo()
+    first.single["N"] = 3
+    assert get_memo() is first
+
+    fake.f_lasti = 7
+    fake.f_locals = {"__beartype_pith_0": object()}
+
+    second = get_memo()
+    assert second is not first
+    assert second.single == {}
+
   def test_sequential_cross_arg(self) -> None:
     """Sequential calls with multiple args each get independent memos."""
 

@@ -21,12 +21,12 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v8
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: uv sync --group docs --no-dev
-      - run: uv run mkdocs build --clean
+      - run: uv run zensical build --clean
       - uses: actions/upload-pages-artifact@v4
         with:
           path: site

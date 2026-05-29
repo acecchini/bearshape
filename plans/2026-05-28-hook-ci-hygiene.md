@@ -1,4 +1,4 @@
-# Hook and CI hygiene before Bearshape rename
+# Hook and CI hygiene before bearshape rename
 
 This ExecPlan is a living document. The sections `Progress`,
 `Surprises & Discoveries`, `Decision Log`, and `Outcomes & Retrospective` must
@@ -11,7 +11,7 @@ be maintained in accordance with `PLANS.md`.
 
 The baseline audit found that the core runtime and typing tests pass, but the
 local hook suite and PR spelling job are not green. This matters because the
-next major task is the Bearshape rename, which will touch many files. Before
+next major task is the bearshape rename, which will touch many files. Before
 that larger rename, the formatting, spelling, and workflow checks should be
 predictable so the rename diff is not mixed with hook noise.
 

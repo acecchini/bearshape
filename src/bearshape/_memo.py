@@ -38,6 +38,8 @@ __all__ = [
 ]
 
 _FRAME_STACK_GC_THRESHOLD = 8
+_FRAME_MARKER_NAME = "__bearshape_memo_marker__"
+_FRAME_MARKER_MISSING = object()
 
 
 @dataclass
@@ -197,6 +199,25 @@ def _nearest_runtime_frame(_depth: int) -> types.FrameType | None:
   return _frame_at_or_none(_depth)
 
 
+def _frame_token(frame: types.FrameType) -> object:
+  token = frame.f_locals.get(_FRAME_MARKER_NAME)
+  if token is None:
+    token = object()
+    frame.f_locals[_FRAME_MARKER_NAME] = token
+  return token
+
+
+def _active_frame_tokens() -> set[object]:
+  active: set[object] = set()
+  f: types.FrameType | None = sys._getframe(0)
+  while f is not None:
+    token = f.f_locals.get(_FRAME_MARKER_NAME, _FRAME_MARKER_MISSING)
+    if token is not _FRAME_MARKER_MISSING:
+      active.add(token)
+    f = f.f_back
+  return active
+
+
 def get_memo(_depth: int = 2) -> ShapeMemo:
   """Return the memo for the current checking context.
 
@@ -236,25 +257,25 @@ def get_memo(_depth: int = 2) -> ShapeMemo:
   if frame is None:
     return ShapeMemo()
 
-  frame_id = id(frame)
+  token = _frame_token(frame)
   code = frame.f_code
 
   if not hasattr(_local, "frame_stack"):
-    _local.frame_stack = []  # list[tuple[int, object, int, ShapeMemo]]
+    _local.frame_stack = []  # list[tuple[object, object, int, ShapeMemo]]
 
-  # Stack entries: (frame_id, code_obj, max_lasti, memo)
-  # We store the code object alongside id(frame) to prevent false matches
-  # when CPython recycles a frame object at the same address for a different
-  # function (common in parametrised test loops and tight call sequences).
-  stack: list[tuple[int, object, int, ShapeMemo]] = _local.frame_stack
+  # Stack entries: (frame_token, code_obj, max_lasti, memo)
+  # CPython can recycle frame object ids across separate beartype checker calls.
+  # A private token stored in the live frame locals gives each call frame a stable
+  # identity without keeping the frame object alive after the check returns.
+  stack: list[tuple[object, object, int, ShapeMemo]] = _local.frame_stack
   lasti: int = frame.f_lasti
 
   # Fast path: same frame as last check (next param in same call)
-  if stack and stack[-1][0] == frame_id and stack[-1][1] is code:
+  if stack and stack[-1][0] is token and stack[-1][1] is code:
     _, _, prev_lasti, prev_memo = stack[-1]
     if lasti >= prev_lasti:
       # Same call, advancing through params — update max_lasti
-      stack[-1] = (frame_id, code, lasti, prev_memo)
+      stack[-1] = (token, code, lasti, prev_memo)
       return prev_memo
     # f_lasti went backwards → frame-id was reused (new call to same fn).
     # Discard the stale entry and fall through to create a fresh memo.
@@ -262,11 +283,11 @@ def get_memo(_depth: int = 2) -> ShapeMemo:
 
   # Check deeper in stack (returning to outer call after inner completed)
   for i in range(len(stack) - 2, -1, -1):
-    if stack[i][0] == frame_id and stack[i][1] is code:
+    if stack[i][0] is token and stack[i][1] is code:
       _, _, prev_lasti, prev_memo = stack[i]
       if lasti >= prev_lasti:
         del stack[i + 1 :]
-        stack[i] = (frame_id, code, lasti, prev_memo)
+        stack[i] = (token, code, lasti, prev_memo)
         return prev_memo
       # Frame-id reuse at a deeper level — discard everything from i onward
       del stack[i:]
@@ -274,15 +295,11 @@ def get_memo(_depth: int = 2) -> ShapeMemo:
 
   # New call context — clean stale entries when stack grows large
   if len(stack) > _FRAME_STACK_GC_THRESHOLD:
-    active: set[int] = set()
-    f: types.FrameType | None = sys._getframe(0)
-    while f is not None:
-      active.add(id(f))
-      f = f.f_back
-    stack[:] = [(fid, c, li, m) for fid, c, li, m in stack if fid in active]
+    active = _active_frame_tokens()
+    stack[:] = [(t, c, li, m) for t, c, li, m in stack if t in active]
 
   memo = ShapeMemo()
-  stack.append((frame_id, code, lasti, memo))
+  stack.append((token, code, lasti, memo))
   return memo
 
 
@@ -308,6 +325,7 @@ def get_scope(_depth: int = 2) -> dict[str, object]:
     return {}
 
   locals_map = dict(frame.f_locals)
+  locals_map.pop(_FRAME_MARKER_NAME, None)
 
   # beartype wrappers expose runtime arguments as ``args`` / ``kwargs`` plus
   # the wrapped function object. Rebind those to parameter names so
