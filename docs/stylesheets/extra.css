@@ -243,3 +243,21 @@ html {
   color: white;
   text-decoration: underline;
 }
+
+/* Keep Zensical's search trigger visually aligned with the previous site. */
+.md-search__button kbd,
+.md-search__button .md-keys,
+.md-search__button [class*="key"],
+.md-search__button::after {
+  display: none !important;
+}
+
+@media screen and (min-width: 60em) {
+  .md-search {
+    width: 11.7rem;
+  }
+
+  .md-search__button {
+    width: 100%;
+  }
+}

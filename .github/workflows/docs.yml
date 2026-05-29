@@ -26,7 +26,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: uv sync --group docs --no-dev
-      - run: uv run mkdocs build --clean
+      - run: uv run zensical build --clean
       - uses: actions/upload-pages-artifact@v4
         with:
           path: site
