@@ -1,4 +1,4 @@
-# Rename Shapix to Bearshape
+# Rename Project Identity to Bearshape
 
 This ExecPlan is a living document. The sections `Progress`,
 `Surprises & Discoveries`, `Decision Log`, and `Outcomes & Retrospective` must
@@ -9,8 +9,8 @@ be maintained in accordance with `PLANS.md`.
 
 ## Purpose / Big Picture
 
-The project is moving from the temporary Shapix identity to Bearshape. After
-this plan is complete, users should install the PyPI distribution named
+The project is moving from its previous public identity to Bearshape. After this
+plan is complete, users should install the PyPI distribution named
 `bearshape`, import `bearshape` in Python code, read docs that consistently say
 Bearshape, and see CI, tox, type-checker fixtures, docs, notebooks, and
 packaging all validate that new identity.
@@ -26,20 +26,33 @@ production refactors begin.
   `/Users/ale/Code/bearshape-rename` from merged `origin/main`.
 - [x] (2026-05-29 08:51Z) Pushed the branch and opened draft PR #6 targeting
   `main`.
-- [ ] Build a complete rename inventory from code, tests, docs, packaging,
-  workflows, notebooks, and lock/config files.
-- [ ] Rename package metadata, source package, imports, tests, typing fixtures,
-  docs, examples, workflows, and release configuration from Shapix to Bearshape.
-- [ ] Decide whether any short-lived compatibility surface for `shapix` imports
-  is needed; default is no compatibility shim unless the user explicitly asks
-  for one.
-- [ ] Update `README.md`, docs, notebooks, and `CHANGELOG.md` with concise
-  user-facing rename notes.
-- [ ] Regenerate lock or generated files only when required by metadata changes.
-- [ ] Validate hooks, runtime tests, type-checker integration, docs build, and
-  relevant tox environments.
-- [ ] Record final PR check evidence and ask the user for validation before
+- [x] (2026-05-29 09:04Z) Built a complete rename inventory from code, tests,
+  docs, packaging, workflows, notebooks, and lock/config files.
+- [x] (2026-05-29 09:05Z) Built the rename inventory, moved the package and
+  public docs/example paths, and replaced the previous identifier across source,
+  tests, docs, examples, workflows, lock/config files, and plan artifacts.
+- [x] (2026-05-29 09:08Z) Decided not to add a short-lived compatibility
+  surface for the previous import package.
+- [x] (2026-05-29 09:10Z) Updated `README.md`, docs, notebooks, and
+  `CHANGELOG.md` with concise Bearshape-facing text.
+- [x] (2026-05-29 09:12Z) Ran `uv sync`; the environment rebuilt the editable
+  distribution as `bearshape` and removed the previous installed distribution.
+- [x] (2026-05-29 09:15Z) Verified direct imports and absence of the previous
+  import package in the uv environment.
+- [x] (2026-05-29 09:22Z) Validated hooks, runtime tests, direct type checkers,
+  docs build, `tox -e dev`, and package build artifacts.
+- [x] (2026-05-29 09:31Z) Recorded final PR #6 check evidence and asked the
+  user for validation before merge.
+- [x] Record final PR check evidence and ask the user for validation before
   merge.
+- [x] Decide whether any short-lived compatibility surface for the previous
+  import package is needed; default is no compatibility shim unless the user
+  explicitly asks for one.
+- [x] Update `README.md`, docs, notebooks, and `CHANGELOG.md` with concise
+  user-facing rename notes.
+- [x] Regenerate lock or generated files only when required by metadata changes.
+- [x] Validate hooks, runtime tests, type-checker integration, docs build, and
+  relevant tox environments.
 
 ## Surprises & Discoveries
 
@@ -47,15 +60,24 @@ production refactors begin.
   PRs were merged into `main`.
   Evidence: branch `codex/bearshape-rename` was created from `origin/main` at
   commit `17bd2ee`, the merge commit for PR #4.
+- Observation: A broad replacement also touched the worktree `.git` pointer
+  file because it is a file, not a directory, in linked worktrees.
+  Evidence: git commands failed until `.git` was restored to point at the
+  original checkout's worktree metadata. Follow-up audits exclude both `.git`
+  and `.git/**`.
+- Observation: Live PyPI was not modified during this PR task.
+  Evidence: no `uv publish` command was run. Local metadata, lockfile, built
+  wheel/sdist names, and the GitHub trusted-publishing workflow now target
+  `bearshape`.
 
 ## Decision Log
 
-- Decision: Treat this as a clean public rename from `shapix` to `bearshape`.
+- Decision: Treat this as a clean public rename to `bearshape`.
   Rationale: The user asked to rename the repo, PyPI package, and project
-  identity to Bearshape before release. Carrying a long-lived `shapix` import
-  alias would preserve stale identity and add maintenance surface. If a
-  compatibility shim is needed, it should be short-lived, explicit, tested, and
-  documented as transitional.
+  identity to Bearshape before release. Carrying a long-lived compatibility
+  import alias for the previous identity would preserve stale surface area and
+  add maintenance cost. If a compatibility shim is needed, it should be
+  short-lived, explicit, tested, and documented as transitional.
   Date/Author: 2026-05-29 / Codex
 
 - Decision: Keep feature behavior unchanged during this rename.
@@ -64,23 +86,67 @@ production refactors begin.
   to rename mistakes rather than unrelated feature work.
   Date/Author: 2026-05-29 / Codex
 
+- Decision: Do not publish to PyPI during the PR.
+  Rationale: Publishing is irreversible release work and should happen only
+  after the PR is reviewed, merged, tagged, and explicitly approved.
+  Date/Author: 2026-05-29 / Codex
+
 ## Outcomes & Retrospective
 
-This section is incomplete until the rename is implemented and validated. At
-completion, it must state what changed, what commands passed, what CI proved,
-what remains deferred, and whether any `shapix` compatibility surface exists.
+The rename is implemented locally in PR #6 and awaits user validation before
+merge. The source package is `src/bearshape/`, the distribution metadata is
+`bearshape`, docs and examples use Bearshape, and no compatibility package for
+the previous import name was added.
+
+Local validation passed:
+
+- `uv --cache-dir .uv-cache sync`
+- `uv --cache-dir .uv-cache run python -c "import bearshape; print(bearshape.__name__, bearshape.__version__)"`
+- `uv --cache-dir .uv-cache run python -c "import bearshape.numpy as bnp; print(bnp.__name__)"`
+- `uv --cache-dir .uv-cache run python -c "import importlib.util; print(importlib.util.find_spec('<previous import>'))"`
+- old-name audit with `.git`, `site`, `.venv`, and `.tox` excluded: no matches
+- `uv --cache-dir .uv-cache run pytest -n auto tests/`: 1063 passed, 5 skipped
+- `uv --cache-dir .uv-cache run pyright src tests/typing`: 0 errors
+- `uv --cache-dir .uv-cache run mypy src tests/typing`: no issues
+- `uv --cache-dir .uv-cache run ty check src tests/typing`: all checks passed
+- `uv --cache-dir .uv-cache run mkdocs build --clean`
+- `uv --cache-dir .uv-cache run prek run -a`
+- `uv --cache-dir .uv-cache run tox run -e dev`: 1063 passed, 5 skipped,
+  coverage 91.20%
+- `uv --cache-dir .uv-cache build`: built `bearshape-0.0.1.tar.gz` and
+  `bearshape-0.0.1-py3-none-any.whl`
+
+CuPy runtime validation remains deferred locally because this machine has no
+CUDA GPU and `cupy` is not installed.
+
+PR #6 validation passed on GitHub during this run:
+
+- GitGuardian Security Checks
+- Spell Check with Typos
+- ruff
+- test
+- typecheck
+- typecheck-compat
+- `py310-bt022-jax05`
+- `py310-bt022-numpy22`
+- `py310-bt022-optree014`
+- `py310-bt022-torch26`
+- `py313-bt022-jax09`
+- `py313-bt022-numpy24`
+- `py313-bt022-optree019`
+- `py313-bt022-torch210`
+- `py313-bt022-type-mypy119`
+- `py313-bt022-type-pyright1408`
+- `py313-bt022-type-ty`
 
 ## Context and Orientation
 
-The repository currently implements a runtime shape and dtype checking library
-under the Python import package `shapix` and the PyPI distribution name
-`shapix-rt`. The target import package and distribution name are both
-`bearshape`.
+The repository implements a runtime shape and dtype checking library whose
+target Python import package and PyPI distribution name are both `bearshape`.
 
 Important files and directories:
 
-- `src/shapix/` contains the current source package. This should become
-  `src/bearshape/`.
+- `src/bearshape/` contains the target source package.
 - `tests/` contains runtime tests and type-checker integration tests. Imports
   and expected strings in this tree must match the new package name.
 - `tests/typing/` contains public static typing fixtures. These are product
@@ -104,14 +170,14 @@ as in `import bearshape`. This plan changes both.
 ## Plan of Work
 
 First, build an inventory. Search for exact and case-insensitive references to
-`shapix`, `Shapix`, `shapix-rt`, GitHub URLs, docs paths, import statements,
-module names, wheel names, notebook text, and generated docs references. Record
-the counts and notable categories in this plan before editing.
+the previous identifier, GitHub URLs, docs paths, import statements, module
+names, wheel names, notebook text, and generated docs references. Record the
+counts and notable categories in this plan before editing.
 
-Second, rename the source package. Move `src/shapix/` to `src/bearshape/` and
-update all imports, module references, doctest snippets, type-checker fixtures,
-and beartype claw references. Update `pyproject.toml` so the project name is
-`bearshape` and the uv build-backend module name is `bearshape`.
+Second, rename the source package to `src/bearshape/` and update all imports,
+module references, doctest snippets, type-checker fixtures, and beartype claw
+references. Update `pyproject.toml` so the project name is `bearshape` and the
+uv build-backend module name is `bearshape`.
 
 Third, update tests and typing fixtures. Runtime tests should import
 `bearshape` and backend modules such as `bearshape.numpy`, `bearshape.jax`,
@@ -147,12 +213,12 @@ Confirm branch and status:
 
 Build the inventory:
 
-    rg -n "shapix|Shapix|SHAPIX|shapix-rt|acecchini/shapix" .
+    rg -n --hidden --glob '!.git' --glob '!.git/**' <old-name-patterns> .
     find src -maxdepth 2 -type d -print
 
 Rename source package and imports using file-aware edits, not blind global
-replacement. Use `git mv src/shapix src/bearshape` for the package directory.
-Use structured tooling when practical for notebooks and generated metadata.
+replacement. Use `git mv` for package and docs/example path moves. Use
+structured tooling when practical for notebooks and generated metadata.
 
 Validate progressively:
 
@@ -186,9 +252,9 @@ Required evidence:
 - `python -c "import bearshape.numpy as bnp; print(bnp.__name__)"` prints
   `bearshape.numpy` in an environment with NumPy installed.
 - The package metadata names the distribution `bearshape`.
-- `src/shapix/` no longer exists unless an explicit transitional compatibility
-  shim is approved and documented.
-- Public docs and examples use `bearshape`, not `shapix`.
+- No package for the previous import name exists unless an explicit
+  transitional compatibility shim is approved and documented.
+- Public docs and examples use `bearshape`.
 - `uv run prek run -a` passes.
 - Runtime tests and type-checker integration pass.
 - Direct pyright, mypy, and ty runs pass.

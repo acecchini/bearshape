@@ -2,8 +2,8 @@
 
 Array types (e.g. ``F32``, ``Int``) are subscriptable with dimension symbols::
 
-    from shapix import N, C, H, W
-    from shapix.numpy import F32
+    from bearshape import N, C, H, W
+    from bearshape.numpy import F32
 
 
     @beartype
@@ -11,7 +11,7 @@ Array types (e.g. ``F32``, ``Int``) are subscriptable with dimension symbols::
 
 Endianness variants are available programmatically via
 ``make_array_type(np.ndarray, FLOAT32_LE)`` using DtypeSpec constants from
-``shapix._dtypes``.
+``bearshape._dtypes``.
 
 Additional dtypes: ``V`` (void), ``Str`` (string), ``Bytes``, ``Obj`` (object),
 ``DT64`` (datetime64), ``TD64`` (timedelta64).
@@ -20,7 +20,7 @@ Additional dtypes: ``V`` (void), ``Str`` (string), ``Bytes``, ``Obj`` (object),
 — use them for function inputs that will be converted to arrays.
 Like types **must be subscripted**: ``F32Like[N, C]`` or ``F32Like[...]``::
 
-    from shapix.numpy import F32Like
+    from bearshape.numpy import F32Like
 
 
     @beartype
@@ -29,7 +29,7 @@ Like types **must be subscripted**: ``F32Like[N, C]`` or ``F32Like[...]``::
 ``ScalarLike`` types (e.g. ``I8ScalarLike``, ``U8ScalarLike``) validate individual
 scalar values with range checking — no shape, just value::
 
-    from shapix.numpy import U8ScalarLike
+    from bearshape.numpy import U8ScalarLike
 
 
     @beartype
@@ -37,13 +37,13 @@ scalar values with range checking — no shape, just value::
 
 ``make_scalar_like_type`` creates casting-aware scalar types programmatically::
 
-    from shapix.numpy import make_scalar_like_type
+    from bearshape.numpy import make_scalar_like_type
 
     F32Scalar = make_scalar_like_type(np.float32, casting="safe")
 
 ``Structured()`` creates array types for NumPy structured (record) dtypes::
 
-    from shapix.numpy import Structured
+    from bearshape.numpy import Structured
 
     Point = Structured([("x", np.float32), ("y", np.float32)])
 
@@ -209,7 +209,7 @@ def make_array_like_type(
   asarray: tp.Callable[[object], object] | None = None,
   trusted_types: tuple[type[object], ...] | None = _NUMPY_TRUSTED,
 ) -> tp.Any:
-  """NumPy-aware version of :func:`shapix.make_array_like_type`.
+  """NumPy-aware version of :func:`bearshape.make_array_like_type`.
 
   The fast path only trusts ``np.ndarray``; other backend arrays
   (e.g. ``torch.Tensor``, ``jax.Array``) go through the slow path
@@ -362,7 +362,7 @@ def Structured(  # noqa: N802
 
 
 # ---------------------------------------------------------------------------
-# Array types (shape-checked via shapix runtime hints)
+# Array types (shape-checked via bearshape runtime hints)
 # ---------------------------------------------------------------------------
 
 if tp.TYPE_CHECKING:

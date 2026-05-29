@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from shapix._memo import ShapeMemo
-from shapix._shape import (
+from bearshape._memo import ShapeMemo
+from bearshape._shape import (
   ANONYMOUS,
   ANONYMOUS_VARIADIC,
   FixedDim,

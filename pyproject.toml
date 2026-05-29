@@ -1,5 +1,5 @@
 [project]
-name = "shapix-rt"
+name = "bearshape"
 version = "0.0.1"
 description = "Elegant runtime shape and dtype checking for NumPy, JAX, PyTorch, and CuPy arrays — powered by beartype."
 readme = "README.md"
@@ -34,16 +34,16 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/acecchini/shapix"
-Repository = "https://github.com/acecchini/shapix"
-Issues = "https://github.com/acecchini/shapix/issues"
+Homepage = "https://github.com/acecchini/bearshape"
+Repository = "https://github.com/acecchini/bearshape"
+Issues = "https://github.com/acecchini/bearshape/issues"
 
 [build-system]
 requires = ["uv_build>=0.11.0,<0.12.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
-# Backends are CPU-only for dev/CI. Shapix is device-agnostic — it checks
+# Backends are CPU-only for dev/CI. Bearshape is device-agnostic — it checks
 # .shape and .dtype only. Users install their own numpy/jax/torch/cupy/optree.
 # CuPy requires CUDA and is not included here; install separately for GPU envs.
 optional = ["numpy>=2.2.0", "torch>=2.6.0", "jax[cpu]>=0.5.0", "optree>=0.14.0"]
@@ -65,7 +65,7 @@ required-version = ">=0.11.0,<0.12.0"
 python-preference = "only-managed"
 
 [tool.uv.build-backend]
-module-name = "shapix"
+module-name = "bearshape"
 
 [tool.uv.sources]
 torch = [{ index = "pytorch-cpu" }]
@@ -108,7 +108,7 @@ warn_unreachable = true
 
 [tool.coverage.run]
 branch = true
-source = ["shapix"]
+source = ["bearshape"]
 
 [tool.coverage.report]
 show_missing = true

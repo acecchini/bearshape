@@ -120,7 +120,7 @@ commands = [
     "tests/",
     "-n",
     "auto",
-    "--cov=shapix",
+    "--cov=bearshape",
     "--cov-branch",
     "--cov-report=term-missing:skip-covered",
     "--cov-fail-under=90",

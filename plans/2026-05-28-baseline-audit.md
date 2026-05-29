@@ -9,12 +9,12 @@ be maintained in accordance with `PLANS.md`.
 
 ## Purpose / Big Picture
 
-The project is being renamed from Shapix to Bearshape and prepared for a
-production-quality release under the beartype organization. Before changing
-package names, public APIs, CI, tox, docs, or implementation internals, this
-audit records what works today and what is already broken. The result should let
-a future contributor separate pre-existing failures from regressions introduced
-by the rename and cleanup work.
+The project is being renamed to Bearshape and prepared for a production-quality
+release under the beartype organization. Before changing package names, public
+APIs, CI, tox, docs, or implementation internals, this audit records what works
+today and what is already broken. The result should let a future contributor
+separate pre-existing failures from regressions introduced by the rename and
+cleanup work.
 
 After this plan is complete, a maintainer should be able to read this file and
 know the current local baseline: which tests pass, which tests fail, which type
@@ -28,8 +28,7 @@ should become separate follow-up plans.
 - [x] (2026-05-28 09:01Z) Added the agent workflow files needed for this audit:
     `AGENTS.md`, `CLAUDE.md` as a symlink to `AGENTS.md`, and `PLANS.md`.
 - [x] (2026-05-28 09:01Z) Pushed `codex/baseline-audit` to GitHub. GitHub
-    reported that the repository moved from `acecchini/shapix` to
-    `acecchini/bearshape`.
+    reported that the repository moved to `acecchini/bearshape`.
 - [x] (2026-05-28 09:05Z) Opened draft PR
     `https://github.com/acecchini/bearshape/pull/4` against `main`.
 - [x] (2026-05-28 09:03Z) Ran `uv sync`; the locked development environment
@@ -54,7 +53,7 @@ should become separate follow-up plans.
 ## Surprises & Discoveries
 
 - Observation: The remote still appears locally as
-    `https://github.com/acecchini/shapix.git`, but pushing reports that the
+    `https://github.com/acecchini/bearshape.git`, but pushing reports that the
     repository moved. Evidence: `git push -u origin codex/baseline-audit`
     printed
     `This repository moved. Please use the new location: https://github.com/acecchini/bearshape.git`.
@@ -80,15 +79,14 @@ should become separate follow-up plans.
 - Observation: Running hooks caused broad formatter churn outside the audit
     scope. Evidence: `git status --short` showed modifications to `AGENTS.md`,
     `PLANS.md`, `docs/assets/js/tesseract.js`, `docs/stylesheets/extra.css`,
-    `examples/shapix_tour.ipynb`, `mkdocs.yml`, and this ExecPlan.
+    `examples/bearshape_tour.ipynb`, `mkdocs.yml`, and this ExecPlan.
 - Observation: CI spelling does not match local `prek` behavior. Evidence:
     local `prek` reported `typos` passed, but the PR spelling job ran `typos .`
-    and failed on `npt.NDArray` occurrences in `examples/shapix_tour.ipynb`.
-- Observation: The Bearshape rename has not started in tracked contract
-    artifacts. Evidence:
-    `rg -o "shapix|shapix-rt|Shapix" ... | wc -l` found 1102 matches, while
-    `rg -l "bearshape|Bearshape" ...` found no matches outside the new
-    agent/plan files.
+    and failed on `npt.NDArray` occurrences in `examples/bearshape_tour.ipynb`.
+- Observation: The Bearshape rename had not started in tracked contract
+    artifacts at audit time. Evidence: the previous identifier still appeared
+    throughout source, tests, docs, examples, CI, and publishing configuration,
+    while Bearshape references were limited to the new agent and plan files.
 
 ## Decision Log
 
@@ -115,18 +113,15 @@ typechecker integration test, direct pyright, direct mypy, direct ty, and
 validated locally because this machine does not have CUDA GPU support and `cupy`
 is not installed.
 
-The repo is not ready for rename or release work yet. The public identity is
-still Shapix across package metadata, source package names, docs, tests,
-examples, CI, and publishing configuration. Local hooks and CI spelling are not
-green for the branch. The next work should be split into explicit plans rather
-than folded into this audit PR.
+At audit time, the repo was not ready for rename or release work yet. The public
+identity had not been changed across package metadata, source package names,
+docs, tests, examples, CI, and publishing configuration. Local hooks and CI
+spelling were not green for the branch. The next work should be split into
+explicit plans rather than folded into this audit PR.
 
 ## Context and Orientation
 
-The current repository is still named `shapix` in source paths and package
-metadata. The desired public identity is `bearshape`. The root package currently
-lives under `src/shapix/`, with backend modules for NumPy, JAX, Torch, CuPy, and
-optree-backed tree validation. The package metadata currently lives in
+The desired public identity is Bearshape. The package metadata lives in
 `pyproject.toml`, tox configuration in `tox.toml`, GitHub workflows in
 `.github/workflows/`, documentation under `docs/`, and public examples in
 `README.md` plus docs pages.
@@ -172,7 +167,7 @@ prevents further audit commands from running.
 
 Sixth, inspect contract artifacts. Read `pyproject.toml`, `tox.toml`,
 `.github/workflows/*.yml`, `README.md`, `CHANGELOG.md`, `CONTRIBUTING.md`,
-`docs/`, `src/shapix/`, `tests/`, and `tests/typing/`. Record obvious drift,
+`docs/`, `src/bearshape/`, `tests/`, and `tests/typing/`. Record obvious drift,
 duplicate or stale surfaces, rename requirements, missing test coverage, and
 docs that advertise behavior not proven by tests.
 
@@ -216,7 +211,7 @@ Run hooks:
 
 Inspect repo contract artifacts:
 
-    rg -n "shapix|shapix-rt|Shapix|bearshape|Bearshape" \
+    rg -n "bearshape|bearshape|Bearshape|bearshape|Bearshape" \
       pyproject.toml tox.toml README.md CHANGELOG.md CONTRIBUTING.md \
       docs src tests .github
     rg -n "cupy|CuPy|CUDA|gpu|GPU" \
@@ -238,34 +233,34 @@ Required evidence:
 - `tests/test_typecheck.py` result recorded.
 - Direct pyright, mypy, and ty results recorded.
 - `prek` hook result recorded.
-- Rename drift from `shapix` / `shapix-rt` to `bearshape` inventoried.
+- Rename drift from `bearshape` / `bearshape` to `bearshape` inventoried.
 - CI, tox, packaging, docs, and typing fixture issues inventoried.
 - Follow-up candidate ExecPlans listed with clear scopes.
 
 ## Current Contract Map
 
-Runtime array contracts currently live in `src/shapix/_array_types.py`,
-`src/shapix/_shape.py`, and backend modules under `src/shapix/`. They are tested
+Runtime array contracts currently live in `src/bearshape/_array_types.py`,
+`src/bearshape/_shape.py`, and backend modules under `src/bearshape/`. They are tested
 mainly by `tests/test_numpy.py`, `tests/test_jax.py`, `tests/test_torch.py`,
 `tests/test_cupy.py`, `tests/test_shape.py`, and `tests/test_coverage_edges.py`.
 Local validation covered NumPy, JAX CPU, Torch CPU, shape internals, and edge
 tests. CuPy runtime validation is deferred.
 
-Dimension syntax and `Value(...)` behavior live in `src/shapix/_dimensions.py`
-and `src/shapix/_shape.py`. They are tested by `tests/test_dimensions.py`,
+Dimension syntax and `Value(...)` behavior live in `src/bearshape/_dimensions.py`
+and `src/bearshape/_shape.py`. They are tested by `tests/test_dimensions.py`,
 `tests/test_shape.py`, backend tests, and typing fixtures that import public
 dimension symbols.
 
-Dtype normalization lives in `src/shapix/_dtypes.py` and is exercised by
+Dtype normalization lives in `src/bearshape/_dtypes.py` and is exercised by
 `tests/test_dtypes.py` plus backend tests. The local baseline passed with
 platform skips for unavailable distinct `float128/longdouble` and
 `complex256/clongdouble`.
 
-Memo and decorator behavior live in `src/shapix/_memo.py` and
-`src/shapix/_decorator.py`. They are tested by `tests/test_memo.py` and
+Memo and decorator behavior live in `src/bearshape/_memo.py` and
+`src/bearshape/_decorator.py`. They are tested by `tests/test_memo.py` and
 `tests/test_decorator.py`, including sync and async paths.
 
-Tree behavior lives in `src/shapix/_tree.py`, `src/shapix/optree.py`, and the
+Tree behavior lives in `src/bearshape/_tree.py`, `src/bearshape/optree.py`, and the
 JAX backend. It is tested by `tests/test_tree.py` and typing fixture
 `tests/typing/check_tree.py`.
 
@@ -274,14 +269,14 @@ under `tests/typing/`. The current checked surface passes pyright 1.1.408, mypy
 1.19.1, and ty 0.0.29. Pyrefly and zuban are not configured.
 
 Docs and examples are contract artifacts, but they are not yet lean. `README.md`
-is long, `docs/` contains Shapix-specific pages and assets, and
-`examples/shapix_tour.ipynb` is included in CI spelling checks.
+is long, `docs/` contains Bearshape-specific pages and assets, and
+`examples/bearshape_tour.ipynb` is included in CI spelling checks.
 
 ## Follow-up Candidate ExecPlans
 
 1. Bearshape rename: rename package metadata, source package, imports, docs,
    examples, CI, publishing URL, coverage source, and public references from
-   Shapix / `shapix-rt` / `shapix` to Bearshape / `bearshape`.
+   Bearshape / `bearshape` / `bearshape` to Bearshape / `bearshape`.
 2. Hook and CI hygiene: resolve the `PLANS.md` versus mdformat/markdownlint
    conflict, remove formatter churn from generated or vendored assets, and align
    local `prek` spelling with the CI `typos .` job.
@@ -333,7 +328,7 @@ uv sync evidence:
 
     uv sync completed successfully.
     Python used: CPython 3.10.20
-    Project installed: shapix-rt==0.0.1 from the local checkout.
+    Project installed: bearshape==0.0.1 from the local checkout.
     Notable warning: the MIT license classifier is deprecated under PEP 639.
 
 Non-CuPy pytest evidence:
@@ -380,16 +375,16 @@ Draft PR CI evidence:
     Spell Check with Typos: fail
 
     The spelling job runs typos . and fails on npt.NDArray in
-    examples/shapix_tour.ipynb.
+    examples/bearshape_tour.ipynb.
 
 Rename inventory evidence:
 
-    rg -o "shapix|shapix-rt|Shapix" ... | wc -l
+    rg -o "bearshape|bearshape|Bearshape" ... | wc -l
     1102
 
     No bearshape/Bearshape matches were found in the checked contract artifacts.
     Explicit stale identity locations include pyproject.toml, mkdocs.yml,
-    README.md, CHANGELOG.md, docs, examples, tests, src/shapix, and
+    README.md, CHANGELOG.md, docs, examples, tests, src/bearshape, and
     .github/workflows/pypi.yml.
 
 ## Interfaces and Dependencies
@@ -406,7 +401,7 @@ The main files and directories under inspection are:
     and uv build settings.
 - `tox.toml` for version and backend matrix validation.
 - `.github/workflows/` for CI, docs, nightly, and PyPI publishing workflows.
-- `src/shapix/` for the current runtime package.
+- `src/bearshape/` for the current runtime package.
 - `tests/` for runtime behavior.
 - `tests/typing/` for static typing fixtures.
 - `README.md`, `docs/`, `CONTRIBUTING.md`, and `CHANGELOG.md` for public

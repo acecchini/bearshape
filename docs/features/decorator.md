@@ -1,5 +1,5 @@
 ---
-description: Explicit memo management with @shapix.check and check_context.
+description: Explicit memo management with @bearshape.check and check_context.
 ---
 
 # Decorator & Memo
@@ -15,8 +15,8 @@ during one call. That shared memo is why:
 
 ```python
 from beartype import beartype
-from shapix import N, C
-from shapix.numpy import F32
+from bearshape import N, C
+from bearshape.numpy import F32
 
 @beartype
 def f(x: F32[N, C], y: F32[N, C]) -> F32[N, C]:
@@ -30,22 +30,22 @@ that.
 
 Use plain `@beartype` by default.
 
-Add `@shapix.check` only when you need explicit memo scope rather than frame
+Add `@bearshape.check` only when you need explicit memo scope rather than frame
 discovery.
 
-- `@beartype` What it does: lets shapix find the shared memo by walking the
+- `@beartype` What it does: lets bearshape find the shared memo by walking the
     beartype call stack. Right fit: normal application code with no unusual
     wrapper layers.
 
-- `@shapix.check` + `@beartype` What it does: pushes one memo explicitly before
-    the call and pops it after. Right fit: middleware-heavy stacks, wrapper
-    decorators, async `Value(...)`, or defensive correctness.
+- `@bearshape.check` + `@beartype` What it does: pushes one memo explicitly
+    before the call and pops it after. Right fit: middleware-heavy stacks,
+    wrapper decorators, async `Value(...)`, or defensive correctness.
 
-- `@shapix.check(conf=...)` What it does: same explicit memo handling, and
+- `@bearshape.check(conf=...)` What it does: same explicit memo handling, and
     applies beartype for you. Right fit: when you also want to pass
     `BeartypeConf` without stacking both decorators manually.
 
-What `@shapix.check` changes:
+What `@bearshape.check` changes:
 
 - how the shared memo is found
 - how long that memo lives around the call
@@ -56,21 +56,21 @@ What it does **not** change:
 - whether return values are checked
 - whether plain `@beartype` remains the simplest choice for ordinary code
 
-## `@shapix.check`
+## `@bearshape.check`
 
-`@shapix.check` provides explicit memo management. Instead of discovering the
+`@bearshape.check` provides explicit memo management. Instead of discovering the
 correct beartype frame dynamically, it pushes a memo before the call and pops it
 afterwards.
 
 ### Usage mode 1: memo only
 
 ```python
-import shapix
+import bearshape
 from beartype import beartype
-from shapix import N, C
-from shapix.numpy import F32
+from bearshape import N, C
+from bearshape.numpy import F32
 
-@shapix.check
+@bearshape.check
 @beartype
 def f(x: F32[N, C], y: F32[N, C]) -> F32[N, C]:
   ...
@@ -79,12 +79,12 @@ def f(x: F32[N, C], y: F32[N, C]) -> F32[N, C]:
 ### Usage mode 2: memo + beartype combined
 
 ```python
-import shapix
+import bearshape
 from beartype import BeartypeConf, BeartypeStrategy
-from shapix import N, C
-from shapix.numpy import F32
+from bearshape import N, C
+from bearshape.numpy import F32
 
-@shapix.check(conf=BeartypeConf(strategy=BeartypeStrategy.On))
+@bearshape.check(conf=BeartypeConf(strategy=BeartypeStrategy.On))
 def f(x: F32[N, C], y: F32[N, C]) -> F32[N, C]:
   ...
 ```
@@ -111,12 +111,12 @@ Concrete examples:
 
 ## Async support
 
-`@shapix.check` supports both sync and async callables:
+`@bearshape.check` supports both sync and async callables:
 
 - `inspect.iscoroutinefunction()` remains `True`
 - the memo lifetime covers the awaited execution, not just coroutine creation
 - parameter mismatches and return mismatches are still raised normally
-- `@shapix.check(conf=...)` works for async functions too
+- `@bearshape.check(conf=...)` works for async functions too
 
 Generator functions are intentionally rejected:
 
@@ -125,8 +125,8 @@ Generator functions are intentionally rejected:
 
 !!! tip "When you don't need it" If plain `@beartype` is already working in your
 
-codebase, keep it simple. `@shapix.check` is an explicit escape hatch, not the
-default style.
+codebase, keep it simple. `@bearshape.check` is an explicit escape hatch, not
+the default style.
 
 ## `check_context`
 
@@ -135,27 +135,27 @@ share one memo.
 
 ```python
 from beartype.door import is_bearable
-import shapix
-from shapix import N, C
-from shapix.numpy import F32
+import bearshape
+from bearshape import N, C
+from bearshape.numpy import F32
 
 is_bearable(x, F32[N, C])  # independent temporary memo
 is_bearable(y, F32[N, C])  # independent temporary memo
 
-with shapix.check_context():
+with bearshape.check_context():
   assert is_bearable(x, F32[N, C])
   assert is_bearable(y, F32[N, C])
 ```
 
 `check_context` supports both:
 
-- `with shapix.check_context():`
-- `async with shapix.check_context():`
+- `with bearshape.check_context():`
+- `async with bearshape.check_context():`
 
 ## Thread and async safety
 
 - frame-based auto-detection uses `threading.local()` for thread isolation
-- the explicit memo stack used by `@shapix.check` and `check_context()` uses
+- the explicit memo stack used by `@bearshape.check` and `check_context()` uses
     `contextvars.ContextVar`
 
 !!! note Child tasks inheriting an active parent context share the same live
@@ -165,14 +165,14 @@ memo by reference. For full task isolation, each task should enter its own
 
 ## `from __future__ import annotations`
 
-Shapix works with `from __future__ import annotations`, but every symbol used
+Bearshape works with `from __future__ import annotations`, but every symbol used
 inside the annotation must still be imported in module scope:
 
 ```python
 from __future__ import annotations
 from beartype import beartype
-from shapix import B, C
-from shapix.numpy import F32
+from bearshape import B, C
+from bearshape.numpy import F32
 
 @beartype
 def f(x: F32[~B, C]):  # type: ignore[valid-type]

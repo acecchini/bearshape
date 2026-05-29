@@ -3,7 +3,7 @@
 Tested with: pyright, mypy, ty
 """
 
-from shapix.numpy import (
+from bearshape.numpy import (
   ArrayLike,
   # Array Like types
   BoolLike,

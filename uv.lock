@@ -2139,7 +2139,7 @@ wheels = [
 ]
 
 [[package]]
-name = "shapix-rt"
+name = "bearshape"
 version = "0.0.1"
 source = { editable = "." }
 dependencies = [

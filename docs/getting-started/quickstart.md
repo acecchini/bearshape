@@ -7,7 +7,7 @@ description: Write your first shape-checked function and learn the core executio
 # Quick Start
 
 This page uses NumPy for concreteness, but the same shape language works across
-`shapix.jax`, `shapix.torch`, and `shapix.cupy`.
+`bearshape.jax`, `bearshape.torch`, and `bearshape.cupy`.
 
 ## 1. Start with standard `@beartype`
 
@@ -17,8 +17,8 @@ module:
 ```python
 import numpy as np
 from beartype import beartype
-from shapix import N, C
-from shapix.numpy import F32
+from bearshape import N, C
+from bearshape.numpy import F32
 
 @beartype
 def normalize(x: F32[N, C]) -> F32[N, C]:
@@ -82,19 +82,19 @@ f(np.ones((3,), dtype=np.float32))  # N = 3
 f(np.ones((100,), dtype=np.float32))  # N = 100, no conflict with the prior call
 ```
 
-## 5. Add `@shapix.check` only when you need explicit memo scope
+## 5. Add `@bearshape.check` only when you need explicit memo scope
 
-Most code should stop at `@beartype`. Add `@shapix.check` when you want the
+Most code should stop at `@beartype`. Add `@bearshape.check` when you want the
 shared shape memo to be pushed explicitly instead of discovered through the
 beartype wrapper stack:
 
 ```python
-import shapix
+import bearshape
 from beartype import beartype
-from shapix import Value
-from shapix.numpy import F32
+from bearshape import Value
+from bearshape.numpy import F32
 
-@shapix.check
+@bearshape.check
 @beartype
 async def make_batch(size: int) -> F32[Value("size")]:  # type: ignore[valid-type]
   ...

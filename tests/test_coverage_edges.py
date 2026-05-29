@@ -10,15 +10,15 @@ import numpy as np
 import pytest
 from beartype import BeartypeConf
 
-import shapix._memo as memo_mod
-from shapix import N
-from shapix._array_types import _ArrayChecker, _to_shape_spec, make_array_type
-from shapix._dtypes import FLOAT32, extract_dtype_str
-from shapix._memo import ShapeMemo, bindings_str, get_memo
-from shapix._shape import FixedDim, NamedDim, VariadicDim, check_shape
-from shapix._tree import _TreeFactory
-from shapix.claw import shapix_this_package
-from shapix.numpy import F32
+import bearshape._memo as memo_mod
+from bearshape import N
+from bearshape._array_types import _ArrayChecker, _to_shape_spec, make_array_type
+from bearshape._dtypes import FLOAT32, extract_dtype_str
+from bearshape._memo import ShapeMemo, bindings_str, get_memo
+from bearshape._shape import FixedDim, NamedDim, VariadicDim, check_shape
+from bearshape._tree import _TreeFactory
+from bearshape.claw import bearshape_this_package
+from bearshape.numpy import F32
 
 
 class TestArrayFactoryEdges:
@@ -45,7 +45,7 @@ class TestArrayFactoryEdges:
 class TestByteorderEdgePaths:
   def test_single_byte_with_endianness_spec_passes(self) -> None:
     """Single-byte dtype with non-'any' byteorder spec should always pass (bo='|')."""
-    from shapix._dtypes import DtypeSpec
+    from bearshape._dtypes import DtypeSpec
 
     # Create a little-endian int8 spec — unusual but valid
     spec = DtypeSpec("I8LE", frozenset({"int8"}), byteorder="little")
@@ -55,7 +55,7 @@ class TestByteorderEdgePaths:
 
   def test_multi_byte_little_endian_matches(self) -> None:
     """Multi-byte dtype with matching endianness spec should pass."""
-    from shapix._dtypes import DtypeSpec
+    from bearshape._dtypes import DtypeSpec
 
     spec = DtypeSpec("F32LE", frozenset({"float32"}), byteorder="little")
     arr = np.zeros(2, dtype="<f4")  # explicit little-endian float32
@@ -63,7 +63,7 @@ class TestByteorderEdgePaths:
 
   def test_multi_byte_big_endian_rejected(self) -> None:
     """Multi-byte dtype with mismatched endianness spec should fail."""
-    from shapix._dtypes import DtypeSpec
+    from bearshape._dtypes import DtypeSpec
 
     spec = DtypeSpec("F32LE", frozenset({"float32"}), byteorder="little")
     arr = np.zeros(2, dtype=">f4")  # explicit big-endian float32
@@ -71,7 +71,7 @@ class TestByteorderEdgePaths:
 
   def test_extract_dtype_str_dtype_type_without_name(self) -> None:
     """dtype.type exists but __name__ is None should fall through."""
-    from shapix._dtypes import extract_dtype_str
+    from bearshape._dtypes import extract_dtype_str
 
     class FakeDtypeType:
       __name__ = None  # type: ignore[assignment]
@@ -167,7 +167,7 @@ class TestTreeFactoryEdgeBranches:
       tree[F32[N], ...]
 
   def test_tree_both_ellipsis_raises(self) -> None:
-    from shapix._tree import Structure
+    from bearshape._tree import Structure
 
     tree = _TreeFactory(object, name="Tree")
     X = Structure("X")
@@ -179,14 +179,14 @@ class TestTreeFactoryEdgeBranches:
 
 class TestArrayFactoryShapeSpecEdges:
   def test_scalar_dim_to_shape_spec(self) -> None:
-    from shapix._dimensions import Scalar
+    from bearshape._dimensions import Scalar
 
     specs = _to_shape_spec((Scalar,))
     assert specs == ()
 
   def test_mixed_type_shape_spec(self) -> None:
-    from shapix._dimensions import Dimension
-    from shapix._shape import ANONYMOUS_VARIADIC
+    from bearshape._dimensions import Dimension
+    from bearshape._shape import ANONYMOUS_VARIADIC
 
     specs = _to_shape_spec((3, Dimension("N"), Ellipsis))
     assert specs[0] == FixedDim(3)
@@ -197,7 +197,7 @@ class TestArrayFactoryShapeSpecEdges:
     checker = _ArrayChecker(FLOAT32, (NamedDim("N"),))
     arr = np.ones((10,), dtype=np.float32)
     # Should fail because N=5 != 10, and memo should be restored
-    from shapix._memo import pop_memo, push_memo
+    from bearshape._memo import pop_memo, push_memo
 
     push_memo_ref = push_memo()
     push_memo_ref.single["N"] = 5
@@ -209,7 +209,7 @@ class TestArrayFactoryShapeSpecEdges:
 class TestArrayLikeCheckerEdges:
   def test_casting_no_uses_strict_match(self) -> None:
     """casting='no' should only accept exact dtype match."""
-    from shapix._array_types import _ArrayLikeChecker
+    from bearshape._array_types import _ArrayLikeChecker
 
     checker = _ArrayLikeChecker(FLOAT32, (NamedDim("X"),), casting="no", name="F32Like")
     assert checker(np.ones(3, dtype=np.float32)) is True
@@ -217,8 +217,8 @@ class TestArrayLikeCheckerEdges:
 
   def test_wildcard_dtype_accepts_anything(self) -> None:
     """SHAPED's wildcard '*' in allowed should accept any dtype."""
-    from shapix._array_types import _ArrayLikeChecker
-    from shapix._dtypes import SHAPED
+    from bearshape._array_types import _ArrayLikeChecker
+    from bearshape._dtypes import SHAPED
 
     checker = _ArrayLikeChecker(
       SHAPED, (NamedDim("X"),), casting="same_kind", name="ShapedLike"
@@ -229,7 +229,7 @@ class TestArrayLikeCheckerEdges:
 
   def test_asarray_failure_returns_false(self) -> None:
     """Objects that can't be converted to array should return False."""
-    from shapix._array_types import _ArrayLikeChecker
+    from bearshape._array_types import _ArrayLikeChecker
 
     checker = _ArrayLikeChecker(
       FLOAT32, (NamedDim("X"),), casting="same_kind", name="F32Like"
@@ -246,7 +246,7 @@ class TestArrayLikeCheckerEdges:
 
   def test_asarray_slow_path_bad_dtype(self) -> None:
     """Slow-path object whose dtype string is empty should fail."""
-    from shapix._array_types import _ArrayLikeChecker
+    from bearshape._array_types import _ArrayLikeChecker
 
     # A plain list goes through slow path (no .shape/.dtype), converts to array
     # but complex128 can't cast to float32 under same_kind
@@ -259,8 +259,8 @@ class TestArrayLikeCheckerEdges:
 
   def test_arraylike_memo_restore_on_shape_failure(self) -> None:
     """ArrayLikeChecker should restore memo on shape mismatch."""
-    from shapix._array_types import _ArrayLikeChecker
-    from shapix._memo import pop_memo, push_memo
+    from bearshape._array_types import _ArrayLikeChecker
+    from bearshape._memo import pop_memo, push_memo
 
     checker = _ArrayLikeChecker(
       FLOAT32, (NamedDim("N"),), casting="same_kind", name="F32Like"
@@ -276,7 +276,7 @@ class TestArrayLikeCheckerEdges:
 
   def test_arraylike_dtype_no_source_returns_false(self) -> None:
     """Object with dtype but no extractable string should fail."""
-    from shapix._array_types import _ArrayLikeChecker
+    from bearshape._array_types import _ArrayLikeChecker
 
     class WeirdDtype:
       pass
@@ -292,8 +292,8 @@ class TestArrayLikeCheckerEdges:
 
   def test_arraylike_can_cast_type_error(self) -> None:
     """np.can_cast TypeError should be caught gracefully."""
-    from shapix._array_types import _ArrayLikeChecker
-    from shapix._dtypes import DtypeSpec
+    from bearshape._array_types import _ArrayLikeChecker
+    from bearshape._dtypes import DtypeSpec
 
     # Create a spec with a bogus target dtype name
     bogus = DtypeSpec("Bogus", frozenset({"not_a_real_dtype"}))
@@ -303,7 +303,7 @@ class TestArrayLikeCheckerEdges:
     assert checker(np.ones(3, dtype=np.float32)) is False
 
   def test_arraylike_repr(self) -> None:
-    from shapix._array_types import _ArrayLikeChecker
+    from bearshape._array_types import _ArrayLikeChecker
 
     checker = _ArrayLikeChecker(
       FLOAT32, (NamedDim("N"), NamedDim("C")), casting="same_kind", name="F32Like"
@@ -312,21 +312,21 @@ class TestArrayLikeCheckerEdges:
 
   def test_arraylike_factory_single_dim_subscript(self) -> None:
     """F32Like[N] (single dim, not tuple) should work."""
-    from shapix._array_types import make_array_like_type
+    from bearshape._array_types import make_array_like_type
 
     factory = make_array_like_type(FLOAT32, name="F32Like")
     hint = factory[N]
     assert hasattr(hint, "__metadata__")
 
   def test_arraylike_factory_repr(self) -> None:
-    from shapix._array_types import make_array_like_type
+    from bearshape._array_types import make_array_like_type
 
     factory = make_array_like_type(FLOAT32, name="F32Like")
     assert repr(factory) == "F32Like"
 
   def test_arraylike_fail_obj_replay(self) -> None:
     """Second call with same failing obj should replay failure."""
-    from shapix._array_types import _ArrayLikeChecker
+    from bearshape._array_types import _ArrayLikeChecker
 
     checker = _ArrayLikeChecker(FLOAT32, (NamedDim("N"),), casting="no", name="F32Like")
     bad_obj = np.ones(3, dtype=np.int64)
@@ -343,25 +343,25 @@ class TestArrayLikeCheckerEdges:
 
 class TestInputValidation:
   def test_invalid_casting_in_make_array_like_type(self) -> None:
-    from shapix._array_types import make_array_like_type
+    from bearshape._array_types import make_array_like_type
 
     with pytest.raises(ValueError, match="Invalid casting"):
       make_array_like_type(FLOAT32, casting="bogus")
 
   def test_invalid_casting_in_make_scalar_like_type(self) -> None:
-    from shapix.numpy import make_scalar_like_type
+    from bearshape.numpy import make_scalar_like_type
 
     with pytest.raises(ValueError, match="Invalid casting"):
       make_scalar_like_type(np.float32, casting="bogus")
 
   def test_invalid_byteorder_in_dtype_spec(self) -> None:
-    from shapix._dtypes import DtypeSpec
+    from bearshape._dtypes import DtypeSpec
 
     with pytest.raises(ValueError, match="Invalid byteorder"):
       DtypeSpec("Bad", frozenset({"float32"}), byteorder="wrong")
 
   def test_valid_castings_accepted(self) -> None:
-    from shapix._array_types import make_array_like_type
+    from bearshape._array_types import make_array_like_type
 
     for casting in ("no", "equiv", "safe", "same_kind", "unsafe"):
       factory = make_array_like_type(FLOAT32, casting=casting)
@@ -385,7 +385,7 @@ class TestInputValidation:
 class TestScalarLikeFactory:
   def test_make_scalar_like_type_exception_path(self) -> None:
     """Objects where np.asarray or np.can_cast raises should return False."""
-    from shapix.numpy import make_scalar_like_type
+    from bearshape.numpy import make_scalar_like_type
 
     T = make_scalar_like_type(np.float32, casting="same_kind")
 
@@ -401,7 +401,7 @@ class TestScalarLikeFactory:
   def test_make_scalar_like_type_exact_match(self) -> None:
     from beartype.door import is_bearable
 
-    from shapix.numpy import make_scalar_like_type
+    from bearshape.numpy import make_scalar_like_type
 
     T = make_scalar_like_type(np.float32, casting="no")
     assert is_bearable(np.float32(1.0), T)
@@ -409,12 +409,12 @@ class TestScalarLikeFactory:
 
 
 class TestVersionExport:
-  def test_shapix_has_version(self) -> None:
-    import shapix
+  def test_bearshape_has_version(self) -> None:
+    import bearshape
 
-    assert hasattr(shapix, "__version__")
-    assert isinstance(shapix.__version__, str)
-    assert len(shapix.__version__) > 0
+    assert hasattr(bearshape, "__version__")
+    assert isinstance(bearshape.__version__, str)
+    assert len(bearshape.__version__) > 0
 
   def test_root_import_does_not_require_numpy(self) -> None:
     script = """
@@ -432,8 +432,8 @@ def fake_import(name, globals=None, locals=None, fromlist=(), level=0):
 
 builtins.__import__ = fake_import
 try:
-    import shapix
-    print(hasattr(shapix, 'Value'), hasattr(shapix, 'make_scalar_like_type'))
+    import bearshape
+    print(hasattr(bearshape, 'Value'), hasattr(bearshape, 'make_scalar_like_type'))
 finally:
     builtins.__import__ = real_import
 """
@@ -469,15 +469,15 @@ builtins.__import__ = fake_import
 import importlib.metadata
 _real_version = importlib.metadata.version
 def _fake_version(name):
-    if name == 'shapix':
+    if name == 'bearshape':
         raise importlib.metadata.PackageNotFoundError(name)
     return _real_version(name)
 
 importlib.metadata.version = _fake_version
 
 try:
-    import shapix
-    print(shapix.__version__)
+    import bearshape
+    print(bearshape.__version__)
 finally:
     builtins.__import__ = real_import
     importlib.metadata.version = _real_version
@@ -510,7 +510,7 @@ def fake_import_module(name, package=None):
 
 importlib.import_module = fake_import_module
 try:
-    import shapix.cupy
+    import bearshape.cupy
 except ModuleNotFoundError as exc:
     print(exc)
 finally:
@@ -524,12 +524,12 @@ finally:
       check=False,
     )
     assert result.returncode == 0, result.stderr
-    assert "shapix.cupy requires 'cupy' at runtime." in result.stdout
+    assert "bearshape.cupy requires 'cupy' at runtime." in result.stdout
 
 
 class TestNewDimensionSymbols:
   def test_d_and_k_available(self) -> None:
-    from shapix import D, K
+    from bearshape import D, K
 
     assert str(D) == "D"
     assert str(K) == "K"
@@ -537,8 +537,8 @@ class TestNewDimensionSymbols:
   def test_d_and_k_in_annotations(self) -> None:
     from beartype import beartype
 
-    from shapix import D, K
-    from shapix.numpy import F32  # noqa: F401
+    from bearshape import D, K
+    from bearshape.numpy import F32  # noqa: F401
 
     @beartype
     def f(x: F32[D, K]) -> F32[D, K]:  # type: ignore[valid-type]
@@ -554,7 +554,7 @@ class TestTrustedTypesParameter:
 
   def test_trusted_types_none_uses_global(self) -> None:
     """trusted_types=None falls back to global _is_trusted_array."""
-    from shapix._array_types import _ArrayLikeChecker
+    from bearshape._array_types import _ArrayLikeChecker
 
     checker = _ArrayLikeChecker(
       FLOAT32, (NamedDim("X"),), casting="same_kind", name="F32Like"
@@ -564,7 +564,7 @@ class TestTrustedTypesParameter:
 
   def test_trusted_types_scoped(self) -> None:
     """trusted_types restricts fast path to specified types."""
-    from shapix._array_types import _ArrayLikeChecker
+    from bearshape._array_types import _ArrayLikeChecker
 
     # Only trust np.ndarray
     checker = _ArrayLikeChecker(
@@ -580,7 +580,7 @@ class TestTrustedTypesParameter:
 
   def test_factory_threads_trusted_types(self) -> None:
     """make_array_like_type passes trusted_types to factory."""
-    from shapix._array_types import make_array_like_type
+    from bearshape._array_types import make_array_like_type
 
     factory = make_array_like_type(FLOAT32, name="F32Like", trusted_types=(np.ndarray,))
     assert factory._trusted_types == (np.ndarray,)
@@ -588,17 +588,17 @@ class TestTrustedTypesParameter:
 
 class TestTrustedArrayCache:
   def test_ndarray_is_trusted(self) -> None:
-    from shapix._array_types import _is_trusted_array
+    from bearshape._array_types import _is_trusted_array
 
     assert _is_trusted_array(np.ones(3))
 
   def test_plain_object_not_trusted(self) -> None:
-    from shapix._array_types import _is_trusted_array
+    from bearshape._array_types import _is_trusted_array
 
     assert not _is_trusted_array(object())
 
   def test_spoofed_not_trusted(self) -> None:
-    from shapix._array_types import _is_trusted_array
+    from bearshape._array_types import _is_trusted_array
 
     class Fake:
       shape = (3,)
@@ -608,7 +608,7 @@ class TestTrustedArrayCache:
 
 
 class TestClawWrapper:
-  def test_shapix_this_package_delegates_to_beartype(
+  def test_bearshape_this_package_delegates_to_beartype(
     self, monkeypatch: pytest.MonkeyPatch
   ) -> None:
     captured: dict[str, object] = {}
@@ -616,10 +616,10 @@ class TestClawWrapper:
     def _fake_beartype_this_package(*, conf: object) -> None:
       captured["conf"] = conf
 
-    import shapix.claw as claw_mod
+    import bearshape.claw as claw_mod
 
     monkeypatch.setattr(claw_mod, "_beartype_this_package", _fake_beartype_this_package)
     conf = BeartypeConf()
-    shapix_this_package(conf=conf)
+    bearshape_this_package(conf=conf)
 
     assert captured["conf"] is conf

@@ -6,7 +6,7 @@ Two modes of operation:
    context is detected automatically using the beartype wrapper's frame identity.
    All parameter checks within one function call share the same memo.
 
-2. **Explicit (push/pop)**: When used with ``@shapix.check``, the memo is managed
+2. **Explicit (push/pop)**: When used with ``@bearshape.check``, the memo is managed
    via an explicit stack stored in a :class:`contextvars.ContextVar`.  This is
    guaranteed correct regardless of call-stack depth.  The stack structure is
    async-task-safe (push/pop in one task cannot mutate another's stack), but
@@ -78,7 +78,7 @@ class ShapeMemo:
 
 
 # ---------------------------------------------------------------------------
-# Explicit stack (used by @shapix.check / check_context)
+# Explicit stack (used by @bearshape.check / check_context)
 #
 # Stored as immutable tuples in ContextVar so that asyncio task fork
 # cannot modify the parent's stack (push/pop are isolated).  Note that
@@ -202,7 +202,7 @@ def get_memo(_depth: int = 2) -> ShapeMemo:
 
   Resolution order:
 
-  1. If an explicit memo was pushed (via ``@shapix.check``), use it.
+  1. If an explicit memo was pushed (via ``@bearshape.check``), use it.
   2. Otherwise, identify the call context from the beartype wrapper frame
      and reuse or create a memo keyed by that frame's identity.
   3. If all else fails, return a fresh temporary memo (no cross-arg checking).

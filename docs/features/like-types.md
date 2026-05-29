@@ -4,7 +4,7 @@ description: Input-validation types for array-like data and range-validated scal
 
 # Like Types
 
-Shapix has two broad input-contract families:
+Bearshape has two broad input-contract families:
 
 - `Like` types such as `F32Like[N, C]`
 - `ScalarLike` types such as `U8ScalarLike`
@@ -20,8 +20,8 @@ They must always be subscripted.
 ```python
 import numpy as np
 from beartype import beartype
-from shapix import N, C
-from shapix.numpy import F32, F32Like
+from bearshape import N, C
+from bearshape.numpy import F32, F32Like
 
 @beartype
 def to_array(x: F32Like[...]) -> np.ndarray:
@@ -72,7 +72,7 @@ component, only value- and dtype-family constraints.
 
 ```python
 from beartype import beartype
-from shapix.numpy import U8ScalarLike
+from bearshape.numpy import U8ScalarLike
 
 @beartype
 def clamp_pixel(value: U8ScalarLike) -> int:
@@ -86,8 +86,8 @@ clamp_pixel(-1)  # Raises
 !!! warning "Boolean exclusion" Numeric scalar aliases (`I8ScalarLike`,
 
 `F32ScalarLike`, `NumScalarLike`, etc.) reject `bool` and `np.bool_` values.
-Python `bool` is a subclass of `int`, but shapix treats booleans as non-numeric.
-Use `BoolScalarLike` for boolean scalars.
+Python `bool` is a subclass of `int`, but bearshape treats booleans as
+non-numeric. Use `BoolScalarLike` for boolean scalars.
 
 Available families include:
 
@@ -101,10 +101,10 @@ Available families include:
 Backend modules re-export these NumPy-defined scalar types:
 
 ```python
-from shapix.numpy import U8ScalarLike
-from shapix.jax import U8ScalarLike
-from shapix.torch import U8ScalarLike
-from shapix.cupy import U8ScalarLike
+from bearshape.numpy import U8ScalarLike
+from bearshape.jax import U8ScalarLike
+from bearshape.torch import U8ScalarLike
+from bearshape.cupy import U8ScalarLike
 ```
 
 !!! note Backend-native 0-D arrays such as `jnp.array(1.0)` or
@@ -116,11 +116,11 @@ example `F32Like[Scalar]`.
 
 The `Like` family is intentionally backend-aware:
 
-- `shapix.numpy` slow-path conversion uses `np.asarray`
-- `shapix.jax` slow-path conversion uses `jnp.asarray`, so objects implementing
-    `__jax_array__` are accepted
-- `shapix.torch` slow-path conversion uses `torch.as_tensor`
-- `shapix.cupy` slow-path conversion uses `cupy.asarray`
+- `bearshape.numpy` slow-path conversion uses `np.asarray`
+- `bearshape.jax` slow-path conversion uses `jnp.asarray`, so objects
+    implementing `__jax_array__` are accepted
+- `bearshape.torch` slow-path conversion uses `torch.as_tensor`
+- `bearshape.cupy` slow-path conversion uses `cupy.asarray`
 
 Static type checkers only see the backend array type, not the broader runtime
 acceptance of scalars and nested sequences.
@@ -132,7 +132,7 @@ quite right for your API:
 
 ```python
 import numpy as np
-from shapix.numpy import make_scalar_like_type
+from bearshape.numpy import make_scalar_like_type
 
 F32ScalarDefault = make_scalar_like_type(np.float32)  # same_kind
 F32ScalarStrict = make_scalar_like_type(np.float32, casting="no")
@@ -162,7 +162,8 @@ BoolScalar = make_scalar_like_type(np.bool_)
 ```
 
 `make_scalar_like_type` is intentionally documented on backend modules such as
-`shapix.numpy`; it is not part of the lightweight root `shapix` import surface.
+`bearshape.numpy`; it is not part of the lightweight root `bearshape` import
+surface.
 
 ## Casting rules
 
@@ -192,8 +193,8 @@ If you need stricter or looser input acceptance, make a custom alias instead of
 relying on the built-ins:
 
 ```python
-from shapix import make_array_like_type
-from shapix._dtypes import FLOAT32
+from bearshape import make_array_like_type
+from bearshape._dtypes import FLOAT32
 
 F32Exact = make_array_like_type(FLOAT32, casting="no", name="F32Exact")
 F32Unsafe = make_array_like_type(FLOAT32, casting="unsafe", name="F32Unsafe")
@@ -201,15 +202,15 @@ F32Unsafe = make_array_like_type(FLOAT32, casting="unsafe", name="F32Unsafe")
 
 ## `ArrayLike` template
 
-`shapix.numpy.ArrayLike` is a public recursive type alias for custom static
+`bearshape.numpy.ArrayLike` is a public recursive type alias for custom static
 typing combinations:
 
 ```python
 import numpy as np
-from shapix.numpy import ArrayLike
+from bearshape.numpy import ArrayLike
 
 type MyInputType = ArrayLike[float, np.float32]
 ```
 
 That template is most useful when you want your own checker-friendly alias but
-still follow shapix's "scalar or nested sequence or array" model.
+still follow bearshape's "scalar or nested sequence or array" model.

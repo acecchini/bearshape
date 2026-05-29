@@ -3,9 +3,9 @@
 
 Usage::
 
-    from shapix import N, C, T, S, Structure
-    from shapix.optree import Tree
-    from shapix.numpy import F32
+    from bearshape import N, C, T, S, Structure
+    from bearshape.optree import Tree
+    from bearshape.numpy import F32
 
 
     @beartype
@@ -29,7 +29,7 @@ def _get_optree() -> tp.Any:
   return require_module(
     "optree",
     install_hint=(
-      "shapix.optree requires 'optree' at runtime. "
+      "bearshape.optree requires 'optree' at runtime. "
       "Install it with `pip install optree`."
     ),
   )

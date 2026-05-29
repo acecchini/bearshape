@@ -1,4 +1,4 @@
-"""Shapix — elegant runtime shape and dtype checking for array annotations.
+"""Bearshape — elegant runtime shape and dtype checking for array annotations.
 
 Works with standard ``@beartype`` decorators and ``beartype.claw`` import hooks.
 No custom decorator required for basic usage. Plain ``@beartype`` checks share
@@ -9,8 +9,8 @@ structure diagnostics.
 Quick start::
 
     from beartype import beartype
-    from shapix import N, C, H, W
-    from shapix.numpy import F32
+    from bearshape import N, C, H, W
+    from bearshape.numpy import F32
 
 
     @beartype
@@ -19,7 +19,7 @@ Quick start::
 Dimension symbols (``N``, ``C``, ``H``, ``W``, …) are bound on first use
 within a function call and enforced on subsequent occurrences. This gives
 automatic cross-argument shape consistency with no extra boilerplate. Use
-``@shapix.check`` or ``check_context()`` when you want that memo scope to be
+``@bearshape.check`` or ``check_context()`` when you want that memo scope to be
 explicit instead of frame-discovered.
 
 Exports
@@ -43,8 +43,8 @@ Unary operators
 Classes
     :class:`Dimension` — create custom dimension symbols with arithmetic support.
     :class:`DtypeSpec` — describe a set of allowed dtypes by string name.
-    ``Tree`` — subscriptable tree annotation, import from ``shapix.optree``
-    or ``shapix.jax``.
+    ``Tree`` — subscriptable tree annotation, import from ``bearshape.optree``
+    or ``bearshape.jax``.
 
 Functions
     :func:`make_array_type` — create subscriptable array type factories for
@@ -63,7 +63,7 @@ Context managers
 from importlib.metadata import PackageNotFoundError, version
 
 try:
-  __version__ = version("shapix")
+  __version__ = version("bearshape")
 except PackageNotFoundError:
   __version__ = "0+unknown"
 

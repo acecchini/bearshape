@@ -1,6 +1,6 @@
 """Verify F32[N, C] annotation pattern type-checks cleanly.
 
-Tests the full shapix annotation pattern including dimension-subscripted
+Tests the full bearshape annotation pattern including dimension-subscripted
 array types with pyright, mypy, and ty.
 
 Advanced runtime-only constructs are exercised through named aliases in
@@ -15,8 +15,8 @@ from typing import TYPE_CHECKING, TypeAlias
 import numpy as np
 from beartype import beartype
 
-from shapix import B, C, Dimension, H, N, Scalar, Value, W, __, check, check_context
-from shapix.numpy import (
+from bearshape import B, C, Dimension, H, N, Scalar, Value, W, __, check, check_context
+from bearshape.numpy import (
   C64,
   C128,
   C256,

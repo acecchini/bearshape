@@ -20,11 +20,11 @@ from beartype.roar import (
   BeartypeCallHintReturnViolation,
 )
 
-import shapix
-from shapix import C, H, N, S, T, Value, W, __
-from shapix._tree import Structure, _TreeFactory
-from shapix.numpy import F32, F64, I64, Shaped
-from shapix.optree import Tree
+import bearshape
+from bearshape import C, H, N, S, T, Value, W, __
+from bearshape._tree import Structure, _TreeFactory
+from bearshape.numpy import F32, F64, I64, Shaped
+from bearshape.optree import Tree
 
 # =====================================================================
 # Basic leaf type checking
@@ -107,7 +107,7 @@ class TestCrossLeafConsistency:
   """All leaves in a Tree share the same dimension memo."""
 
   def test_consistent_shapes(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N, C]]) -> Tree[F32[N, C]]:
       return x
@@ -115,7 +115,7 @@ class TestCrossLeafConsistency:
     f({"a": np.ones((3, 4), dtype=np.float32), "b": np.ones((3, 4), dtype=np.float32)})
 
   def test_inconsistent_N_rejected(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N, C]]) -> Tree[F32[N, C]]:
       return x
@@ -129,7 +129,7 @@ class TestCrossLeafConsistency:
   def test_anonymous_dims_no_consistency(self) -> None:
     """Anonymous dims (__) should not enforce cross-leaf consistency."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[__, C]]) -> Tree[F32[__, C]]:
       return x
@@ -149,7 +149,7 @@ class TestStructureBinding:
   """Tree[LeafType, T] enforces tree structure consistency."""
 
   def test_same_structure_passes(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N, C], T], y: Tree[F32[N, C], T]) -> Tree[F32[N, C]]:
       return x
@@ -161,7 +161,7 @@ class TestStructureBinding:
     f(tree, tree)
 
   def test_different_structure_rejected(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -172,7 +172,7 @@ class TestStructureBinding:
       f(x, y)
 
   def test_different_keys_rejected(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -185,7 +185,7 @@ class TestStructureBinding:
   def test_independent_structure_names(self) -> None:
     """Different names bind independently."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], S], y: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -195,7 +195,7 @@ class TestStructureBinding:
     f(x, y)  # OK — S and T are independent
 
   def test_list_structure_match(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -205,7 +205,7 @@ class TestStructureBinding:
     f(x, y)
 
   def test_nested_structure_match(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -226,7 +226,7 @@ class TestCrossArgConsistency:
   """Dimension bindings are shared between Tree and plain array args."""
 
   def test_pytree_and_plain_array(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(params: Tree[F32[N, C]], bias: F32[C]) -> Tree[F32[N, C]]:
       return params
@@ -236,7 +236,7 @@ class TestCrossArgConsistency:
     f(params, bias)
 
   def test_pytree_and_plain_array_mismatch(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(params: Tree[F32[N, C]], bias: F32[C]) -> Tree[F32[N, C]]:
       return params
@@ -247,7 +247,7 @@ class TestCrossArgConsistency:
       f(params, bias)
 
   def test_two_pytree_args(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N, C]], y: Tree[F32[N, C]]) -> Tree[F32[N, C]]:
       return x
@@ -365,19 +365,19 @@ class TestEdgeCases:
 
 class TestDecoratorIntegration:
   def test_check_context_with_pytree(self) -> None:
-    with shapix.check_context():
+    with bearshape.check_context():
       tree = {"a": np.ones((3, 4), dtype=np.float32)}
       assert is_bearable(tree, Tree[F32[N, C]])  # pyright: ignore[reportArgumentType]
 
   def test_check_context_rejects(self) -> None:
-    with shapix.check_context():
+    with bearshape.check_context():
       tree = {"a": np.ones(3, dtype=np.float64)}
       assert not is_bearable(tree, Tree[F32[N]])  # pyright: ignore[reportArgumentType]
 
-  def test_shapix_check_with_conf(self) -> None:
+  def test_bearshape_check_with_conf(self) -> None:
     from beartype import BeartypeConf
 
-    @shapix.check(conf=BeartypeConf())
+    @bearshape.check(conf=BeartypeConf())
     def f(x: Tree[F32[N, C]]) -> Tree[F32[N, C]]:
       return x
 
@@ -385,7 +385,7 @@ class TestDecoratorIntegration:
     f(data)
 
   def test_sequential_calls_independent(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N]]) -> Tree[F32[N]]:
       return x
@@ -418,7 +418,7 @@ class TestTopLevel:
   def test_top_level_matching(self) -> None:
     """Tree[leaf, T, ...] — top-level structure matches T, subtrees arbitrary."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], T, ...],
@@ -434,7 +434,7 @@ class TestTopLevel:
   def test_top_level_different_subtrees_pass(self) -> None:
     """Subtrees can differ when only top-level is checked."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], T, ...],
@@ -448,7 +448,7 @@ class TestTopLevel:
     f(x, y)
 
   def test_top_level_mismatch_rejected(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], T, ...],
@@ -471,7 +471,7 @@ class TestBottomLevel:
   def test_bottom_level_match(self) -> None:
     """Tree[leaf, ..., T] — T matches the leaf-adjacent container level."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], ..., T],
@@ -487,7 +487,7 @@ class TestBottomLevel:
   def test_bottom_level_single_level(self) -> None:
     """On a flat tree, the bottom level IS the top level."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], ..., T],
@@ -500,7 +500,7 @@ class TestBottomLevel:
     f(x, y)
 
   def test_bottom_level_different_structure_rejected(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], ..., T],
@@ -524,7 +524,7 @@ class TestMultiLevel:
   def test_composite_top_and_rest(self) -> None:
     """Tree[leaf, T, S] — T = top level, S = full remaining."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], T, S],
@@ -542,7 +542,7 @@ class TestMultiLevel:
   def test_composite_mismatch_rejected(self) -> None:
     """Different inner structures across same-level siblings should fail."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T, S]) -> Tree[F32[N]]:  # pyright: ignore
       return x
@@ -558,7 +558,7 @@ class TestMultiLevel:
   def test_multi_level_top_down_wildcard(self) -> None:
     """Tree[leaf, T, S, ...] — T = top, S = next, rest arbitrary."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], T, S, ...],  # pyright: ignore
@@ -574,7 +574,7 @@ class TestMultiLevel:
   def test_multi_level_bottom_up(self) -> None:
     """Tree[leaf, ..., T, S] — S = bottom, T = second-from-bottom."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], ..., T, S],  # pyright: ignore
@@ -590,7 +590,7 @@ class TestMultiLevel:
   def test_tree_shallower_than_spec_rejected(self) -> None:
     """Tree[leaf, T, S] on a flat tree should fail (only 1 level, need 2)."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T, S]) -> Tree[F32[N]]:  # pyright: ignore
       return x
@@ -614,7 +614,7 @@ class TestMultiLevel:
   def test_bottom_up_too_shallow_rejected(self) -> None:
     """Tree[leaf, ..., T, S] on a flat tree — only 1 level, need 2."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], ..., T, S]) -> Tree[F32[N]]:  # pyright: ignore
       return x
@@ -627,7 +627,7 @@ class TestMultiLevel:
   def test_empty_tree_with_structure(self) -> None:
     """Empty dict has no levels — structure spec should still be handled."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T, ...]) -> Tree[F32[N]]:  # pyright: ignore
       return x
@@ -721,7 +721,7 @@ class TestCrossLeafDimFailures:
   def test_inconsistent_C_across_leaves(self) -> None:
     """C mismatch between leaves — N matches but C doesn't."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N, C]]) -> Tree[F32[N, C]]:
       return x
@@ -735,7 +735,7 @@ class TestCrossLeafDimFailures:
   def test_inconsistent_dims_in_deeply_nested(self) -> None:
     """Dimension mismatch between leaves at different nesting depths."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N, C]]) -> Tree[F32[N, C]]:
       return x
@@ -749,7 +749,7 @@ class TestCrossLeafDimFailures:
   def test_all_dims_inconsistent(self) -> None:
     """Both N and C differ between leaves."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N, C]]) -> Tree[F32[N, C]]:
       return x
@@ -763,7 +763,7 @@ class TestCrossLeafDimFailures:
   def test_inconsistent_4d_leaves(self) -> None:
     """4D shape with one dimension differing."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N, C, H, W]]) -> Tree[F32[N, C, H, W]]:
       return x
@@ -777,7 +777,7 @@ class TestCrossLeafDimFailures:
   def test_inconsistent_across_list_items(self) -> None:
     """Leaves in a list with mismatched dimensions."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N]]) -> Tree[F32[N]]:
       return x
@@ -797,7 +797,7 @@ class TestStructureBindingFailures:
   def test_different_list_lengths(self) -> None:
     """Same container type but different lengths."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -810,7 +810,7 @@ class TestStructureBindingFailures:
   def test_different_nesting_depths(self) -> None:
     """X is flat dict, y is nested dict — different structures."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -823,7 +823,7 @@ class TestStructureBindingFailures:
   def test_tuple_vs_list(self) -> None:
     """Tuple and list have different tree specs."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -836,7 +836,7 @@ class TestStructureBindingFailures:
   def test_dict_extra_keys(self) -> None:
     """Same keys plus an extra key — different structure."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -849,7 +849,7 @@ class TestStructureBindingFailures:
   def test_nested_inner_structure_differs(self) -> None:
     """Same top-level keys, different inner container types."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -862,7 +862,7 @@ class TestStructureBindingFailures:
   def test_leaf_vs_container(self) -> None:
     """One arg is a bare leaf, the other is a container."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -875,7 +875,7 @@ class TestStructureBindingFailures:
   def test_three_args_third_differs(self) -> None:
     """First two match structure T, third differs."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T], z: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -898,7 +898,7 @@ class TestCrossArgFailures:
   def test_tree_dim_vs_plain_array_dim(self) -> None:
     """Tree leaves bind N=3, but plain array has N=7."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(params: Tree[F32[N]], bias: F32[N]) -> Tree[F32[N]]:
       return params
@@ -911,7 +911,7 @@ class TestCrossArgFailures:
   def test_two_trees_dim_mismatch(self) -> None:
     """Two Tree args with same dim name but different values."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N, C]], y: Tree[F32[N, C]]) -> Tree[F32[N, C]]:
       return x
@@ -924,7 +924,7 @@ class TestCrossArgFailures:
   def test_tree_and_plain_array_both_dims_mismatch(self) -> None:
     """Both N and C differ between tree and plain array."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N, C]], b: F32[C]) -> Tree[F32[N, C]]:
       return x
@@ -946,7 +946,7 @@ class TestTopLevelFailures:
   def test_dict_vs_list_top_level(self) -> None:
     """One has dict at top, other has list."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], T, ...],
@@ -962,7 +962,7 @@ class TestTopLevelFailures:
   def test_different_dict_keys_top_level(self) -> None:
     """Same container type (dict) but different keys at top."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], T, ...],
@@ -978,7 +978,7 @@ class TestTopLevelFailures:
   def test_different_list_lengths_top_level(self) -> None:
     """Same container type (list) but different lengths at top."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], T, ...],
@@ -994,7 +994,7 @@ class TestTopLevelFailures:
   def test_leaf_at_top_rejected(self) -> None:
     """A bare array has no container level — peeling one level should fail."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T, ...]) -> Tree[F32[N]]:  # pyright: ignore
       return x
@@ -1005,7 +1005,7 @@ class TestTopLevelFailures:
   def test_multi_name_prefix_second_level_differs(self) -> None:
     """Tree[leaf, T, S, ...] — T matches but S doesn't."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], T, S, ...],  # pyright: ignore
@@ -1031,7 +1031,7 @@ class TestBottomLevelFailures:
   def test_different_bottom_container_type(self) -> None:
     """X has list at bottom, y has dict at bottom."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], ..., T],
@@ -1047,7 +1047,7 @@ class TestBottomLevelFailures:
   def test_different_bottom_list_lengths(self) -> None:
     """Same container type at bottom but different lengths."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], ..., T],
@@ -1063,7 +1063,7 @@ class TestBottomLevelFailures:
   def test_different_bottom_dict_keys(self) -> None:
     """Same bottom container type (dict) but different keys."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], ..., T],
@@ -1079,7 +1079,7 @@ class TestBottomLevelFailures:
   def test_inconsistent_bottom_levels_within_tree(self) -> None:
     """Bottom-level containers differ within the same tree."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], ..., T]) -> Tree[F32[N]]:
       return x
@@ -1095,7 +1095,7 @@ class TestBottomLevelFailures:
   def test_bottom_up_too_shallow(self) -> None:
     """Tree[leaf, ..., T, S] on a flat (1-level) tree — need 2 levels."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], ..., T, S]) -> Tree[F32[N]]:  # pyright: ignore
       return x
@@ -1107,7 +1107,7 @@ class TestBottomLevelFailures:
   def test_multi_name_suffix_second_from_bottom_differs(self) -> None:
     """Tree[leaf, ..., T, S] — S matches but T doesn't."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], ..., T, S],  # pyright: ignore
@@ -1136,7 +1136,7 @@ class TestMultiLevelFailures:
   def test_top_matches_inner_differs(self) -> None:
     """Tree[leaf, T, S] — T (top) matches but S (remaining) differs."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], T, S],
@@ -1159,7 +1159,7 @@ class TestMultiLevelFailures:
   def test_inner_differs_top_matches_same_arg(self) -> None:
     """Tree[leaf, T, S] — within one tree, siblings have different S."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T, S]) -> Tree[F32[N]]:  # pyright: ignore
       return x
@@ -1175,7 +1175,7 @@ class TestMultiLevelFailures:
   def test_top_level_type_mismatch(self) -> None:
     """Tree[leaf, T, S] — T differs between args (dict vs list)."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(
       x: Tree[F32[N], T, S],
@@ -1191,7 +1191,7 @@ class TestMultiLevelFailures:
   def test_leaf_where_container_expected(self) -> None:
     """Tree[leaf, T, S] with a flat tree — peeling finds leaf not container."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T, S, ...]) -> Tree[F32[N]]:  # pyright: ignore
       return x
@@ -1228,7 +1228,7 @@ class TestReturnTypeFailures:
   def test_return_structure_mismatch(self) -> None:
     """Return tree has different structure from input when both bound to T."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T]) -> Tree[F32[N], T]:
       # Return different structure than input
@@ -1245,7 +1245,7 @@ class TestReturnTypeFailures:
 
 class TestDiagnosticMessages:
   def test_tree_structure_mismatch_reports_structure_detail(self) -> None:
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -1329,8 +1329,8 @@ class TestReprAndFactory:
     assert repr(Tree) == "Tree"
 
   def test_tree_accepts_beartype_valid_leaf_types(self) -> None:
-    assert Tree[int, T].__module__ == "shapix.optree"
-    assert Tree[list[int], T].__module__ == "shapix.optree"
+    assert Tree[int, T].__module__ == "bearshape.optree"
+    assert Tree[list[int], T].__module__ == "bearshape.optree"
 
   def test_tree_rejects_invalid_leaf_type_eagerly(self) -> None:
     with pytest.raises(TypeError, match="beartype-valid"):
@@ -1384,7 +1384,7 @@ class TestReplayGuard:
   def test_plain_beartype_tree_param_mismatch_error_message(self) -> None:
     """Plain @beartype tree param mismatch must not say True == Is[...]."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T], y: Tree[F32[N], T]) -> Tree[F32[N]]:
       return x
@@ -1400,7 +1400,7 @@ class TestReplayGuard:
   def test_plain_beartype_tree_return_mismatch_error_message(self) -> None:
     """Return type tree mismatch must produce non-contradictory error."""
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: Tree[F32[N], T]) -> Tree[F32[N], T]:
       # Return different structure than input
@@ -1416,7 +1416,7 @@ class TestReplayGuard:
     After the replay counter is exhausted, the same object should be
     re-checkable in a fresh context where it could legitimately pass.
     """
-    from shapix._tree import _TreeChecker
+    from bearshape._tree import _TreeChecker
 
     checker = _TreeChecker(
       F32[N],  # type: ignore[arg-type]
@@ -1428,13 +1428,13 @@ class TestReplayGuard:
     y_list = [np.ones(3, dtype=np.float32)]
 
     # First check: x_dict passes, binding T to dict structure
-    with shapix.check_context():
+    with bearshape.check_context():
       assert is_bearable(x_dict, type(x_dict))  # warm up memo
       assert checker(x_dict)
 
     # Second check: y_list fails because structure doesn't match
     # (in a context where T is bound to dict from a prior arg)
-    @shapix.check
+    @bearshape.check
     @beartype
     def struct_check(a: Tree[F32[N], T], b: Tree[F32[N], T]) -> Tree[F32[N]]:
       return a
@@ -1444,7 +1444,7 @@ class TestReplayGuard:
 
     # Critical: y_list must NOT be poisoned — it should work in a fresh
     # context where it is checked alone (no conflicting T binding)
-    @shapix.check
+    @bearshape.check
     @beartype
     def solo_check(a: Tree[F32[N], T]) -> Tree[F32[N]]:
       return a
@@ -1459,9 +1459,9 @@ class TestReplayGuard:
 
 class TestOptreeBackend:
   def test_optree_tree_basic(self) -> None:
-    from shapix.optree import Tree as OptreeTree
+    from bearshape.optree import Tree as OptreeTree
 
-    @shapix.check
+    @bearshape.check
     @beartype
     def f(x: OptreeTree[F32[N]]) -> OptreeTree[F32[N]]:
       return x
@@ -1470,6 +1470,6 @@ class TestOptreeBackend:
     f(data)
 
   def test_optree_tree_repr(self) -> None:
-    from shapix.optree import Tree as OptreeTree
+    from bearshape.optree import Tree as OptreeTree
 
     assert repr(OptreeTree) == "Tree"

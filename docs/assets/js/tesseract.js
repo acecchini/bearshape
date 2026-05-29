@@ -1,5 +1,5 @@
 /**
- * Shapix Visual v4 — 3D morphing bubbles (ray-marched metaballs),
+ * Bearshape Visual v4 — 3D morphing bubbles (ray-marched metaballs),
  * icosahedron logo, and 3D extruded title.
  * Two-pass WebGL2: scene FBO -> composite with subtle bloom.
  * Zero dependencies.
@@ -24,7 +24,7 @@
   }, { passive: true })
 
   function start() {
-    var el = document.getElementById('shapix-visual')
+    var el = document.getElementById('bearshape-visual')
     if (!el) return
     if (!el.offsetWidth) {
       requestAnimationFrame(function () { setTimeout(start, 30) })
@@ -265,7 +265,7 @@
       gl.shaderSource(s, src)
       gl.compileShader(s)
       if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-        console.error('[shapix]', gl.getShaderInfoLog(s))
+        console.error('[bearshape]', gl.getShaderInfoLog(s))
         return null
       }
       return s
@@ -277,7 +277,7 @@
       var pg = gl.createProgram()
       gl.attachShader(pg, vs); gl.attachShader(pg, fs); gl.linkProgram(pg)
       if (!gl.getProgramParameter(pg, gl.LINK_STATUS)) {
-        console.error('[shapix]', gl.getProgramInfoLog(pg))
+        console.error('[bearshape]', gl.getProgramInfoLog(pg))
         return null
       }
       return pg
@@ -381,7 +381,7 @@
    * LOGO — Animated tesseract with sinusoidal vertex forces + breathing
    * ================================================================ */
   function initLogo() {
-    var c = document.getElementById('shapix-logo')
+    var c = document.getElementById('bearshape-logo')
     if (!c) return
     var ctx = c.getContext('2d')
     var S = 220, dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -568,9 +568,9 @@
    * TITLE — Letter spans + continuous mouse 3D tilt
    * ================================================================ */
   function initTitle() {
-    var el = document.getElementById('shapix-title')
+    var el = document.getElementById('bearshape-title')
     if (!el) return
-    var text = 'Shapix'
+    var text = 'Bearshape'
     var html = ''
     for (var i = 0; i < text.length; i++)
       html += '<span class="hero__letter" style="animation-delay:' + i * 0.15 + 's">' + text[i] + '</span>'
@@ -596,7 +596,7 @@
 
   function initStars() {
     // Only on non-home pages
-    if (document.getElementById('shapix-visual')) {
+    if (document.getElementById('bearshape-visual')) {
       killStars()
       return
     }
@@ -712,7 +712,7 @@
   function cleanup() {
     for (var i = 0; i < _afs.length; i++) cancelAnimationFrame(_afs[i])
     _afs = []
-    var old = document.querySelector('#shapix-visual canvas')
+    var old = document.querySelector('#bearshape-visual canvas')
     if (old) old.remove()
   }
 
@@ -732,7 +732,7 @@
   // after Material swaps page content.
   var _observed = false
   function syncBackgroundMode() {
-    var el = document.getElementById('shapix-visual')
+    var el = document.getElementById('bearshape-visual')
     if (el) {
       if (!el.querySelector('canvas')) init()
       return

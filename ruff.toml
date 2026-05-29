@@ -168,7 +168,7 @@ parametrize-names-type = "csv"
   "PYI024",
   "RUF029",
 ]
-"src/shapix/_decorator.py" = [
+"src/bearshape/_decorator.py" = [
   # Public API intentionally exposes snake_case context manager name
   "N801",
 ]

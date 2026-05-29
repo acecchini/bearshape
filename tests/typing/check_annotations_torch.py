@@ -1,7 +1,7 @@
 # pyright: reportMissingImports=false, reportInvalidTypeForm=false
 """Verify PyTorch tensor type annotations type-check cleanly.
 
-Tests the full shapix annotation pattern with PyTorch backend types.
+Tests the full bearshape annotation pattern with PyTorch backend types.
 
 Tested with: pyright, mypy, ty
 """
@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING, TypeAlias
 
 from beartype import beartype
 
-from shapix import B, C, Dimension, H, N, Scalar, W, __, check
-from shapix.torch import (
+from bearshape import B, C, Dimension, H, N, Scalar, W, __, check
+from bearshape.torch import (
   BF16,
   F16,
   F32,

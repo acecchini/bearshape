@@ -2,7 +2,7 @@
 description: Lightweight root API for dimensions, dtype specs, memo helpers, and factories.
 ---
 
-# `shapix`
+# `bearshape`
 
 The root module is intentionally small and optional-dependency-safe. It is the
 place to import:
@@ -19,8 +19,8 @@ It does **not** export `Tree` or `make_scalar_like_type`.
 ## Typical imports
 
 ```python
-import shapix
-from shapix import (
+import bearshape
+from bearshape import (
   B, C, D, H, K, L, N, P, S, T, W, __,
   Scalar, Dimension, Value, Structure,
   DtypeSpec, make_array_type, make_array_like_type,
@@ -31,9 +31,9 @@ from shapix import (
 ## `__version__`
 
 ```python
-import shapix
+import bearshape
 
-print(shapix.__version__)
+print(bearshape.__version__)
 ```
 
 In an installed package this is the package version. In a plain source checkout
@@ -64,14 +64,14 @@ structure symbol |
 
 <!-- markdownlint-enable MD013 -->
 
-Remember that `Tree` itself lives in `shapix.optree` or `shapix.jax`.
+Remember that `Tree` itself lives in `bearshape.optree` or `bearshape.jax`.
 
 ## `Dimension`
 
 `Dimension` is a `str` subclass used to build the user-facing shape language.
 
 ```python
-from shapix import Dimension
+from bearshape import Dimension
 
 Vocab = Dimension("Vocab")
 Embed = Dimension("Embed")
@@ -90,7 +90,7 @@ Supported operators:
 `Value("expr")` is the runtime-value dimension helper.
 
 ```python
-from shapix import Value
+from bearshape import Value
 
 Batch = Value("batch")
 WidthPlus3 = Value("self.width + 3")
@@ -104,7 +104,7 @@ rejects calls, indexing, and arbitrary evaluation.
 `DtypeSpec` describes an allowed dtype set and optional byte-order constraint.
 
 ```python
-from shapix import DtypeSpec
+from bearshape import DtypeSpec
 
 BF16_OR_F32 = DtypeSpec("BF16orF32", frozenset({"bfloat16", "float32"}))
 ```
@@ -124,8 +124,8 @@ custom array classes.
 ```python
 import numpy as np
 from beartype import beartype
-from shapix import N, C, make_array_type
-from shapix._dtypes import FLOAT32
+from bearshape import N, C, make_array_type
+from bearshape._dtypes import FLOAT32
 
 MyF32 = make_array_type(np.ndarray, FLOAT32)
 
@@ -143,8 +143,8 @@ creates a broader input-contract factory for values that will be converted
 before use.
 
 ```python
-from shapix import make_array_like_type
-from shapix._dtypes import FLOAT32
+from bearshape import make_array_like_type
+from bearshape._dtypes import FLOAT32
 
 F32Input = make_array_like_type(FLOAT32, name="F32Input")
 F32StrictInput = make_array_like_type(FLOAT32, casting="no", name="F32StrictInput")
@@ -156,13 +156,13 @@ conversion hooks.
 
 ## `check`
 
-`@shapix.check` is the explicit memo-management decorator.
+`@bearshape.check` is the explicit memo-management decorator.
 
 ```python
-import shapix
+import bearshape
 from beartype import beartype
 
-@shapix.check
+@bearshape.check
 @beartype
 def f(x: F32[N], y: F32[N]) -> F32[N]:
   ...
@@ -173,7 +173,7 @@ Or combine memo management with `BeartypeConf`:
 ```python
 from beartype import BeartypeConf
 
-@shapix.check(conf=BeartypeConf())
+@bearshape.check(conf=BeartypeConf())
 def f(x: F32[N]) -> F32[N]:
   ...
 ```
@@ -186,9 +186,9 @@ def f(x: F32[N]) -> F32[N]:
 
 ```python
 from beartype.door import is_bearable
-import shapix
+import bearshape
 
-with shapix.check_context():
+with bearshape.check_context():
   assert is_bearable(x, F32[N, C])
   assert is_bearable(y, F32[N, C])
 ```

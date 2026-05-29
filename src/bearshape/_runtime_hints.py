@@ -82,7 +82,7 @@ class _RuntimeValidator(tp.Protocol):
 
 
 def get_runtime_validator(hint: object) -> _RuntimeValidator | None:
-  validator = getattr(hint, "__shapix_validator__", None)
+  validator = getattr(hint, "__bearshape_validator__", None)
   if validator is None:
     return None
   if not hasattr(validator, "instancecheck") or not hasattr(
@@ -95,7 +95,7 @@ def get_runtime_validator(hint: object) -> _RuntimeValidator | None:
 def _require_runtime_validator(hint: object) -> _RuntimeValidator:
   validator = get_runtime_validator(hint)
   if validator is None:
-    msg = f"{hint!r} is not a shapix runtime hint"
+    msg = f"{hint!r} is not a bearshape runtime hint"
     raise TypeError(msg)
   return validator
 
@@ -107,7 +107,7 @@ def hint_label(hint: object) -> str:
   return repr(hint)
 
 
-class _ShapixRuntimeHintMeta(type):
+class _BearshapeRuntimeHintMeta(type):
   def __instancecheck__(cls, obj: object) -> bool:
     validator = _require_runtime_validator(cls)
     return validator.instancecheck(obj)
@@ -128,6 +128,6 @@ def make_runtime_hint(
     "__args__": (origin, validator),
     "__origin__": origin,
     "__metadata__": (validator,),
-    "__shapix_validator__": validator,
+    "__bearshape_validator__": validator,
   }
-  return _ShapixRuntimeHintMeta(name, (), namespace)
+  return _BearshapeRuntimeHintMeta(name, (), namespace)

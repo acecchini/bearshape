@@ -4,15 +4,15 @@
 
 Usage::
 
-    from shapix import N, C, H, W
-    from shapix.jax import F32, BF16
+    from bearshape import N, C, H, W
+    from bearshape.jax import F32, BF16
 
 
     @beartype
     def forward(x: F32[N, C, H, W]) -> BF16[N, C, H, W]: ...
 
 ScalarLike types (range-validated scalars) and ``make_scalar_like_type``
-are re-exported from ``shapix.numpy`` for convenience.
+are re-exported from ``bearshape.numpy`` for convenience.
 """
 
 from __future__ import annotations
@@ -22,12 +22,12 @@ import typing as tp
 from ._imports import require_attr, require_module
 
 _JAX_INSTALL_HINT = (
-  "shapix.jax requires 'jax' at runtime. "
-  "Install it alongside shapix (e.g. `pip install shapix numpy jax`)."
+  "bearshape.jax requires 'jax' at runtime. "
+  "Install it alongside bearshape (e.g. `pip install bearshape numpy jax`)."
 )
 _NUMPY_INSTALL_HINT = (
-  "shapix.jax requires 'numpy' at runtime. "
-  "Install it alongside shapix (e.g. `pip install shapix numpy jax`)."
+  "bearshape.jax requires 'numpy' at runtime. "
+  "Install it alongside bearshape (e.g. `pip install bearshape numpy jax`)."
 )
 
 if tp.TYPE_CHECKING:
@@ -215,7 +215,7 @@ def make_array_like_type(
   asarray: tp.Callable[[object], object] | None = _jax_asarray,
   trusted_types: tuple[type[object], ...] | None = _JAX_TRUSTED,
 ) -> tp.Any:
-  """JAX-aware version of :func:`shapix.make_array_like_type`.
+  """JAX-aware version of :func:`bearshape.make_array_like_type`.
 
   Defaults to ``jnp.asarray`` for the slow path, so objects implementing
   ``__jax_array__`` are accepted in addition to standard array-likes.
@@ -228,7 +228,7 @@ def make_array_like_type(
 
 
 # ---------------------------------------------------------------------------
-# Array types (shape-checked via shapix runtime hints)
+# Array types (shape-checked via bearshape runtime hints)
 # ---------------------------------------------------------------------------
 
 if tp.TYPE_CHECKING:

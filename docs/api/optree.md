@@ -2,13 +2,13 @@
 description: Explicit Tree backend using OpTree.
 ---
 
-# `shapix.optree`
+# `bearshape.optree`
 
-`shapix.optree` provides the explicit OpTree-backed `Tree` annotation plus the
-shared `Structure` type.
+`bearshape.optree` provides the explicit OpTree-backed `Tree` annotation plus
+the shared `Structure` type.
 
 ```python
-from shapix.optree import Tree, Structure
+from bearshape.optree import Tree, Structure
 ```
 
 ## `Tree`
@@ -18,9 +18,9 @@ OpTree.
 
 ```python
 from beartype import beartype
-from shapix import N, T
-from shapix.numpy import F32
-from shapix.optree import Tree
+from bearshape import N, T
+from bearshape.numpy import F32
+from bearshape.optree import Tree
 
 @beartype
 def update(params: Tree[F32[N], T],
@@ -35,16 +35,16 @@ Static typing split:
 
 ## `Structure`
 
-`Structure` is the same structure-symbol type exported from the root `shapix`
+`Structure` is the same structure-symbol type exported from the root `bearshape`
 module.
 
 ```python
-from shapix import Structure
+from bearshape import Structure
 
 Params = Structure("Params")
 ```
 
-## When to use `shapix.optree`
+## When to use `bearshape.optree`
 
 Use this module when:
 

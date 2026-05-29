@@ -4,7 +4,7 @@ description: Named, fixed, variadic, broadcastable, anonymous, scalar, symbolic,
 
 # Dimensions
 
-Dimensions are the core shape language in shapix. They describe:
+Dimensions are the core shape language in bearshape. They describe:
 
 - how many axes an array should have
 - which axes must agree across parameters
@@ -20,8 +20,8 @@ the same call.
 
 ```python
 from beartype import beartype
-from shapix import N, C, H, W
-from shapix.numpy import F32
+from bearshape import N, C, H, W
+from bearshape.numpy import F32
 
 @beartype
 def forward(x: F32[N, C, H, W]) -> F32[N, C, H, W]:
@@ -59,7 +59,7 @@ Dimensions support arithmetic. Expressions are evaluated against already-bound
 shape names:
 
 ```python
-from shapix import N, C
+from bearshape import N, C
 
 @beartype
 def pad(x: F32[N]) -> F32[N + 2]:
@@ -90,8 +90,8 @@ attribute rather than a previously bound shape symbol.
 ```python
 import numpy as np
 from beartype import beartype
-from shapix import Value
-from shapix.numpy import F32
+from bearshape import Value
+from bearshape.numpy import F32
 
 Size = Value("size")
 WidthPlus3 = Value("self.width + 3")
@@ -117,8 +117,8 @@ class SomeClass:
 
 It rejects calls, indexing, comprehensions, and arbitrary evaluation.
 
-When `Value(...)` appears in an async function, use `@shapix.check` if you want
-the scope to be explicitly preserved across the await.
+When `Value(...)` appears in an async function, use `@bearshape.check` if you
+want the scope to be explicitly preserved across the await.
 
 ## Scalar dimension
 
@@ -127,8 +127,8 @@ the scope to be explicitly preserved across the await.
 ```python
 import numpy as np
 from beartype import beartype
-from shapix import N, Scalar
-from shapix.numpy import F32
+from bearshape import N, Scalar
+from bearshape.numpy import F32
 
 @beartype
 def dot(x: F32[N], y: F32[N]) -> F32[Scalar]:
@@ -147,8 +147,8 @@ Apply `~` to a named dimension to match zero or more contiguous axes.
 ```python
 import numpy as np
 from beartype import beartype
-from shapix import B, C
-from shapix.numpy import F32
+from bearshape import B, C
+from bearshape.numpy import F32
 
 @beartype
 def normalize(x: F32[~B, C]) -> F32[~B, C]:
@@ -179,7 +179,7 @@ Use `~__` when you do not need cross-argument binding:
 
 ```python
 from beartype import beartype
-from shapix import __, C
+from bearshape import __, C
 
 @beartype
 def last_dim(x: F32[~__, C]) -> F32[~__, C]:
@@ -206,8 +206,8 @@ bound value.
 ```python
 import numpy as np
 from beartype import beartype
-from shapix import N, C
-from shapix.numpy import F32
+from bearshape import N, C
+from bearshape.numpy import F32
 
 @beartype
 def broadcast_add(x: F32[N, C], y: F32[+N, C]) -> F32[N, C]:
@@ -226,8 +226,8 @@ dims where each can be `1` or the bound value.
 
 ```python
 from beartype import beartype
-from shapix import __, C
-from shapix.numpy import F32
+from bearshape import __, C
+from bearshape.numpy import F32
 
 @beartype
 def f(x: F32[__, C]) -> F32[__, C]:
@@ -243,8 +243,8 @@ Create your own with `Dimension`:
 
 ```python
 from beartype import beartype
-from shapix import Dimension, N
-from shapix.numpy import F32, I64
+from bearshape import Dimension, N
+from bearshape.numpy import F32, I64
 
 Vocab = Dimension("Vocab")
 Embed = Dimension("Embed")
@@ -260,7 +260,7 @@ Custom dimensions work at runtime immediately. For static typing, use the
 
 ```python
 import typing as tp
-from shapix import Dimension
+from bearshape import Dimension
 
 if tp.TYPE_CHECKING:
   type Vocab = int

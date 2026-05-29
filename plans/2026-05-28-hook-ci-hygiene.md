@@ -11,9 +11,9 @@ be maintained in accordance with `PLANS.md`.
 
 The baseline audit found that the core runtime and typing tests pass, but the
 local hook suite and PR spelling job are not green. This matters because the
-next major task is the Shapix to Bearshape rename, which will touch many files.
-Before that larger rename, the formatting, spelling, and workflow checks should
-be predictable so the rename diff is not mixed with hook noise.
+next major task is the Bearshape rename, which will touch many files. Before
+that larger rename, the formatting, spelling, and workflow checks should be
+predictable so the rename diff is not mixed with hook noise.
 
 After this change, a maintainer should be able to run the local hook command and
 inspect PR checks without seeing known hygiene failures unrelated to product
@@ -141,7 +141,7 @@ The baseline audit found two concrete hygiene problems. First, running
 `uv run prek run -a` modified files and then failed, including markdown lint
 failures involving `PLANS.md` and the baseline audit ExecPlan. Second, PR CI
 spelling failed because the GitHub workflow runs `typos .` and reports
-`npt.NDArray` in `examples/shapix_tour.ipynb` as `ND` should be `AND`.
+`npt.NDArray` in `examples/bearshape_tour.ipynb` as `ND` should be `AND`.
 
 The current worktree starts from the committed baseline audit branch and is
 clean. A different worktree, `/Users/ale/Code/bearshape-baseline-audit`, still
@@ -251,7 +251,7 @@ Known failure evidence from the baseline audit:
     uv run prek run -a failed.
     end-of-file-fixer modified PLANS.md.
     markdownlint-fix failed on PLANS.md and the baseline audit ExecPlan.
-    The PR spelling job failed on npt.NDArray in examples/shapix_tour.ipynb.
+    The PR spelling job failed on npt.NDArray in examples/bearshape_tour.ipynb.
 
 Draft PR evidence:
 
@@ -261,7 +261,7 @@ Draft PR evidence:
 Reproduction evidence:
 
     uv sync
-    Resolved 99 packages and built shapix-rt successfully.
+    Resolved 99 packages and built bearshape successfully.
     Warning: License classifiers are deprecated; use license expressions.
 
     uv run prek run -a
