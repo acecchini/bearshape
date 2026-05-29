@@ -165,7 +165,7 @@ memo by reference. For full task isolation, each task should enter its own
 
 ## `from __future__ import annotations`
 
-Bearshape works with `from __future__ import annotations`, but every symbol used
+bearshape works with `from __future__ import annotations`, but every symbol used
 inside the annotation must still be imported in module scope:
 
 ```python

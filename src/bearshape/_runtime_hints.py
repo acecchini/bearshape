@@ -107,7 +107,7 @@ def hint_label(hint: object) -> str:
   return repr(hint)
 
 
-class _BearshapeRuntimeHintMeta(type):
+class _RuntimeHintMeta(type):
   def __instancecheck__(cls, obj: object) -> bool:
     validator = _require_runtime_validator(cls)
     return validator.instancecheck(obj)
@@ -130,4 +130,4 @@ def make_runtime_hint(
     "__metadata__": (validator,),
     "__bearshape_validator__": validator,
   }
-  return _BearshapeRuntimeHintMeta(name, (), namespace)
+  return _RuntimeHintMeta(name, (), namespace)

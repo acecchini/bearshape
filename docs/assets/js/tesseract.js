@@ -1,5 +1,5 @@
 /**
- * Bearshape Visual v4 — 3D morphing bubbles (ray-marched metaballs),
+ * bearshape Visual v4 — 3D morphing bubbles (ray-marched metaballs),
  * icosahedron logo, and 3D extruded title.
  * Two-pass WebGL2: scene FBO -> composite with subtle bloom.
  * Zero dependencies.
@@ -570,7 +570,7 @@
   function initTitle() {
     var el = document.getElementById('bearshape-title')
     if (!el) return
-    var text = 'Bearshape'
+    var text = 'bearshape'
     var html = ''
     for (var i = 0; i < text.length; i++)
       html += '<span class="hero__letter" style="animation-delay:' + i * 0.15 + 's">' + text[i] + '</span>'

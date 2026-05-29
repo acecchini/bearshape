@@ -1,4 +1,4 @@
-"""Bearshape — elegant runtime shape and dtype checking for array annotations.
+"""bearshape — elegant runtime shape and dtype checking for array annotations.
 
 Works with standard ``@beartype`` decorators and ``beartype.claw`` import hooks.
 No custom decorator required for basic usage. Plain ``@beartype`` checks share

@@ -1,9 +1,9 @@
 [project]
-site_name = "Bearshape"
+site_name = "bearshape"
 site_url = "https://acecchini.github.io/bearshape/"
 site_description = "Elegant runtime shape and dtype checking for NumPy, JAX, PyTorch, and CuPy arrays — powered by beartype."
 site_author = "acecchini"
-copyright = "Copyright &copy; 2025 – 2026 Bearshape contributors"
+copyright = "Copyright &copy; 2025 – 2026 bearshape contributors"
 repo_url = "https://github.com/acecchini/bearshape"
 repo_name = "acecchini/bearshape"
 edit_uri = "edit/main/docs/"

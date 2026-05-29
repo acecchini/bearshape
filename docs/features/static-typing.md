@@ -4,7 +4,7 @@ description: How bearshape annotations map onto pyright, mypy, and ty.
 
 # Static Typing
 
-Bearshape supports **pyright**, **mypy**, and **ty**. The repository runs all
+bearshape supports **pyright**, **mypy**, and **ty**. The repository runs all
 three against the typing fixtures in `tests/typing/` via
 `tests/test_typecheck.py`.
 

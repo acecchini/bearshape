@@ -43,7 +43,7 @@ requires = ["uv_build>=0.11.0,<0.12.0"]
 build-backend = "uv_build"
 
 [dependency-groups]
-# Backends are CPU-only for dev/CI. Bearshape is device-agnostic — it checks
+# Backends are CPU-only for dev/CI. bearshape is device-agnostic — it checks
 # .shape and .dtype only. Users install their own numpy/jax/torch/cupy/optree.
 # CuPy requires CUDA and is not included here; install separately for GPU envs.
 optional = ["numpy>=2.2.0", "torch>=2.6.0", "jax[cpu]>=0.5.0", "optree>=0.14.0"]

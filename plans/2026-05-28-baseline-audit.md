@@ -1,4 +1,4 @@
-# Baseline audit before Bearshape rename
+# Baseline audit before bearshape rename
 
 This ExecPlan is a living document. The sections `Progress`,
 `Surprises & Discoveries`, `Decision Log`, and `Outcomes & Retrospective` must
@@ -9,7 +9,7 @@ be maintained in accordance with `PLANS.md`.
 
 ## Purpose / Big Picture
 
-The project is being renamed to Bearshape and prepared for a production-quality
+The project is being renamed to bearshape and prepared for a production-quality
 release under the beartype organization. Before changing package names, public
 APIs, CI, tox, docs, or implementation internals, this audit records what works
 today and what is already broken. The result should let a future contributor
@@ -44,7 +44,7 @@ should become separate follow-up plans.
 - [x] (2026-05-28 09:17Z) Checked draft PR CI; ruff, typecheck, and
     typecheck-compat passed, spelling failed.
 - [x] (2026-05-28 09:18Z) Audited packaging, tox, CI, docs, README, CHANGELOG,
-    and public import names for drift from the Bearshape target.
+    and public import names for drift from the bearshape target.
 - [x] (2026-05-28 09:20Z) Wrote a current contract map that links runtime
     features, typing fixtures, docs, and tests.
 - [x] (2026-05-28 09:20Z) Summarized follow-up work as separate candidate
@@ -83,10 +83,10 @@ should become separate follow-up plans.
 - Observation: CI spelling does not match local `prek` behavior. Evidence:
     local `prek` reported `typos` passed, but the PR spelling job ran `typos .`
     and failed on `npt.NDArray` occurrences in `examples/bearshape_tour.ipynb`.
-- Observation: The Bearshape rename had not started in tracked contract
+- Observation: The bearshape rename had not started in tracked contract
     artifacts at audit time. Evidence: the previous identifier still appeared
     throughout source, tests, docs, examples, CI, and publishing configuration,
-    while Bearshape references were limited to the new agent and plan files.
+    while bearshape references were limited to the new agent and plan files.
 
 ## Decision Log
 
@@ -121,7 +121,7 @@ explicit plans rather than folded into this audit PR.
 
 ## Context and Orientation
 
-The desired public identity is Bearshape. The package metadata lives in
+The desired public identity is bearshape. The package metadata lives in
 `pyproject.toml`, tox configuration in `tox.toml`, GitHub workflows in
 `.github/workflows/`, documentation under `docs/`, and public examples in
 `README.md` plus docs pages.
@@ -211,7 +211,7 @@ Run hooks:
 
 Inspect repo contract artifacts:
 
-    rg -n "bearshape|bearshape|Bearshape|bearshape|Bearshape" \
+    rg -n "<previous identity>|bearshape" \
       pyproject.toml tox.toml README.md CHANGELOG.md CONTRIBUTING.md \
       docs src tests .github
     rg -n "cupy|CuPy|CUDA|gpu|GPU" \
@@ -233,7 +233,7 @@ Required evidence:
 - `tests/test_typecheck.py` result recorded.
 - Direct pyright, mypy, and ty results recorded.
 - `prek` hook result recorded.
-- Rename drift from `bearshape` / `bearshape` to `bearshape` inventoried.
+- Public identity drift toward `bearshape` inventoried.
 - CI, tox, packaging, docs, and typing fixture issues inventoried.
 - Follow-up candidate ExecPlans listed with clear scopes.
 
@@ -269,20 +269,20 @@ under `tests/typing/`. The current checked surface passes pyright 1.1.408, mypy
 1.19.1, and ty 0.0.29. Pyrefly and zuban are not configured.
 
 Docs and examples are contract artifacts, but they are not yet lean. `README.md`
-is long, `docs/` contains Bearshape-specific pages and assets, and
+is long, `docs/` contains bearshape-specific pages and assets, and
 `examples/bearshape_tour.ipynb` is included in CI spelling checks.
 
 ## Follow-up Candidate ExecPlans
 
-1. Bearshape rename: rename package metadata, source package, imports, docs,
-   examples, CI, publishing URL, coverage source, and public references from
-   Bearshape / `bearshape` / `bearshape` to Bearshape / `bearshape`.
+1. bearshape rename: rename package metadata, source package, imports, docs,
+   examples, CI, publishing URL, coverage source, and public references from the
+   previous public identity to `bearshape`.
 2. Hook and CI hygiene: resolve the `PLANS.md` versus mdformat/markdownlint
    conflict, remove formatter churn from generated or vendored assets, and align
    local `prek` spelling with the CI `typos .` job.
 3. CuPy validation strategy: define when and where CUDA-backed CuPy runtime tests
    run, what is locally skipped, and how CI records the gap.
-4. CI and tox rebuild: update the matrix for Bearshape, uv-based publishing,
+4. CI and tox rebuild: update the matrix for bearshape, uv-based publishing,
    pyrefly evaluation, and release confidence without over-testing slow axes on
    every PR.
 5. Docs and README cleanup: rewrite from actual code behavior, keep README
@@ -379,10 +379,10 @@ Draft PR CI evidence:
 
 Rename inventory evidence:
 
-    rg -o "bearshape|bearshape|Bearshape" ... | wc -l
+    rg -o "<previous identity>|bearshape" ... | wc -l
     1102
 
-    No bearshape/Bearshape matches were found in the checked contract artifacts.
+    No target-identity matches were found in the checked contract artifacts.
     Explicit stale identity locations include pyproject.toml, mkdocs.yml,
     README.md, CHANGELOG.md, docs, examples, tests, src/bearshape, and
     .github/workflows/pypi.yml.

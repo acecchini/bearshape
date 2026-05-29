@@ -1,10 +1,10 @@
 ---
-description: Explore Bearshape's runtime contracts, typing model, and backend-specific tools.
+description: Explore bearshape's runtime contracts, typing model, and backend-specific tools.
 ---
 
 # Features
 
-Bearshape layers several pieces together:
+bearshape layers several pieces together:
 
 - a shape language built from Python objects such as `N`, `Scalar`, and
     `Value("size")`

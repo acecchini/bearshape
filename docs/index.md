@@ -1,5 +1,5 @@
 ---
-title: Bearshape
+title: bearshape
 description: Elegant runtime shape and dtype checking for NumPy, JAX, PyTorch, and CuPy arrays — powered by beartype.
 hide:
   - navigation
@@ -375,7 +375,7 @@ a.backend-logo:hover {
 
 <div class="hero__logo">
 <canvas id="bearshape-logo" width="220" height="220"></canvas>
-<div class="hero__title" id="bearshape-title">Bearshape</div>
+<div class="hero__title" id="bearshape-title">bearshape</div>
 </div>
 
 <div class="hero__tagline">Runtime shape checking for array code</div>

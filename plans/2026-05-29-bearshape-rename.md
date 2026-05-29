@@ -1,4 +1,4 @@
-# Rename Project Identity to Bearshape
+# Rename Project Identity to bearshape
 
 This ExecPlan is a living document. The sections `Progress`,
 `Surprises & Discoveries`, `Decision Log`, and `Outcomes & Retrospective` must
@@ -9,10 +9,10 @@ be maintained in accordance with `PLANS.md`.
 
 ## Purpose / Big Picture
 
-The project is moving from its previous public identity to Bearshape. After this
+The project is moving from its previous public identity to bearshape. After this
 plan is complete, users should install the PyPI distribution named
 `bearshape`, import `bearshape` in Python code, read docs that consistently say
-Bearshape, and see CI, tox, type-checker fixtures, docs, notebooks, and
+bearshape, and see CI, tox, type-checker fixtures, docs, notebooks, and
 packaging all validate that new identity.
 
 This is intentionally a broad cleanup task. The goal is not to add new runtime
@@ -34,7 +34,7 @@ production refactors begin.
 - [x] (2026-05-29 09:08Z) Decided not to add a short-lived compatibility
   surface for the previous import package.
 - [x] (2026-05-29 09:10Z) Updated `README.md`, docs, notebooks, and
-  `CHANGELOG.md` with concise Bearshape-facing text.
+  `CHANGELOG.md` with concise bearshape-facing text.
 - [x] (2026-05-29 09:12Z) Ran `uv sync`; the environment rebuilt the editable
   distribution as `bearshape` and removed the previous installed distribution.
 - [x] (2026-05-29 09:15Z) Verified direct imports and absence of the previous
@@ -74,7 +74,7 @@ production refactors begin.
 
 - Decision: Treat this as a clean public rename to `bearshape`.
   Rationale: The user asked to rename the repo, PyPI package, and project
-  identity to Bearshape before release. Carrying a long-lived compatibility
+  identity to bearshape before release. Carrying a long-lived compatibility
   import alias for the previous identity would preserve stale surface area and
   add maintenance cost. If a compatibility shim is needed, it should be
   short-lived, explicit, tested, and documented as transitional.
@@ -95,7 +95,7 @@ production refactors begin.
 
 The rename is implemented locally in PR #6 and awaits user validation before
 merge. The source package is `src/bearshape/`, the distribution metadata is
-`bearshape`, docs and examples use Bearshape, and no compatibility package for
+`bearshape`, docs and examples use bearshape, and no compatibility package for
 the previous import name was added.
 
 Local validation passed:
@@ -152,7 +152,7 @@ Important files and directories:
 - `tests/typing/` contains public static typing fixtures. These are product
   contract artifacts and must import the new package.
 - `docs/`, `mkdocs.yml`, and `README.md` are user-facing docs. They must say
-  Bearshape and show `bearshape` imports.
+  bearshape and show `bearshape` imports.
 - `examples/` contains notebooks or examples that may embed package names in
   cells, metadata, or outputs.
 - `pyproject.toml` owns package metadata, build-backend module name, uv config,
@@ -160,7 +160,7 @@ Important files and directories:
 - `tox.toml` and `.github/workflows/` own release confidence and CI matrix
   behavior.
 - `CHANGELOG.md` must record the major user-visible rename.
-- `AGENTS.md` already describes the new Bearshape mission and should remain
+- `AGENTS.md` already describes the new bearshape mission and should remain
   concise.
 
 Use "distribution name" to mean the name users install from PyPI, as in
@@ -186,7 +186,7 @@ must use the same public syntax under the new import name. Expected error
 messages should be updated only when they mention module names; semantics should
 not change.
 
-Fourth, update docs and examples. Rewrite the README as a concise Bearshape
+Fourth, update docs and examples. Rewrite the README as a concise bearshape
 intro. Update docs pages, MkDocs nav entries, module API paths, notebooks, and
 examples so every shown command and import is real. Keep docs short and avoid
 promising future behavior.
@@ -242,7 +242,7 @@ Run relevant tox environments after the basic suite is green:
 
 ## Validation and Acceptance
 
-The rename is accepted when Bearshape is the only production identity and all
+The rename is accepted when bearshape is the only production identity and all
 changed surfaces prove it.
 
 Required evidence:
@@ -289,7 +289,7 @@ Initial setup evidence:
 Merged setup PRs:
 
     PR #5 Hook and CI hygiene before rename: merged into codex/baseline-audit
-    PR #4 Baseline audit before Bearshape rename: merged into main
+    PR #4 Baseline audit before bearshape rename: merged into main
 
 ## Interfaces and Dependencies
 
