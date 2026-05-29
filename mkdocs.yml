@@ -19,29 +19,29 @@ extra_javascript:
 nav:
   - Home: index.md
   - Getting Started:
-    - getting-started/index.md
-    - getting-started/installation.md
-    - getting-started/quickstart.md
+      - getting-started/index.md
+      - getting-started/installation.md
+      - getting-started/quickstart.md
   - Features:
-    - features/index.md
-    - features/dimensions.md
-    - features/static-typing.md
-    - features/array-types.md
-    - features/like-types.md
-    - features/tree-annotations.md
-    - features/decorator.md
-    - features/claw.md
+      - features/index.md
+      - features/dimensions.md
+      - features/static-typing.md
+      - features/array-types.md
+      - features/like-types.md
+      - features/tree-annotations.md
+      - features/decorator.md
+      - features/claw.md
   - API Reference:
-    - api/index.md
-    - api/shapix.md
-    - api/numpy.md
-    - api/jax.md
-    - api/torch.md
-    - api/cupy.md
-    - api/optree.md
-    - api/claw.md
+      - api/index.md
+      - api/shapix.md
+      - api/numpy.md
+      - api/jax.md
+      - api/torch.md
+      - api/cupy.md
+      - api/optree.md
+      - api/claw.md
   - Examples:
-    - examples/index.md
+      - examples/index.md
 
 theme:
   name: material
