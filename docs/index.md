@@ -367,7 +367,7 @@ a.backend-logo:hover {
   .backends__logos { gap: 1.5rem; }
 }
 
-@media (min-width: 1350px) and (max-width: 2200px) and (max-height: 980px) {
+@media (min-width: 1350px) and (max-width: 2200px) and (max-height: 1060px) {
   .md-main__inner { margin-top: clamp(-3.9rem, -4.3vh, -2.2rem); }
 
   .hero__logo canvas {
