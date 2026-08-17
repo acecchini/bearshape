@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import typing as tp
 
+from typing_extensions import Self, TypeAliasType, TypeVarTuple
+
 from ._imports import require_attr, require_module
 
 _CUPY_INSTALL_HINT = (
@@ -38,7 +40,7 @@ if tp.TYPE_CHECKING:
     shape: tuple[int, ...]
     dtype: object
 
-    def __add__(self, other: object, /) -> tp.Self: ...
+    def __add__(self, other: object, /) -> Self: ...
 
 else:
   CuPyArray = tp.cast(
@@ -232,36 +234,36 @@ def make_array_like_type(
 # ---------------------------------------------------------------------------
 
 if tp.TYPE_CHECKING:
-  _Dims = tp.TypeVarTuple("_Dims")
+  _Dims = TypeVarTuple("_Dims")
 
-  Bool = tp.TypeAliasType("Bool", CuPyArray, type_params=(_Dims,))
+  Bool = TypeAliasType("Bool", CuPyArray, type_params=(_Dims,))
 
-  I8 = tp.TypeAliasType("I8", CuPyArray, type_params=(_Dims,))
-  I16 = tp.TypeAliasType("I16", CuPyArray, type_params=(_Dims,))
-  I32 = tp.TypeAliasType("I32", CuPyArray, type_params=(_Dims,))
-  I64 = tp.TypeAliasType("I64", CuPyArray, type_params=(_Dims,))
+  I8 = TypeAliasType("I8", CuPyArray, type_params=(_Dims,))
+  I16 = TypeAliasType("I16", CuPyArray, type_params=(_Dims,))
+  I32 = TypeAliasType("I32", CuPyArray, type_params=(_Dims,))
+  I64 = TypeAliasType("I64", CuPyArray, type_params=(_Dims,))
 
-  U8 = tp.TypeAliasType("U8", CuPyArray, type_params=(_Dims,))
-  U16 = tp.TypeAliasType("U16", CuPyArray, type_params=(_Dims,))
-  U32 = tp.TypeAliasType("U32", CuPyArray, type_params=(_Dims,))
-  U64 = tp.TypeAliasType("U64", CuPyArray, type_params=(_Dims,))
+  U8 = TypeAliasType("U8", CuPyArray, type_params=(_Dims,))
+  U16 = TypeAliasType("U16", CuPyArray, type_params=(_Dims,))
+  U32 = TypeAliasType("U32", CuPyArray, type_params=(_Dims,))
+  U64 = TypeAliasType("U64", CuPyArray, type_params=(_Dims,))
 
-  F16 = tp.TypeAliasType("F16", CuPyArray, type_params=(_Dims,))
-  F32 = tp.TypeAliasType("F32", CuPyArray, type_params=(_Dims,))
-  F64 = tp.TypeAliasType("F64", CuPyArray, type_params=(_Dims,))
+  F16 = TypeAliasType("F16", CuPyArray, type_params=(_Dims,))
+  F32 = TypeAliasType("F32", CuPyArray, type_params=(_Dims,))
+  F64 = TypeAliasType("F64", CuPyArray, type_params=(_Dims,))
 
-  C64 = tp.TypeAliasType("C64", CuPyArray, type_params=(_Dims,))
-  C128 = tp.TypeAliasType("C128", CuPyArray, type_params=(_Dims,))
+  C64 = TypeAliasType("C64", CuPyArray, type_params=(_Dims,))
+  C128 = TypeAliasType("C128", CuPyArray, type_params=(_Dims,))
 
-  Int = tp.TypeAliasType("Int", CuPyArray, type_params=(_Dims,))
-  UInt = tp.TypeAliasType("UInt", CuPyArray, type_params=(_Dims,))
-  Integer = tp.TypeAliasType("Integer", CuPyArray, type_params=(_Dims,))
-  Float = tp.TypeAliasType("Float", CuPyArray, type_params=(_Dims,))
-  Real = tp.TypeAliasType("Real", CuPyArray, type_params=(_Dims,))
-  Complex = tp.TypeAliasType("Complex", CuPyArray, type_params=(_Dims,))
-  Inexact = tp.TypeAliasType("Inexact", CuPyArray, type_params=(_Dims,))
-  Num = tp.TypeAliasType("Num", CuPyArray, type_params=(_Dims,))
-  Shaped = tp.TypeAliasType("Shaped", CuPyArray, type_params=(_Dims,))
+  Int = TypeAliasType("Int", CuPyArray, type_params=(_Dims,))
+  UInt = TypeAliasType("UInt", CuPyArray, type_params=(_Dims,))
+  Integer = TypeAliasType("Integer", CuPyArray, type_params=(_Dims,))
+  Float = TypeAliasType("Float", CuPyArray, type_params=(_Dims,))
+  Real = TypeAliasType("Real", CuPyArray, type_params=(_Dims,))
+  Complex = TypeAliasType("Complex", CuPyArray, type_params=(_Dims,))
+  Inexact = TypeAliasType("Inexact", CuPyArray, type_params=(_Dims,))
+  Num = TypeAliasType("Num", CuPyArray, type_params=(_Dims,))
+  Shaped = TypeAliasType("Shaped", CuPyArray, type_params=(_Dims,))
 
 else:
   Bool = make_array_type(CuPyArray, BOOL)
@@ -298,34 +300,34 @@ else:
 # ---------------------------------------------------------------------------
 
 if tp.TYPE_CHECKING:
-  BoolLike = tp.TypeAliasType("BoolLike", CuPyArray, type_params=(_Dims,))
+  BoolLike = TypeAliasType("BoolLike", CuPyArray, type_params=(_Dims,))
 
-  I8Like = tp.TypeAliasType("I8Like", CuPyArray, type_params=(_Dims,))
-  I16Like = tp.TypeAliasType("I16Like", CuPyArray, type_params=(_Dims,))
-  I32Like = tp.TypeAliasType("I32Like", CuPyArray, type_params=(_Dims,))
-  I64Like = tp.TypeAliasType("I64Like", CuPyArray, type_params=(_Dims,))
+  I8Like = TypeAliasType("I8Like", CuPyArray, type_params=(_Dims,))
+  I16Like = TypeAliasType("I16Like", CuPyArray, type_params=(_Dims,))
+  I32Like = TypeAliasType("I32Like", CuPyArray, type_params=(_Dims,))
+  I64Like = TypeAliasType("I64Like", CuPyArray, type_params=(_Dims,))
 
-  U8Like = tp.TypeAliasType("U8Like", CuPyArray, type_params=(_Dims,))
-  U16Like = tp.TypeAliasType("U16Like", CuPyArray, type_params=(_Dims,))
-  U32Like = tp.TypeAliasType("U32Like", CuPyArray, type_params=(_Dims,))
-  U64Like = tp.TypeAliasType("U64Like", CuPyArray, type_params=(_Dims,))
+  U8Like = TypeAliasType("U8Like", CuPyArray, type_params=(_Dims,))
+  U16Like = TypeAliasType("U16Like", CuPyArray, type_params=(_Dims,))
+  U32Like = TypeAliasType("U32Like", CuPyArray, type_params=(_Dims,))
+  U64Like = TypeAliasType("U64Like", CuPyArray, type_params=(_Dims,))
 
-  F16Like = tp.TypeAliasType("F16Like", CuPyArray, type_params=(_Dims,))
-  F32Like = tp.TypeAliasType("F32Like", CuPyArray, type_params=(_Dims,))
-  F64Like = tp.TypeAliasType("F64Like", CuPyArray, type_params=(_Dims,))
+  F16Like = TypeAliasType("F16Like", CuPyArray, type_params=(_Dims,))
+  F32Like = TypeAliasType("F32Like", CuPyArray, type_params=(_Dims,))
+  F64Like = TypeAliasType("F64Like", CuPyArray, type_params=(_Dims,))
 
-  C64Like = tp.TypeAliasType("C64Like", CuPyArray, type_params=(_Dims,))
-  C128Like = tp.TypeAliasType("C128Like", CuPyArray, type_params=(_Dims,))
+  C64Like = TypeAliasType("C64Like", CuPyArray, type_params=(_Dims,))
+  C128Like = TypeAliasType("C128Like", CuPyArray, type_params=(_Dims,))
 
-  IntLike = tp.TypeAliasType("IntLike", CuPyArray, type_params=(_Dims,))
-  UIntLike = tp.TypeAliasType("UIntLike", CuPyArray, type_params=(_Dims,))
-  IntegerLike = tp.TypeAliasType("IntegerLike", CuPyArray, type_params=(_Dims,))
-  FloatLike = tp.TypeAliasType("FloatLike", CuPyArray, type_params=(_Dims,))
-  RealLike = tp.TypeAliasType("RealLike", CuPyArray, type_params=(_Dims,))
-  ComplexLike = tp.TypeAliasType("ComplexLike", CuPyArray, type_params=(_Dims,))
-  InexactLike = tp.TypeAliasType("InexactLike", CuPyArray, type_params=(_Dims,))
-  NumLike = tp.TypeAliasType("NumLike", CuPyArray, type_params=(_Dims,))
-  ShapedLike = tp.TypeAliasType("ShapedLike", CuPyArray, type_params=(_Dims,))
+  IntLike = TypeAliasType("IntLike", CuPyArray, type_params=(_Dims,))
+  UIntLike = TypeAliasType("UIntLike", CuPyArray, type_params=(_Dims,))
+  IntegerLike = TypeAliasType("IntegerLike", CuPyArray, type_params=(_Dims,))
+  FloatLike = TypeAliasType("FloatLike", CuPyArray, type_params=(_Dims,))
+  RealLike = TypeAliasType("RealLike", CuPyArray, type_params=(_Dims,))
+  ComplexLike = TypeAliasType("ComplexLike", CuPyArray, type_params=(_Dims,))
+  InexactLike = TypeAliasType("InexactLike", CuPyArray, type_params=(_Dims,))
+  NumLike = TypeAliasType("NumLike", CuPyArray, type_params=(_Dims,))
+  ShapedLike = TypeAliasType("ShapedLike", CuPyArray, type_params=(_Dims,))
 
 else:
   BoolLike = make_array_like_type(BOOL, name="BoolLike")

@@ -58,6 +58,7 @@ from typing import Annotated
 import numpy as np
 from beartype.vale import Is
 from numpy._typing import _NestedSequence, _SupportsArray
+from typing_extensions import TypeAliasType, TypeVarTuple
 
 __all__ = [
   # Array types — base
@@ -368,127 +369,115 @@ def Structured(  # noqa: N802
 if tp.TYPE_CHECKING:
   from numpy.typing import NDArray
 
-  _Dims = tp.TypeVarTuple("_Dims")
+  _Dims = TypeVarTuple("_Dims")
 
   # --- Base types ---
-  Bool = tp.TypeAliasType("Bool", NDArray[np.bool_], type_params=(_Dims,))
+  Bool = TypeAliasType("Bool", NDArray[np.bool_], type_params=(_Dims,))
 
-  I8 = tp.TypeAliasType("I8", NDArray[np.int8], type_params=(_Dims,))
-  I16 = tp.TypeAliasType("I16", NDArray[np.int16], type_params=(_Dims,))
-  I32 = tp.TypeAliasType("I32", NDArray[np.int32], type_params=(_Dims,))
-  I64 = tp.TypeAliasType("I64", NDArray[np.int64], type_params=(_Dims,))
+  I8 = TypeAliasType("I8", NDArray[np.int8], type_params=(_Dims,))
+  I16 = TypeAliasType("I16", NDArray[np.int16], type_params=(_Dims,))
+  I32 = TypeAliasType("I32", NDArray[np.int32], type_params=(_Dims,))
+  I64 = TypeAliasType("I64", NDArray[np.int64], type_params=(_Dims,))
 
-  U8 = tp.TypeAliasType("U8", NDArray[np.uint8], type_params=(_Dims,))
-  U16 = tp.TypeAliasType("U16", NDArray[np.uint16], type_params=(_Dims,))
-  U32 = tp.TypeAliasType("U32", NDArray[np.uint32], type_params=(_Dims,))
-  U64 = tp.TypeAliasType("U64", NDArray[np.uint64], type_params=(_Dims,))
+  U8 = TypeAliasType("U8", NDArray[np.uint8], type_params=(_Dims,))
+  U16 = TypeAliasType("U16", NDArray[np.uint16], type_params=(_Dims,))
+  U32 = TypeAliasType("U32", NDArray[np.uint32], type_params=(_Dims,))
+  U64 = TypeAliasType("U64", NDArray[np.uint64], type_params=(_Dims,))
 
-  F16 = tp.TypeAliasType("F16", NDArray[np.float16], type_params=(_Dims,))
-  F32 = tp.TypeAliasType("F32", NDArray[np.float32], type_params=(_Dims,))
-  F64 = tp.TypeAliasType("F64", NDArray[np.float64], type_params=(_Dims,))
-  F128 = tp.TypeAliasType("F128", NDArray[np.longdouble], type_params=(_Dims,))
+  F16 = TypeAliasType("F16", NDArray[np.float16], type_params=(_Dims,))
+  F32 = TypeAliasType("F32", NDArray[np.float32], type_params=(_Dims,))
+  F64 = TypeAliasType("F64", NDArray[np.float64], type_params=(_Dims,))
+  F128 = TypeAliasType("F128", NDArray[np.longdouble], type_params=(_Dims,))
 
-  C64 = tp.TypeAliasType("C64", NDArray[np.complex64], type_params=(_Dims,))
-  C128 = tp.TypeAliasType("C128", NDArray[np.complex128], type_params=(_Dims,))
-  C256 = tp.TypeAliasType("C256", NDArray[np.clongdouble], type_params=(_Dims,))
+  C64 = TypeAliasType("C64", NDArray[np.complex64], type_params=(_Dims,))
+  C128 = TypeAliasType("C128", NDArray[np.complex128], type_params=(_Dims,))
+  C256 = TypeAliasType("C256", NDArray[np.clongdouble], type_params=(_Dims,))
 
-  Int = tp.TypeAliasType("Int", NDArray[np.signedinteger[tp.Any]], type_params=(_Dims,))
-  UInt = tp.TypeAliasType(
+  Int = TypeAliasType("Int", NDArray[np.signedinteger[tp.Any]], type_params=(_Dims,))
+  UInt = TypeAliasType(
     "UInt", NDArray[np.unsignedinteger[tp.Any]], type_params=(_Dims,)
   )
-  Integer = tp.TypeAliasType(
-    "Integer", NDArray[np.integer[tp.Any]], type_params=(_Dims,)
-  )
-  Float = tp.TypeAliasType("Float", NDArray[np.floating[tp.Any]], type_params=(_Dims,))
-  Real = tp.TypeAliasType(
+  Integer = TypeAliasType("Integer", NDArray[np.integer[tp.Any]], type_params=(_Dims,))
+  Float = TypeAliasType("Float", NDArray[np.floating[tp.Any]], type_params=(_Dims,))
+  Real = TypeAliasType(
     "Real", NDArray[np.integer[tp.Any] | np.floating[tp.Any]], type_params=(_Dims,)
   )
-  Complex = tp.TypeAliasType(
+  Complex = TypeAliasType(
     "Complex", NDArray[np.complexfloating[tp.Any, tp.Any]], type_params=(_Dims,)
   )
-  Inexact = tp.TypeAliasType(
-    "Inexact", NDArray[np.inexact[tp.Any]], type_params=(_Dims,)
-  )
-  Num = tp.TypeAliasType("Num", NDArray[np.number[tp.Any]], type_params=(_Dims,))
-  Shaped = tp.TypeAliasType(
+  Inexact = TypeAliasType("Inexact", NDArray[np.inexact[tp.Any]], type_params=(_Dims,))
+  Num = TypeAliasType("Num", NDArray[np.number[tp.Any]], type_params=(_Dims,))
+  Shaped = TypeAliasType(
     "Shaped", NDArray[np.bool_ | np.number[tp.Any]], type_params=(_Dims,)
   )
 
   # --- New dtypes ---
-  V = tp.TypeAliasType("V", NDArray[np.void], type_params=(_Dims,))
-  Str = tp.TypeAliasType("Str", NDArray[np.str_], type_params=(_Dims,))
-  Bytes = tp.TypeAliasType("Bytes", NDArray[np.bytes_], type_params=(_Dims,))
-  Obj = tp.TypeAliasType("Obj", NDArray[np.object_], type_params=(_Dims,))
-  DT64 = tp.TypeAliasType("DT64", NDArray[np.datetime64], type_params=(_Dims,))
-  TD64 = tp.TypeAliasType("TD64", NDArray[np.timedelta64], type_params=(_Dims,))
+  V = TypeAliasType("V", NDArray[np.void], type_params=(_Dims,))
+  Str = TypeAliasType("Str", NDArray[np.str_], type_params=(_Dims,))
+  Bytes = TypeAliasType("Bytes", NDArray[np.bytes_], type_params=(_Dims,))
+  Obj = TypeAliasType("Obj", NDArray[np.object_], type_params=(_Dims,))
+  DT64 = TypeAliasType("DT64", NDArray[np.datetime64], type_params=(_Dims,))
+  TD64 = TypeAliasType("TD64", NDArray[np.timedelta64], type_params=(_Dims,))
 
   # --- Like types (static: ArrayLike template with bare scalar types) ---
-  BoolLike = tp.TypeAliasType(
-    "BoolLike", ArrayLike[bool, np.bool_], type_params=(_Dims,)
-  )
+  BoolLike = TypeAliasType("BoolLike", ArrayLike[bool, np.bool_], type_params=(_Dims,))
 
-  I8Like = tp.TypeAliasType("I8Like", ArrayLike[int, np.int8], type_params=(_Dims,))
-  I16Like = tp.TypeAliasType("I16Like", ArrayLike[int, np.int16], type_params=(_Dims,))
-  I32Like = tp.TypeAliasType("I32Like", ArrayLike[int, np.int32], type_params=(_Dims,))
-  I64Like = tp.TypeAliasType("I64Like", ArrayLike[int, np.int64], type_params=(_Dims,))
+  I8Like = TypeAliasType("I8Like", ArrayLike[int, np.int8], type_params=(_Dims,))
+  I16Like = TypeAliasType("I16Like", ArrayLike[int, np.int16], type_params=(_Dims,))
+  I32Like = TypeAliasType("I32Like", ArrayLike[int, np.int32], type_params=(_Dims,))
+  I64Like = TypeAliasType("I64Like", ArrayLike[int, np.int64], type_params=(_Dims,))
 
-  U8Like = tp.TypeAliasType("U8Like", ArrayLike[int, np.uint8], type_params=(_Dims,))
-  U16Like = tp.TypeAliasType("U16Like", ArrayLike[int, np.uint16], type_params=(_Dims,))
-  U32Like = tp.TypeAliasType("U32Like", ArrayLike[int, np.uint32], type_params=(_Dims,))
-  U64Like = tp.TypeAliasType("U64Like", ArrayLike[int, np.uint64], type_params=(_Dims,))
+  U8Like = TypeAliasType("U8Like", ArrayLike[int, np.uint8], type_params=(_Dims,))
+  U16Like = TypeAliasType("U16Like", ArrayLike[int, np.uint16], type_params=(_Dims,))
+  U32Like = TypeAliasType("U32Like", ArrayLike[int, np.uint32], type_params=(_Dims,))
+  U64Like = TypeAliasType("U64Like", ArrayLike[int, np.uint64], type_params=(_Dims,))
 
-  F16Like = tp.TypeAliasType(
-    "F16Like", ArrayLike[float, np.float16], type_params=(_Dims,)
-  )
-  F32Like = tp.TypeAliasType(
-    "F32Like", ArrayLike[float, np.float32], type_params=(_Dims,)
-  )
-  F64Like = tp.TypeAliasType(
-    "F64Like", ArrayLike[float, np.float64], type_params=(_Dims,)
-  )
-  F128Like = tp.TypeAliasType(
+  F16Like = TypeAliasType("F16Like", ArrayLike[float, np.float16], type_params=(_Dims,))
+  F32Like = TypeAliasType("F32Like", ArrayLike[float, np.float32], type_params=(_Dims,))
+  F64Like = TypeAliasType("F64Like", ArrayLike[float, np.float64], type_params=(_Dims,))
+  F128Like = TypeAliasType(
     "F128Like", ArrayLike[float, np.longdouble], type_params=(_Dims,)
   )
 
-  C64Like = tp.TypeAliasType(
+  C64Like = TypeAliasType(
     "C64Like", ArrayLike[complex, np.complex64], type_params=(_Dims,)
   )
-  C128Like = tp.TypeAliasType(
+  C128Like = TypeAliasType(
     "C128Like", ArrayLike[complex, np.complex128], type_params=(_Dims,)
   )
-  C256Like = tp.TypeAliasType(
+  C256Like = TypeAliasType(
     "C256Like", ArrayLike[complex, np.clongdouble], type_params=(_Dims,)
   )
 
-  IntLike = tp.TypeAliasType(
+  IntLike = TypeAliasType(
     "IntLike", ArrayLike[int, np.signedinteger[tp.Any]], type_params=(_Dims,)
   )
-  UIntLike = tp.TypeAliasType(
+  UIntLike = TypeAliasType(
     "UIntLike", ArrayLike[int, np.unsignedinteger[tp.Any]], type_params=(_Dims,)
   )
-  IntegerLike = tp.TypeAliasType(
+  IntegerLike = TypeAliasType(
     "IntegerLike", ArrayLike[int, np.integer[tp.Any]], type_params=(_Dims,)
   )
-  FloatLike = tp.TypeAliasType(
+  FloatLike = TypeAliasType(
     "FloatLike", ArrayLike[float, np.floating[tp.Any]], type_params=(_Dims,)
   )
-  RealLike = tp.TypeAliasType(
+  RealLike = TypeAliasType(
     "RealLike",
     ArrayLike[int | float, np.integer[tp.Any] | np.floating[tp.Any]],
     type_params=(_Dims,),
   )
-  ComplexLike = tp.TypeAliasType(
+  ComplexLike = TypeAliasType(
     "ComplexLike",
     ArrayLike[complex, np.complexfloating[tp.Any, tp.Any]],
     type_params=(_Dims,),
   )
-  InexactLike = tp.TypeAliasType(
+  InexactLike = TypeAliasType(
     "InexactLike", ArrayLike[float | complex, np.inexact[tp.Any]], type_params=(_Dims,)
   )
-  NumLike = tp.TypeAliasType(
+  NumLike = TypeAliasType(
     "NumLike", ArrayLike[int | float | complex, np.number[tp.Any]], type_params=(_Dims,)
   )
-  ShapedLike = tp.TypeAliasType(
+  ShapedLike = TypeAliasType(
     "ShapedLike",
     ArrayLike[bool | int | float | complex, np.bool_ | np.number[tp.Any]],
     type_params=(_Dims,),

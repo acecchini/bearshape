@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import typing as tp
 
+from typing_extensions import TypeAliasType, TypeVarTuple
+
 from ._imports import require_attr, require_module
 
 _TORCH_INSTALL_HINT = (
@@ -227,37 +229,37 @@ def make_array_like_type(
 # ---------------------------------------------------------------------------
 
 if tp.TYPE_CHECKING:
-  _Dims = tp.TypeVarTuple("_Dims")
+  _Dims = TypeVarTuple("_Dims")
 
-  Bool = tp.TypeAliasType("Bool", Tensor, type_params=(_Dims,))
+  Bool = TypeAliasType("Bool", Tensor, type_params=(_Dims,))
 
-  I8 = tp.TypeAliasType("I8", Tensor, type_params=(_Dims,))
-  I16 = tp.TypeAliasType("I16", Tensor, type_params=(_Dims,))
-  I32 = tp.TypeAliasType("I32", Tensor, type_params=(_Dims,))
-  I64 = tp.TypeAliasType("I64", Tensor, type_params=(_Dims,))
+  I8 = TypeAliasType("I8", Tensor, type_params=(_Dims,))
+  I16 = TypeAliasType("I16", Tensor, type_params=(_Dims,))
+  I32 = TypeAliasType("I32", Tensor, type_params=(_Dims,))
+  I64 = TypeAliasType("I64", Tensor, type_params=(_Dims,))
 
-  U8 = tp.TypeAliasType("U8", Tensor, type_params=(_Dims,))
-  U16 = tp.TypeAliasType("U16", Tensor, type_params=(_Dims,))
-  U32 = tp.TypeAliasType("U32", Tensor, type_params=(_Dims,))
-  U64 = tp.TypeAliasType("U64", Tensor, type_params=(_Dims,))
+  U8 = TypeAliasType("U8", Tensor, type_params=(_Dims,))
+  U16 = TypeAliasType("U16", Tensor, type_params=(_Dims,))
+  U32 = TypeAliasType("U32", Tensor, type_params=(_Dims,))
+  U64 = TypeAliasType("U64", Tensor, type_params=(_Dims,))
 
-  F16 = tp.TypeAliasType("F16", Tensor, type_params=(_Dims,))
-  F32 = tp.TypeAliasType("F32", Tensor, type_params=(_Dims,))
-  F64 = tp.TypeAliasType("F64", Tensor, type_params=(_Dims,))
-  BF16 = tp.TypeAliasType("BF16", Tensor, type_params=(_Dims,))
+  F16 = TypeAliasType("F16", Tensor, type_params=(_Dims,))
+  F32 = TypeAliasType("F32", Tensor, type_params=(_Dims,))
+  F64 = TypeAliasType("F64", Tensor, type_params=(_Dims,))
+  BF16 = TypeAliasType("BF16", Tensor, type_params=(_Dims,))
 
-  C64 = tp.TypeAliasType("C64", Tensor, type_params=(_Dims,))
-  C128 = tp.TypeAliasType("C128", Tensor, type_params=(_Dims,))
+  C64 = TypeAliasType("C64", Tensor, type_params=(_Dims,))
+  C128 = TypeAliasType("C128", Tensor, type_params=(_Dims,))
 
-  Int = tp.TypeAliasType("Int", Tensor, type_params=(_Dims,))
-  UInt = tp.TypeAliasType("UInt", Tensor, type_params=(_Dims,))
-  Integer = tp.TypeAliasType("Integer", Tensor, type_params=(_Dims,))
-  Float = tp.TypeAliasType("Float", Tensor, type_params=(_Dims,))
-  Real = tp.TypeAliasType("Real", Tensor, type_params=(_Dims,))
-  Complex = tp.TypeAliasType("Complex", Tensor, type_params=(_Dims,))
-  Inexact = tp.TypeAliasType("Inexact", Tensor, type_params=(_Dims,))
-  Num = tp.TypeAliasType("Num", Tensor, type_params=(_Dims,))
-  Shaped = tp.TypeAliasType("Shaped", Tensor, type_params=(_Dims,))
+  Int = TypeAliasType("Int", Tensor, type_params=(_Dims,))
+  UInt = TypeAliasType("UInt", Tensor, type_params=(_Dims,))
+  Integer = TypeAliasType("Integer", Tensor, type_params=(_Dims,))
+  Float = TypeAliasType("Float", Tensor, type_params=(_Dims,))
+  Real = TypeAliasType("Real", Tensor, type_params=(_Dims,))
+  Complex = TypeAliasType("Complex", Tensor, type_params=(_Dims,))
+  Inexact = TypeAliasType("Inexact", Tensor, type_params=(_Dims,))
+  Num = TypeAliasType("Num", Tensor, type_params=(_Dims,))
+  Shaped = TypeAliasType("Shaped", Tensor, type_params=(_Dims,))
 
 else:
   Bool = make_array_type(Tensor, BOOL)
@@ -295,35 +297,35 @@ else:
 # ---------------------------------------------------------------------------
 
 if tp.TYPE_CHECKING:
-  BF16Like = tp.TypeAliasType("BF16Like", Tensor, type_params=(_Dims,))
-  BoolLike = tp.TypeAliasType("BoolLike", Tensor, type_params=(_Dims,))
+  BF16Like = TypeAliasType("BF16Like", Tensor, type_params=(_Dims,))
+  BoolLike = TypeAliasType("BoolLike", Tensor, type_params=(_Dims,))
 
-  I8Like = tp.TypeAliasType("I8Like", Tensor, type_params=(_Dims,))
-  I16Like = tp.TypeAliasType("I16Like", Tensor, type_params=(_Dims,))
-  I32Like = tp.TypeAliasType("I32Like", Tensor, type_params=(_Dims,))
-  I64Like = tp.TypeAliasType("I64Like", Tensor, type_params=(_Dims,))
+  I8Like = TypeAliasType("I8Like", Tensor, type_params=(_Dims,))
+  I16Like = TypeAliasType("I16Like", Tensor, type_params=(_Dims,))
+  I32Like = TypeAliasType("I32Like", Tensor, type_params=(_Dims,))
+  I64Like = TypeAliasType("I64Like", Tensor, type_params=(_Dims,))
 
-  U8Like = tp.TypeAliasType("U8Like", Tensor, type_params=(_Dims,))
-  U16Like = tp.TypeAliasType("U16Like", Tensor, type_params=(_Dims,))
-  U32Like = tp.TypeAliasType("U32Like", Tensor, type_params=(_Dims,))
-  U64Like = tp.TypeAliasType("U64Like", Tensor, type_params=(_Dims,))
+  U8Like = TypeAliasType("U8Like", Tensor, type_params=(_Dims,))
+  U16Like = TypeAliasType("U16Like", Tensor, type_params=(_Dims,))
+  U32Like = TypeAliasType("U32Like", Tensor, type_params=(_Dims,))
+  U64Like = TypeAliasType("U64Like", Tensor, type_params=(_Dims,))
 
-  F16Like = tp.TypeAliasType("F16Like", Tensor, type_params=(_Dims,))
-  F32Like = tp.TypeAliasType("F32Like", Tensor, type_params=(_Dims,))
-  F64Like = tp.TypeAliasType("F64Like", Tensor, type_params=(_Dims,))
+  F16Like = TypeAliasType("F16Like", Tensor, type_params=(_Dims,))
+  F32Like = TypeAliasType("F32Like", Tensor, type_params=(_Dims,))
+  F64Like = TypeAliasType("F64Like", Tensor, type_params=(_Dims,))
 
-  C64Like = tp.TypeAliasType("C64Like", Tensor, type_params=(_Dims,))
-  C128Like = tp.TypeAliasType("C128Like", Tensor, type_params=(_Dims,))
+  C64Like = TypeAliasType("C64Like", Tensor, type_params=(_Dims,))
+  C128Like = TypeAliasType("C128Like", Tensor, type_params=(_Dims,))
 
-  IntLike = tp.TypeAliasType("IntLike", Tensor, type_params=(_Dims,))
-  UIntLike = tp.TypeAliasType("UIntLike", Tensor, type_params=(_Dims,))
-  IntegerLike = tp.TypeAliasType("IntegerLike", Tensor, type_params=(_Dims,))
-  FloatLike = tp.TypeAliasType("FloatLike", Tensor, type_params=(_Dims,))
-  RealLike = tp.TypeAliasType("RealLike", Tensor, type_params=(_Dims,))
-  ComplexLike = tp.TypeAliasType("ComplexLike", Tensor, type_params=(_Dims,))
-  InexactLike = tp.TypeAliasType("InexactLike", Tensor, type_params=(_Dims,))
-  NumLike = tp.TypeAliasType("NumLike", Tensor, type_params=(_Dims,))
-  ShapedLike = tp.TypeAliasType("ShapedLike", Tensor, type_params=(_Dims,))
+  IntLike = TypeAliasType("IntLike", Tensor, type_params=(_Dims,))
+  UIntLike = TypeAliasType("UIntLike", Tensor, type_params=(_Dims,))
+  IntegerLike = TypeAliasType("IntegerLike", Tensor, type_params=(_Dims,))
+  FloatLike = TypeAliasType("FloatLike", Tensor, type_params=(_Dims,))
+  RealLike = TypeAliasType("RealLike", Tensor, type_params=(_Dims,))
+  ComplexLike = TypeAliasType("ComplexLike", Tensor, type_params=(_Dims,))
+  InexactLike = TypeAliasType("InexactLike", Tensor, type_params=(_Dims,))
+  NumLike = TypeAliasType("NumLike", Tensor, type_params=(_Dims,))
+  ShapedLike = TypeAliasType("ShapedLike", Tensor, type_params=(_Dims,))
 
 else:
   BF16Like = make_array_like_type(BFLOAT16, name="BF16Like")

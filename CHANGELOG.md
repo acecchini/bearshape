@@ -13,6 +13,17 @@ and this project follows
 - A GitHub Actions workflow for trusted publishing to PyPI, with automatic
     release-based publishing and manual `workflow_dispatch` support for a chosen
     ref.
+- `typing_extensions>=4.6` as a runtime dependency, so the typing constructs
+    used by the backend aliases resolve on every supported Python version.
+
+### Fixed
+
+- Backend array aliases (`Shaped`, `F32`, `IntLike`, …) no longer break type
+    checkers resolving Python 3.10 or 3.11. The aliases used
+    `typing.TypeAliasType` (3.12+) and `typing.TypeVarTuple` (3.11+); they now
+    use the `typing_extensions` backports, along with `typing_extensions.Self`
+    in `bearshape.cupy` and `typing_extensions.Never` in
+    `bearshape._dimensions`.
 
 ### Changed
 
