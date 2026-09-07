@@ -20,7 +20,7 @@ env_list = [
   "py313-bt022-jax09",
   "py313-bt022-torch210",
   "py313-bt022-optree019",
-  # Typecheck: latest Python + latest beartype only (type stubs are version-independent)
+  # Check Python 3.13 with its compatible dependencies; CI also covers 3.10-3.14.
   { product = [
     ["py313"],
     ["bt022"],

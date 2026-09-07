@@ -1,5 +1,6 @@
 [environment]
-python-version = "3.12"
+# Match the supported Python floor used by pyright and mypy.
+python-version = "3.10"
 
 [rules]
 # Dimension/ValueExpr subclass str and intentionally override arithmetic

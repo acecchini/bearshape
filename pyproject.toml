@@ -98,13 +98,14 @@ reportUnusedClass = false
 # numpy._NestedSequence, ._SupportsArray, and internal _dim_spec access
 reportPrivateUsage = false
 reportUnusedImport = "warning"
-pythonVersion = "3.12"
+# Check the oldest supported Python, not the interpreter running the checker.
+pythonVersion = "3.10"
 pythonPlatform = "Linux"
 venvPath = "."
 venv = ".venv"
 
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.10"
 strict = true
 ignore_missing_imports = true
 warn_unreachable = true
