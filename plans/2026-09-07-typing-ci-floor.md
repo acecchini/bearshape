@@ -17,8 +17,8 @@ Bearshape promises Python 3.10 and newer, but its default type checkers currentl
 - [x] (2026-09-07) Set checker defaults to 3.10; prototype cross-target tests and discover NumPy stub incompatibility in Python 3.13 tox.
 - [x] (2026-09-07) Match each suite target to its interpreter and add a Python 3.10-3.14 typecheck-compat environment matrix.
 - [x] (2026-09-07) Validate all three default checkers, 30 local typing tests, six structured dtype tests, all three declared tox checker environments, hooks, lock consistency, and actionlint.
-- [ ] Complete the final hosted CI run for the dtype annotation repair; the preceding revision already passed all five Python typing jobs and the coverage-enabled test job.
-- [ ] Merge PR #10 and the CI companion only after applicable checks pass, refresh local main, and remove owned worktrees and branches.
+- [x] (2026-09-07) Complete hosted run 34162817643 at 6a28164851a4612483b09750784e010d2b2a7a22: all 20 applicable jobs passed, including five Python typing environments, coverage, eight backend combinations, and three tox checker environments.
+- [x] (2026-09-07) Prepare publication under the user's explicit approval, preserving the contributor commit through PR #11. Merge only after the final documentation revision also passes CI, then refresh main and remove owned worktrees; GitHub PR #11 records the merge receipt.
 
 ## Surprises & Discoveries
 
@@ -39,7 +39,7 @@ Decision: Treat the user's latest instruction as authorization to enable CI and 
 ## Outcomes & Retrospective
 
 
-Implementation and local validation are complete. The final hosted run is the remaining merge gate. Hosted CI identified a pre-existing lint blocker: ruff-action resolved Ruff 0.16.6 from >=0.15.9, while uv.lock contains 0.15.15. New suppression-comment rules fail unchanged source, preventing all downstream tests. Fix the version drift through the lock, not by weakening lint or editing unrelated source.
+Implementation, local validation, and the complete hosted matrix are green. Run 34162817643 passed all 20 applicable jobs for the final code revision 6a28164851a4612483b09750784e010d2b2a7a22. This final plan-only revision records those results; its own CI must also pass before publication. Hosted CI identified a pre-existing lint blocker: ruff-action resolved Ruff 0.16.6 from >=0.15.9, while uv.lock contains 0.15.15. New suppression-comment rules fail unchanged source, preventing all downstream tests. Fix the version drift through the lock, not by weakening lint or editing unrelated source.
 
 The original backport review passed all three checkers across five targets, the CPU runtime suite, hooks, lock validation, package build, and isolated minimum-dependency imports on Python 3.10 and 3.14.
 
@@ -100,7 +100,8 @@ Prior independent review evidence:
     final local typing suite: 30 passed
     structured dtype regression subset: 6 passed
     Python 3.13 tox: pyright1408 and mypy119 pass; ty passes after DTypeLike repair
-    hosted run 34162541944: all five Python typing jobs and coverage-enabled test job passed before final repair
+    final hosted run 34162817643: SUCCESS, 20 applicable jobs passed, none failed
+    final code revision: 6a28164851a4612483b09750784e010d2b2a7a22
 
 ## Interfaces and Dependencies
 
@@ -118,3 +119,5 @@ Revision note (2026-09-07): The first tox run exposed NumPy 2.4 stub syntax erro
 Revision note (2026-09-07): The final Python 3.13 tox run passed pyright and mypy but latest ty identified an existing dtype constructor annotation mismatch. Add a precise DTypeLike cast at that dynamic boundary rather than suppressing the checker or pinning away the diagnostic.
 
 Revision note (2026-09-07): Record completed local validation and the final narrow annotation repair. The final combined commit must still pass hosted CI before merge.
+
+Revision note (2026-09-07): Finalize the audit with all 20 hosted CI jobs passing. The source implementation is unchanged by this record update. The authorized publication step is gated on this final revision's CI; merge and cleanup receipts are recorded in GitHub and the task.
