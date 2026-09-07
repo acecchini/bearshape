@@ -36,6 +36,8 @@ from __future__ import annotations
 
 import typing as tp
 
+from typing_extensions import Never
+
 from ._shape import (
   ANONYMOUS,
   ANONYMOUS_VARIADIC,
@@ -312,7 +314,7 @@ class _ValueExpr(str):
   def __neg__(self) -> _ValueExpr:
     return _ValueExpr(f"(-{self})")
 
-  def __invert__(self) -> tp.Never:
+  def __invert__(self) -> Never:
     """``~Value(...)`` is not supported — variadic requires a name."""
     msg = "Value expressions cannot be variadic (~); use a named Dimension instead"
     raise TypeError(msg)

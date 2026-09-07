@@ -15,6 +15,9 @@ from __future__ import annotations
 import typing as tp
 from dataclasses import dataclass, field
 
+if tp.TYPE_CHECKING:
+  from numpy.typing import DTypeLike
+
 __all__ = [
   # Core
   "DtypeSpec",
@@ -240,7 +243,7 @@ class DtypeSpec:
     """
     import numpy as np
 
-    dt = np.dtype(dtype)  # type: ignore[call-overload]
+    dt = np.dtype(tp.cast("DTypeLike", dtype))
     return DtypeSpec(
       name=f"Structured({dt})", allowed=frozenset({"void"}), _structured=dt
     )

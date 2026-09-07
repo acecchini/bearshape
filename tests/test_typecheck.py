@@ -5,6 +5,9 @@ Runs pyright, mypy, and ty against both:
 - sample files under ``tests/typing/`` that exercise the public annotation
   surface and its documented ``TYPE_CHECKING`` workarounds
 - the ``src/`` tree itself, so source-level checker regressions are caught too
+
+Use the current interpreter as the checker target so third-party stubs match
+the installed dependencies. CI runs this suite on Python 3.10 through 3.14.
 """
 
 from __future__ import annotations
@@ -20,6 +23,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 TYPING_DIR = ROOT / "tests" / "typing"
 WHOLE_TREE_TARGETS = ["src", "tests/typing"]
+PYTHON_TARGET = f"{sys.version_info.major}.{sys.version_info.minor}"
 
 # ---------------------------------------------------------------------------
 # All files tested by all three checkers
@@ -80,16 +84,18 @@ class TestPyright:
   @pytest.mark.parametrize("filename", ALL_FILES)
   def test_pyright(self, filename: str) -> None:
     _skip_if_missing("pyright")
-    result = _run("pyright", str(TYPING_DIR / filename))
+    result = _run(
+      "pyright", "--pythonversion", PYTHON_TARGET, str(TYPING_DIR / filename)
+    )
     assert result.returncode == 0, (
       f"pyright failed on {filename}:\n{result.stdout}\n{result.stderr}"
     )
 
   def test_pyright_source_tree(self) -> None:
     _skip_if_missing("pyright")
-    result = _run("pyright", *WHOLE_TREE_TARGETS)
+    result = _run("pyright", "--pythonversion", PYTHON_TARGET, *WHOLE_TREE_TARGETS)
     assert result.returncode == 0, (
-      f"pyright failed on source tree:\n{result.stdout}\n{result.stderr}"
+      f"pyright failed on source tree for Python {PYTHON_TARGET}:\n{result.stdout}\n{result.stderr}"
     )
 
 
@@ -103,16 +109,16 @@ class TestMypy:
   @pytest.mark.parametrize("filename", ALL_FILES)
   def test_mypy(self, filename: str) -> None:
     _skip_if_missing("mypy")
-    result = _run_mypy(str(TYPING_DIR / filename))
+    result = _run_mypy("--python-version", PYTHON_TARGET, str(TYPING_DIR / filename))
     assert result.returncode == 0, (
       f"mypy failed on {filename}:\n{result.stdout}\n{result.stderr}"
     )
 
   def test_mypy_source_tree(self) -> None:
     _skip_if_missing("mypy")
-    result = _run_mypy(*WHOLE_TREE_TARGETS)
+    result = _run_mypy("--python-version", PYTHON_TARGET, *WHOLE_TREE_TARGETS)
     assert result.returncode == 0, (
-      f"mypy failed on source tree:\n{result.stdout}\n{result.stderr}"
+      f"mypy failed on source tree for Python {PYTHON_TARGET}:\n{result.stdout}\n{result.stderr}"
     )
 
 
@@ -126,14 +132,16 @@ class TestTy:
   @pytest.mark.parametrize("filename", ALL_FILES)
   def test_ty(self, filename: str) -> None:
     _skip_if_missing("ty")
-    result = _run("ty", "check", str(TYPING_DIR / filename))
+    result = _run(
+      "ty", "check", "--python-version", PYTHON_TARGET, str(TYPING_DIR / filename)
+    )
     assert result.returncode == 0, (
       f"ty failed on {filename}:\n{result.stdout}\n{result.stderr}"
     )
 
   def test_ty_source_tree(self) -> None:
     _skip_if_missing("ty")
-    result = _run("ty", "check", *WHOLE_TREE_TARGETS)
+    result = _run("ty", "check", "--python-version", PYTHON_TARGET, *WHOLE_TREE_TARGETS)
     assert result.returncode == 0, (
-      f"ty failed on source tree:\n{result.stdout}\n{result.stderr}"
+      f"ty failed on source tree for Python {PYTHON_TARGET}:\n{result.stdout}\n{result.stderr}"
     )

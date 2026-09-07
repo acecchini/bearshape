@@ -13,9 +13,28 @@ and this project follows
 - A GitHub Actions workflow for trusted publishing to PyPI, with automatic
     release-based publishing and manual `workflow_dispatch` support for a chosen
     ref.
+- `typing_extensions>=4.6` as a runtime dependency, so the typing constructs
+    used by the backend aliases resolve on every supported Python version.
+
+### Fixed
+
+- Structured dtype normalization now exposes its NumPy input type to all
+    supported checkers while retaining NumPy's runtime validation.
+
+- Backend array aliases (`Shaped`, `F32`, `IntLike`, …) no longer break type
+    checkers resolving Python 3.10 or 3.11. The aliases used
+    `typing.TypeAliasType` (3.12+) and `typing.TypeVarTuple` (3.11+); they now
+    use the `typing_extensions` backports, along with `typing_extensions.Self`
+    in `bearshape.cupy` and `typing_extensions.Never` in
+    `bearshape._dimensions`.
 
 ### Changed
 
+- CI lint and formatting now use the Ruff version in `uv.lock`, avoiding
+    unreviewed tool upgrades that disagree with local checks.
+- Default type checks now target Python 3.10, with compatibility tests covering
+    every supported Python target from 3.10 through 3.14 for pyright, mypy, and
+    ty.
 - Renamed the distribution, import package, documentation, examples, tests, and
     release metadata to bearshape.
 - Normalized product-facing branding to lowercase `bearshape`.
