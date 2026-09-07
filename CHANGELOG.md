@@ -18,6 +18,9 @@ and this project follows
 
 ### Fixed
 
+- Structured dtype normalization now exposes its NumPy input type to all
+    supported checkers while retaining NumPy's runtime validation.
+
 - Backend array aliases (`Shaped`, `F32`, `IntLike`, …) no longer break type
     checkers resolving Python 3.10 or 3.11. The aliases used
     `typing.TypeAliasType` (3.12+) and `typing.TypeVarTuple` (3.11+); they now
@@ -29,28 +32,20 @@ and this project follows
 
 - CI lint and formatting now use the Ruff version in `uv.lock`, avoiding
     unreviewed tool upgrades that disagree with local checks.
-
 - Default type checks now target Python 3.10, with compatibility tests covering
     every supported Python target from 3.10 through 3.14 for pyright, mypy, and
     ty.
-
 - Renamed the distribution, import package, documentation, examples, tests, and
     release metadata to bearshape.
-
 - Normalized product-facing branding to lowercase `bearshape`.
-
 - Switched the documentation build from direct MkDocs usage to Zensical while
     preserving the existing Material-style site proportions and theme.
-
 - Hardened nearest-wrapper memo and scope resolution for plain `@beartype` usage
     in decorated call stacks.
-
 - Hardened standalone `is_bearable()` memo identity against recycled checker
     frame objects.
-
 - Array and tree runtime hints now report readable validation failures through
     custom beartype diagnostics instead of boolean-only validator output.
-
 - Backend `Like[...]` diagnostics now identify JAX, PyTorch, and CuPy hints with
     their owning `bearshape` backend module instead of `numpy`.
 
