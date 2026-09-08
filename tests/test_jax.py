@@ -447,14 +447,14 @@ class TestJaxLikeEdgeCases:
 
 
 class TestJaxLikeTrustScope:
-  """JAX Like fast path trusts only np.ndarray and jax.Array."""
+  """JAX Like fast path trusts only jax.Array."""
 
   def test_jax_array_is_fast_path_trusted(self) -> None:
     """jax.Array should be trusted (fast path) by JAX Like types."""
     from bearshape.jax import _JAX_TRUSTED
 
     assert jax.Array in _JAX_TRUSTED
-    assert np.ndarray in _JAX_TRUSTED
+    assert np.ndarray not in _JAX_TRUSTED
 
   def test_torch_tensor_not_in_jax_trusted(self) -> None:
     """torch.Tensor must NOT be in JAX trusted types."""
@@ -673,3 +673,26 @@ class TestJaxNumericScalarBoolRejection:
     from bearshape.jax import I64ScalarLike
 
     assert not is_bearable(True, I64ScalarLike)
+
+
+class TestJaxConversionContract:
+  def test_shaped_like_rejects_unsupported_numpy_dtype(self) -> None:
+    from bearshape.jax import ShapedLike
+
+    value = np.array(["text"])
+    with pytest.raises(TypeError):
+      jnp.asarray(value)
+    assert not is_bearable(value, ShapedLike[N])
+
+  def test_numeric_numpy_view_remains_convertible(self) -> None:
+    value = np.arange(6, dtype=np.float32)[::-2]
+    assert jnp.asarray(value).shape == (3,)
+    assert is_bearable(value, F32Like[N])
+
+  def test_native_array_preserves_function_argument(self) -> None:
+    @beartype
+    def accept(value: F32Like[N]) -> object:
+      return value
+
+    value = jnp.ones(3, dtype=jnp.float32)
+    assert accept(value) is value

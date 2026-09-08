@@ -39,10 +39,7 @@ else:
     "type[object]", require_attr("torch", "Tensor", install_hint=_TORCH_INSTALL_HINT)
   )
 
-try:
-  import numpy as np
-except ModuleNotFoundError as exc:
-  raise ModuleNotFoundError(_NUMPY_INSTALL_HINT) from exc
+require_module("numpy", install_hint=_NUMPY_INSTALL_HINT)
 
 from ._array_types import make_array_like_type as _make_array_like_type
 from ._array_types import make_array_type
@@ -198,10 +195,9 @@ def _torch_asarray(obj: object) -> tp.Any:
   return torch.as_tensor(obj)
 
 
-# Backend-scoped fast-path trust: only np.ndarray and torch.Tensor skip
-# conversion.  Foreign-backend arrays (e.g. jax.Array) fall through
-# to the slow path where torch.as_tensor() verifies actual convertibility.
-_TORCH_TRUSTED: tuple[type, ...] = (np.ndarray, Tensor)
+# Only native Torch arrays bypass conversion. NumPy and other foreign arrays
+# must satisfy this backend's conversion rules.
+_TORCH_TRUSTED: tuple[type, ...] = (Tensor,)
 
 
 def make_array_like_type(
@@ -216,8 +212,8 @@ def make_array_like_type(
 
   Defaults to ``torch.as_tensor`` for the slow path, so tensors, NumPy arrays,
   Python scalars, and nested sequences are accepted.
-  The fast path only trusts ``np.ndarray`` and ``torch.Tensor``; other
-  backend arrays (e.g. ``jax.Array``) go through the slow path.
+  The fast path only trusts ``torch.Tensor``. NumPy and other foreign arrays
+  go through the converter, including its layout and dtype restrictions.
   """
   return _make_array_like_type(
     dtype_spec, casting=casting, name=name, asarray=asarray, trusted_types=trusted_types

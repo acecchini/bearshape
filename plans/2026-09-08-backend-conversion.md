@@ -12,10 +12,10 @@ A backend Like annotation should accept an input only when its documented conver
 
 
 - [x] (2026-09-08) Inspected shared conversion and backend trust paths.
-- [ ] Open draft PR and reproduce backend conversion counterexamples.
-- [ ] Remove misleading fallback and narrow default backend trust.
-- [ ] Validate positive/negative conversion, casting, shape and argument preservation.
-- [ ] Record runtime/checker/hook evidence and remaining CuPy limitation.
+- [x] (2026-09-08) Opened PR #16; before correction, seven of thirteen converter-oracle cases failed.
+- [x] (2026-09-08) Removed fallback, limited native trust, and retained optional import diagnostics.
+- [x] (2026-09-08) All thirteen oracle cases and 1,047 runtime tests pass on baseline and exact rc0 with Python 3.10/3.14.
+- [x] (2026-09-08) Thirty existing checker tests and all hooks pass; locked dev tox passes 1,077 tests, five platform/backend skips, 91.33% coverage. CuPy GPU validation remains pending.
 
 ## Surprises & Discoveries
 
@@ -32,7 +32,7 @@ Decision: Default backend trust includes only its native array class, not all Nu
 ## Outcomes & Retrospective
 
 
-Implementation pending. This PR must show actual converter/validator agreement for the observed counterexamples and ordinary valid inputs. CuPy source consistency can be reviewed locally; CUDA runtime behavior remains unverified until a GPU run.
+Implemented converter/validator agreement for all observed counterexamples and ordinary valid inputs. The seven formerly accepted invalid cases now reject, while valid lists/views and native Torch autograd retain their behavior. CuPy source consistency can be reviewed locally; CUDA runtime behavior remains unverified until a GPU run.
 
 ## Context and Orientation
 
@@ -72,7 +72,7 @@ Use the isolated feature worktree and pytest temporary state. Do not modify user
 ## Artifacts and Notes
 
 
-Record results in `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/` and summarize observed counts here. Separate lifetime correction is PR #15; this PR must not duplicate that source change.
+Evidence is under `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/`: `conversion-before.log` (7 failed, 6 passed), `conversion-after.log` (13 passed), `conversion-runtime.log`, `conversion-rc0-py310.log`, `conversion-rc0-py314.log` (1,047 passed, 5 skipped each), `conversion-checkers.log` (30 passed), `conversion-hooks-final.log`, and `conversion-tox.log` (1,077 passed, 5 skipped, 91.33% coverage). Separate lifetime correction is PR #15; this PR must not duplicate that source change.
 
 ## Interfaces and Dependencies
 
@@ -80,3 +80,5 @@ Record results in `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/
 Public backend Like names and make_array_like_type parameters remain available. `asarray=None` selects NumPy conversion. A custom trusted_types tuple explicitly declares which inputs may bypass that converter, so its author must ensure that assertion is valid. Root imports remain backend-independent. No new runtime dependency is introduced.
 
 Revision note — 2026-09-08: Added focused conversion plan before implementation.
+
+Revision note — 2026-09-08: Implemented and validated target-backend conversion. Recorded CPU evidence and the remaining GPU gate.

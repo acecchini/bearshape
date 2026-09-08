@@ -427,14 +427,14 @@ class TestTorchLikeEdgeCases:
 
 
 class TestTorchLikeTrustScope:
-  """Torch Like fast path trusts only np.ndarray and torch.Tensor."""
+  """Torch Like fast path trusts only torch.Tensor."""
 
   def test_torch_tensor_is_fast_path_trusted(self) -> None:
     """torch.Tensor should be trusted (fast path) by Torch Like types."""
     from bearshape.torch import _TORCH_TRUSTED
 
     assert torch.Tensor in _TORCH_TRUSTED
-    assert np.ndarray in _TORCH_TRUSTED
+    assert np.ndarray not in _TORCH_TRUSTED
 
   def test_jax_array_not_in_torch_trusted(self) -> None:
     """jax.Array must NOT be in Torch trusted types."""
@@ -667,3 +667,52 @@ class TestTorchNumericScalarBoolRejection:
     from bearshape.torch import I64ScalarLike
 
     assert not is_bearable(True, I64ScalarLike)
+
+
+class TestTorchConversionContract:
+  @pytest.mark.parametrize("case", ["negative_stride", "byte_order"])
+  def test_rejects_numpy_layouts_rejected_by_torch(self, case: str) -> None:
+    value = np.ones(3, dtype=np.float32)
+    if case == "negative_stride":
+      value = value[::-1]
+    else:
+      value = value.astype(value.dtype.newbyteorder("S"))
+    with pytest.raises(ValueError):
+      torch.as_tensor(value)
+    assert not is_bearable(value, F32Like[N])
+
+  def test_shaped_like_rejects_unsupported_numpy_dtype(self) -> None:
+    from bearshape.torch import ShapedLike
+
+    value = np.array(["text"])
+    with pytest.raises(TypeError):
+      torch.as_tensor(value)
+    assert not is_bearable(value, ShapedLike[N])
+
+  def test_numpy_protocol_does_not_hide_torch_failure(self) -> None:
+    class NumpyOnly:
+      def __array__(self, *_args: object, **_kwargs: object) -> np.ndarray:  # noqa: PLW3201
+        return np.ones(3, dtype=np.float32)
+
+    value = NumpyOnly()
+    assert np.asarray(value).dtype == np.float32
+    with pytest.raises(RuntimeError):
+      torch.as_tensor(value)
+    assert not is_bearable(value, F32Like[N])
+
+  def test_native_tensor_preserves_identity_and_autograd(self) -> None:
+    @beartype
+    def accept(value: F32Like[N]) -> object:
+      return value
+
+    value = torch.ones(3, dtype=torch.float32, requires_grad=True)
+    assert accept(value) is value
+    value.sum().backward()
+    assert torch.equal(value.grad, torch.ones(3))
+    assert value.dtype == torch.float32
+    assert value.device.type == "cpu"
+
+  @pytest.mark.parametrize("value", [[1.0, 2.0], [True, False], [1, 2]])
+  def test_supported_sequences_remain_convertible(self, value: object) -> None:
+    assert torch.as_tensor(value).shape == (2,)
+    assert is_bearable(value, F32Like[N])
