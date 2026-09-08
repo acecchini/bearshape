@@ -12,11 +12,12 @@ ML users need to know when validation occurs around JAX transformations and Torc
 
 
 - [x] (2026-09-08) Created isolated branch/worktree from exact-rc0 compatibility.
-- [ ] Open draft PR and inspect backend transform behavior with small CPU probes.
-- [ ] Maintain valid/invalid JAX jit/vmap/grad and Torch autograd/compile cases.
-- [ ] Prove root/custom-array operation in a normally installed minimal environment.
-- [ ] Run current and floor backend tests, hooks and candidate endpoint checks.
-- [ ] Document observed tracing/compilation limits and record evidence.
+- [x] (2026-09-08) Opened draft PR #21 and inspected backend transform behavior with small CPU probes.
+- [x] (2026-09-08) Added four JAX and two Torch transformation tests with valid and invalid calls.
+- [x] (2026-09-08) Normally installed candidate wheel passes minimal custom-array checks on Python 3.10.20 and 3.14.5.
+- [x] (2026-09-08) Current suite, JAX/Torch floors, exact-candidate endpoint probes, hooks and docs build pass.
+- [x] (2026-09-08) Added framework placement guide and recorded validation evidence.
+- [ ] Obtain hosted CI results and user validation before merge.
 
 ## Surprises & Discoveries
 
@@ -35,7 +36,9 @@ Decision: Add an isolated minimal-install smoke command, using only declared run
 ## Outcomes & Retrospective
 
 
-Implementation pending. These tests establish documented framework boundaries, not exhaustive framework compatibility. If a transform does not support a validator placement, capture the failure and choose a demonstrated supported placement; do not silently skip it or advertise unsupported behavior.
+Six maintained transformation cases pass on Python 3.10 and 3.14 with exact beartype 0.23.0rc0. The development suite passes 1,070 tests with five platform/optional skips and 91.04% coverage. Floor lanes pass 210 JAX tests and 208 Torch tests; their 21/24 skips cover intentionally absent other backends and unavailable extended precision. JAX 0.5 emits 18 existing FutureWarnings for None conversion; these do not come from the new transformation cases. The framework guide builds without issues.
+
+Minimal normally installed wheels pass custom-array acceptance, shape/dtype/return rejection and optional-import assertions on Python 3.10.20 and 3.14.5. These environments contain only bearshape, exact beartype rc0 and typing_extensions. These tests establish the documented placements, not exhaustive framework compatibility.
 
 ## Context and Orientation
 
@@ -86,3 +89,5 @@ Record `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/framework-*
 Use existing beartype/bearshape public annotations and JAX/Torch APIs already in dependency groups. No runtime dependency or public API addition is planned. Runtime shape relationships remain distinct from static backend/dtype information. The minimal smoke script relies only on Python and the declared runtime dependencies.
 
 Revision note — 2026-09-08: Added focused framework/import validation plan before implementation.
+
+Revision note — 2026-09-08: Recorded implemented transformation and minimal-install contracts, endpoint/floor results and existing JAX warning scope.

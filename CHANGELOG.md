@@ -8,6 +8,11 @@ and this project follows
 
 ## [Unreleased]
 
+- Maintain JAX jit/vmap/grad and Torch autograd/compiler-boundary tests, with
+    explicit tracing and compilation guidance.
+- Verify a normally installed wheel and custom array factory without optional
+    backend dependencies on Python 3.10 and 3.14.
+
 ### Added
 
 - A GitHub Actions workflow for trusted publishing to PyPI, with automatic

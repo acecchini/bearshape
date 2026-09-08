@@ -673,3 +673,58 @@ class TestJaxNumericScalarBoolRejection:
     from bearshape.jax import I64ScalarLike
 
     assert not is_bearable(True, I64ScalarLike)
+
+
+class TestJaxTransformations:
+  def test_jit_inner_validation_runs_during_tracing(self) -> None:
+    traces: list[tuple[int, ...]] = []
+
+    @jax.jit
+    @beartype
+    def add(x: F32[N], y: F32[N]) -> F32[N]:
+      traces.append(x.shape)
+      return x + y
+
+    x = jnp.ones(3, dtype=jnp.float32)
+    np.testing.assert_array_equal(add(x, x), np.full(3, 2.0))
+    np.testing.assert_array_equal(add(x, x), np.full(3, 2.0))
+    assert traces == [(3,)]
+    with pytest.raises(BeartypeCallHintParamViolation):
+      add(x, jnp.ones(4, dtype=jnp.float32))
+    with pytest.raises(BeartypeCallHintParamViolation):
+      add(jnp.ones(3, dtype=jnp.int32), x)
+
+  def test_validation_outside_jit_checks_python_calls(self) -> None:
+    @beartype
+    @jax.jit
+    def add(x: F32[N], y: F32[N]) -> F32[N]:
+      return x + y
+
+    x = jnp.ones(3, dtype=jnp.float32)
+    np.testing.assert_array_equal(add(x, x), np.full(3, 2.0))
+    with pytest.raises(BeartypeCallHintParamViolation):
+      add(x, jnp.ones(4, dtype=jnp.float32))
+    with pytest.raises(BeartypeCallHintParamViolation):
+      add(jnp.ones(3, dtype=jnp.int32), x)
+
+  def test_vmap_validates_the_logical_row_shape(self) -> None:
+    @jax.vmap
+    @beartype
+    def add_rows(x: F32[C], y: F32[C]) -> F32[C]:
+      return x + y
+
+    x = jnp.ones((2, 3), dtype=jnp.float32)
+    np.testing.assert_array_equal(add_rows(x, x), np.full((2, 3), 2.0))
+    with pytest.raises(BeartypeCallHintParamViolation):
+      add_rows(x, jnp.ones((2, 4), dtype=jnp.float32))
+
+  def test_grad_preserves_the_validated_loss(self) -> None:
+    @jax.grad
+    @beartype
+    def loss(x: F32[N]) -> F32[bearshape.Scalar]:
+      return jnp.sum(x * x)
+
+    x = jnp.ones(3, dtype=jnp.float32)
+    np.testing.assert_array_equal(loss(x), np.full(3, 2.0))
+    with pytest.raises(BeartypeCallHintParamViolation):
+      loss(jnp.ones((2, 3), dtype=jnp.float32))
