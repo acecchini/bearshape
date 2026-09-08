@@ -72,7 +72,9 @@ dimensions with useful beartype violations.
 The proposal preserves the upstream ordering and sampling rules. A later
 argument failure does not cause a search for a different earlier alternative.
 Hidden state changes inside arbitrary predicates are not discovered; the
-stateful runtime hint must expose the snapshot hook.
+stateful runtime hint must expose the state hook. Completed transactions release
+their state references and are ignored by subsequent checks using a copied
+execution context; the upstream proposal includes regressions for both cases.
 
 Local CPU runs do not establish CUDA coverage for the changed artifacts. The
 handoff report and ExecPlan record interpreter versions, checks and availability

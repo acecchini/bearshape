@@ -24,6 +24,7 @@ The user requested resolving this defect after approving the earlier implementat
 - [x] (2026-09-08) Prepared the concrete upstream patch and submission text locally and updated the handoff and agent/tool guidance.
 - [x] (2026-09-08) Profiled and reduced the local proposal overhead before maintainer contact, preserving rollback, diagnostics, lazy aliases, sampling and state lifetime.
 - [x] (2026-09-08) Validated optimized normal installations and archive consumers on both endpoints, recorded matched comparisons, and prepared a local Zulip draft without sending it.
+- [x] (2026-09-08) Reproduced and fixed copied-context state retention and stale parent registration; repeated affected installed tests and matched benchmarks against final upstream head.
 - [ ] Upstream acceptance/publication and a later supported dependency migration remain external steps, not a completed release fix.
 
 ## Surprises & Discoveries
@@ -45,7 +46,7 @@ Decision: Prepare any upstream proposal locally before seeking permission to sub
 ## Outcomes & Retrospective
 
 
-The optimized local proposal retains the original rollback contract and reduces added strict-check overhead by 61% on Python 3.10 and 71% on Python 3.14. It uses the smaller state-object adapter and an upstream checker compiled once at decoration. Draft PR #35 isolates the independent frame filter. Normally installed combined artifacts passed 1,125 tests on each endpoint, including all four checkers and 22 integration cases, with five existing CPU skip records. Upstream's final source passed 432/445 unit tests, including 20 protocol tests with 600 independent-reference cases, and pyright. Remaining nested ordinary-reference overhead is disclosed below. No upstream contact, merge into main, publication or transfer occurred. Upstream acceptance, publication and coordinated dependency adoption remain release prerequisites.
+The optimized local proposal retains the rollback contract and reduces added strict-check overhead by 57% on Python 3.10 and 74% on Python 3.14. It uses the smaller state-object adapter and an upstream checker compiled once at decoration. Draft PR #35 isolates the independent frame filter. Normally installed combined artifacts passed 1,125 tests on each endpoint, including all four checkers and 22 integration cases, with five existing CPU skip records. Upstream's final source passed 434/447 unit tests, including 22 protocol tests with 600 independent-reference cases and two copied-context regressions, and pyright. Remaining nested ordinary-reference overhead is disclosed below. No upstream contact, merge into main, publication or transfer occurred. Upstream acceptance, publication and coordinated dependency adoption remain release prerequisites.
 
 ## Context and Orientation
 
@@ -238,7 +239,7 @@ performance evidence.
 ## Optimized delivery and final comparison
 
 
-The final upstream head is `42b5c9dc28639622c362ce30e724da1f20983e08`, against
+The final upstream head is `76e27706fb137c6a676ee7b79a66d8b3092b52ad`, against
 `a2729e0e358bf963ee6f177e300ae08a622d05d6`. The independent frame filter is
 `344d390c4099685cc3ea6519f5bb8b5bde0fb13e`. Local validation commit
 `c53d14f99d71fd4884282642b98e8bd63bd7b871` combines both bearshape changes.
@@ -255,19 +256,19 @@ optree 0.19.1 and typing_extensions 4.15.0. Runtime imports and decoration are
 not timed. The manifest preserves exact commands, script hash and versions.
 
 For strict parameter/return checks, original bearshape with rc0 measured
-19.546/18.262 microseconds on 3.10/3.14, and the first working proposal measured
-31.720/31.630. Optimized bearshape with rc0 measured 16.955/13.358, and the
-optimized working combination measured 21.726/17.198. Thus added transaction
-overhead fell from 12.174/13.368 to 4.771/3.840 microseconds, a 61%/71% reduction
+18.442/17.736 microseconds on 3.10/3.14, and the first working proposal measured
+30.451/30.240. Optimized bearshape with rc0 measured 16.384/13.208, and the
+final working combination measured 21.589/16.418. Thus added transaction
+overhead fell from 12.009/12.504 to 5.206/3.209 microseconds, a 57%/74% reduction
 after accounting separately for the frame filter. The filter alone improves the
-rc0 strict baseline by about 13%/27%.
+rc0 strict baseline by about 11%/26% in this repeat.
 
-Correct second-alternative calls fell from 53.269/54.433 to 33.722/25.769
-microseconds. Explicit-scope fallback calls fell from 41.545/46.739 to
-21.459/15.331, and nested union calls from 26.554/24.103 to 15.066/12.087.
-An unselected ordinary reference is back at the rc0 baseline. Nested ordinary
-references still add about 0.74/0.41 microseconds over rc0, approximately
-1.9x/1.8x their small baseline; this remains a maintainer discussion point.
+Correct second-alternative calls fell from 51.499/52.596 to 32.908/25.489
+microseconds. Explicit-scope fallback calls fell from 39.986/45.178 to
+21.048/15.042, and nested union calls from 25.569/23.746 to 14.717/11.752.
+An unselected ordinary reference remains close to the rc0 baseline. Nested ordinary
+references still add about 0.74/0.42 microseconds over rc0, approximately
+2.0x/1.9x their small baseline; this remains a maintainer discussion point.
 Ordinary root references retain a smaller hook lookup cost. No zero-overhead
 or portable latency guarantee is claimed.
 
@@ -275,9 +276,9 @@ The final archive consumers, with no source directory available, passed 1,125
 tests on each endpoint. There were four unavailable platform precision cases
 and one skipped CuPy module; this provides no new CUDA evidence. Minimal
 normal installations passed with no optional backends. Distribution integrity,
-hooks and documentation passed. Upstream passed 432 tests with 20 existing
-skips on 3.10 and 445 with seven on 3.14; pyright checked 477 source files with
-zero errors and warnings for each interpreter target. Its 20 protocol tests
+hooks and documentation passed. Upstream passed 434 tests with 20 existing
+skips on 3.10 and 447 with seven on 3.14; pyright checked 477 source files with
+zero errors and warnings for each interpreter target. Its 22 protocol tests
 include 600 deterministic comparisons of nested acceptance and final bindings
 against an independent reference.
 
@@ -285,8 +286,8 @@ The combined bearshape wheel SHA256 is
 `a0cb17c0b4a67b49f6e6cc10ee76e0f911ad9441877e994cdd6f495366325851`; the sdist is
 `ac4cf3b1b87c700fece1fbdb35f5b7503b90b199606e4367b4dbdb2193a5c2f0`. The optimized
 beartype wheel is
-`c0032af54fdf5748d837333a60f18320d3442d4e5de5fef925fc1dc2f5d0d784`; its sdist is
-`4217e77fef25037122764349457c89d5edf24742c051105547bdf8a59350289c`.
+`0db860846b16c6fbb61f0b494dd0b30065cbd683d063356a3dbf5ae928da6d20`; its sdist is
+`8bacac19c91d0150943a6c9be90149302d4f2b6849add2b97d972005ee3954dc`.
 
 `OPTIMIZATION.md` contains the full report, `RESULTS.json` the source/artifact
 record, `benchmark-summary.json` the samples, and `benchmark-manifest.json` the
@@ -298,3 +299,25 @@ results are recorded in the external results file when available.
 Revision note — 2026-09-08: Closed the requested local optimization milestone
 with matched measurements, immutable artifacts and expanded correctness proof;
 kept upstream acceptance and release adoption explicitly outstanding.
+
+
+## Final copied-context correction
+
+
+The lifetime review found that `copy_context()` could retain an invocation's
+state after its transaction completed. A later root forward-reference check
+could then mistake the completed transaction for a live parent and omit root
+rollback. Two focused regressions failed before the fix, preserved in
+`copied-context-before.log`. Completed transactions now clear their getters and
+state objects, and new checks ignore parents whose transaction token has closed.
+Both regressions pass. All 22 upstream protocol cases also pass against the
+normally installed wheel outside the upstream source checkout on both endpoints.
+
+The final source, artifact hashes, 1,125 consumer results per endpoint and matched
+benchmarks above include this correction. The earlier optimization evidence is
+preserved under `optimization/before-context-lifetime/`, including the first
+matched comparison cited by PR #35. No earlier artifact evidence was discarded.
+
+Revision note — 2026-09-08: Added failing copied-context lifetime evidence,
+corrected cleanup, repeated affected installed validation and refreshed the
+matched timing matrix against the final upstream patch.
