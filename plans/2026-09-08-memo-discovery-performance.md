@@ -15,9 +15,9 @@ The owner requested substantially lower overhead before contacting the upstream 
 
 - [x] (2026-09-08) Profiled the initial upstream proposal: frame discovery is a material part of repeated checks.
 - [x] (2026-09-08) Created `codex/memo-discovery-performance` and `/Users/ale/Code/bearshape-worktrees/memo-discovery-performance` from main `795ec391123437beb5167de1e1519411dbabe479`.
-- [ ] Open a draft PR before implementation.
-- [ ] Filter impossible frame candidates before reading frame locals; add focused evidence for decorated functions, DOOR checkers and unrelated frames.
-- [ ] Run memo/lifetime/decorator regressions, CPU runtime tests, all four static consumer checkers and hooks with the locked toolchain.
+- [x] (2026-09-08) Opened draft PR #35 before implementation.
+- [x] (2026-09-08) Added the candidate filter and regression proving unrelated frames do not materialize locals. Existing real decorated/DOOR behavior remains covered.
+- [x] (2026-09-08) Targeted tests passed; full CPU runtime tests passed 1,094 with five existing skips; all eight four-checker harness cases passed; hooks passed.
 - [ ] Benchmark identical inputs with and without this change, using both rc0 and the local upstream proposal. Record the two effects separately.
 - [ ] Present the focused change for review; merge remains pending user validation.
 
@@ -34,7 +34,7 @@ Decision: Change only candidate rejection in frame discovery, and keep scope par
 ## Outcomes & Retrospective
 
 
-Implementation and validation are pending. The acceptance criterion is the same memo owner and lifetime with lower measured frame-search cost, not a new caching scheme.
+The focused filter passes existing real-frame behavior, lifetime, CPU and static consumer tests, plus a regression that forbids reading unrelated-frame locals. Matched performance measurements and combination with the upstream proposal remain pending. No new cache or lifetime mechanism was introduced.
 
 ## Context and Orientation
 

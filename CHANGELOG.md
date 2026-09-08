@@ -8,6 +8,9 @@ and this project follows
 
 ## [Unreleased]
 
+- Reduce repeated memo discovery work by filtering unrelated frames before
+    reading their locals.
+
 - Require runtime and four-checker consumer tests from normally installed
     sdist-derived wheels outside the checkout on Python 3.10 and 3.14.
 
