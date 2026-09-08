@@ -26,6 +26,7 @@ SOURCE_INPUTS = {
   "ruff.toml",
   "tools/check_distribution.py",
   "tools/check_installed.py",
+  "tools/check_release.py",
   "tools/validate_runtime.py",
   "tools/validate_tox_env.py",
   "tests/conftest.py",

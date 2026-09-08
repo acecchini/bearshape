@@ -42,9 +42,7 @@ def _copy_consumers(sdist: Path, destination: Path) -> None:
     for member in archive.getmembers():
       name = member.name.removeprefix(prefix)
       if not member.isfile() or not (
-        name.startswith("tests/")
-        or name in _CONFIGS
-        or name == "tools/validate_runtime.py"
+        name.startswith(("tests/", "tools/")) or name in _CONFIGS
       ):
         continue
       target = (destination / name).resolve()

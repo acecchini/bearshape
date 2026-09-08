@@ -83,6 +83,9 @@ and this project follows
 
 ### Changed
 
+- Require immutable tag/version identity and full candidate validation before
+    publishing the tested artifacts; add a validation-only release path.
+
 - Prepare `0.1.0rc0` with beartype `>=0.23.0rc0,<0.24`; older beartype versions
     are no longer supported. Compatibility jobs test the exact rc0 dependency,
     including Python 3.10 and 3.14 CPU backend environments.

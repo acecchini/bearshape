@@ -105,3 +105,36 @@ wheel normally in a temporary environment, then runs copied runtime and checker
 fixtures with no package source directory. It reports artifact hashes and
 installed module origins. `--installed-package` is an explicit pytest mode for
 this consumer check; ordinary source validation continues to include `src`.
+
+## Validate and publish a release
+
+Run a validation-only workflow before making a release decision:
+
+```bash
+gh workflow run pypi.yml --ref main -f ref=<reviewed-commit> -F publish=false
+```
+
+This resolves one commit, runs the complete shared matrix, and produces
+`candidate-distributions` plus `release-evidence`. The evidence records the
+source SHA, version, artifact hashes and run URL. A failed required check
+prevents publication. GPU runtime evidence and open contract decisions still
+require review; CPU CI does not replace them.
+
+Publication requires a canonical `v<project-version>` tag already in `main`
+history. Both the workflow and package must come from that exact tag and commit.
+Versions use `X.Y.Z` with an optional `aN`, `bN` or `rcN` suffix. A GitHub
+release must be marked as a prerelease exactly when its version has such a
+suffix. After explicit owner approval, publish that GitHub release, or dispatch
+the workflow from the same tag with `publish=true`. Publishing downloads the
+same tested distributions and does not rebuild them. Only that job receives OIDC
+permission and enters the `pypi` environment.
+
+Before enabling publication, configure required review for `pypi`, prevent
+self-approval and administrator bypass, and limit its deployment policy to
+release tags. Protect `main` and release tags, and require the final validation
+check on pull requests. Confirm the PyPI trusted publisher identifies the actual
+repository owner/name, `pypi.yml`, and environment `pypi`. The workflow does not
+create these controls. The 2026-09-08 inspection found unprotected `main`, no
+repository rulesets and no `pypi` approval reviewers; PyPI configuration remains
+unverified. Ownership transfer requires rechecking publisher identity and docs
+hosting before changing public URLs.
