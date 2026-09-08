@@ -8,9 +8,16 @@ and this project follows
 
 ## [Unreleased]
 
+- Accept ordinary convertible inputs in static Like annotations: NumPy numeric
+    casting families and JAX/Torch scalars, arrays and nested sequences.
+    Preserve native result types after explicit conversion.
+
+- Allow nonnumeric NumPy dtypes in static Shaped and ShapedLike annotations.
+
 - Verify real consumer calls, inferred types, and expected errors with pyright,
     mypy, ty, and pyrefly; require selected tools instead of silently skipping
     them.
+
 - Update the locked checker versions and make `check(conf=None)` match its
     public overloads.
 - Include LICENSE in wheel/source distributions and ship the regression suite
