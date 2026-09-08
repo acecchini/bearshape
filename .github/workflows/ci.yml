@@ -75,19 +75,21 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { python: py310, beartype: bt022, backend: numpy22 }
-          - { python: py310, beartype: bt022, backend: jax05 }
-          - { python: py310, beartype: bt022, backend: torch26 }
-          - { python: py310, beartype: bt022, backend: optree014 }
-          - { python: py313, beartype: bt022, backend: numpy24 }
-          - { python: py313, beartype: bt022, backend: jax09 }
-          - { python: py313, beartype: bt022, backend: torch210 }
-          - { python: py313, beartype: bt022, backend: optree019 }
+          - { python: py310, beartype: bt023rc0, backend: cpu }
+          - { python: py314, beartype: bt023rc0, backend: cpu }
+          - { python: py310, beartype: bt023rc0, backend: numpy22 }
+          - { python: py310, beartype: bt023rc0, backend: jax05 }
+          - { python: py310, beartype: bt023rc0, backend: torch26 }
+          - { python: py310, beartype: bt023rc0, backend: optree014 }
+          - { python: py313, beartype: bt023rc0, backend: numpy24 }
+          - { python: py313, beartype: bt023rc0, backend: jax09 }
+          - { python: py313, beartype: bt023rc0, backend: torch210 }
+          - { python: py313, beartype: bt023rc0, backend: optree019 }
     name: ${{ matrix.python }}-${{ matrix.beartype }}-${{ matrix.backend }}
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
-      - run: uv run tox run -e "${{ matrix.python }}-${{ matrix.beartype }}-${{ matrix.backend }}"
+      - run: uv run --locked tox run -e "${{ matrix.python }}-${{ matrix.beartype }}-${{ matrix.backend }}"
 
   typecheck-pr:
     if: github.event_name == 'pull_request'
@@ -97,14 +99,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { env: py313-bt022-type-pyright1408 }
-          - { env: py313-bt022-type-mypy119 }
-          - { env: py313-bt022-type-ty }
+          - { env: py313-bt023rc0-type-pyright1408 }
+          - { env: py313-bt023rc0-type-mypy119 }
+          - { env: py313-bt023rc0-type-ty }
     name: ${{ matrix.env }}
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
-      - run: uv run tox run -e "${{ matrix.env }}"
+      - run: uv run --locked tox run -e "${{ matrix.env }}"
 
   # -----------------------------------------------------------------------
   # Push: medium compat matrix
@@ -118,23 +120,25 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { python: py310, beartype: bt022, backend: numpy22 }
-          - { python: py310, beartype: bt022, backend: jax05 }
-          - { python: py310, beartype: bt022, backend: torch26 }
-          - { python: py310, beartype: bt022, backend: optree014 }
-          - { python: py312, beartype: bt022, backend: numpy24 }
-          - { python: py312, beartype: bt022, backend: jax09 }
-          - { python: py312, beartype: bt022, backend: torch210 }
-          - { python: py312, beartype: bt022, backend: optree019 }
-          - { python: py313, beartype: bt022, backend: numpy24 }
-          - { python: py313, beartype: bt022, backend: jax09 }
-          - { python: py313, beartype: bt022, backend: torch210 }
-          - { python: py313, beartype: bt022, backend: optree019 }
+          - { python: py310, beartype: bt023rc0, backend: cpu }
+          - { python: py314, beartype: bt023rc0, backend: cpu }
+          - { python: py310, beartype: bt023rc0, backend: numpy22 }
+          - { python: py310, beartype: bt023rc0, backend: jax05 }
+          - { python: py310, beartype: bt023rc0, backend: torch26 }
+          - { python: py310, beartype: bt023rc0, backend: optree014 }
+          - { python: py312, beartype: bt023rc0, backend: numpy24 }
+          - { python: py312, beartype: bt023rc0, backend: jax09 }
+          - { python: py312, beartype: bt023rc0, backend: torch210 }
+          - { python: py312, beartype: bt023rc0, backend: optree019 }
+          - { python: py313, beartype: bt023rc0, backend: numpy24 }
+          - { python: py313, beartype: bt023rc0, backend: jax09 }
+          - { python: py313, beartype: bt023rc0, backend: torch210 }
+          - { python: py313, beartype: bt023rc0, backend: optree019 }
     name: ${{ matrix.python }}-${{ matrix.beartype }}-${{ matrix.backend }}
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
-      - run: uv run tox run -e "${{ matrix.python }}-${{ matrix.beartype }}-${{ matrix.backend }}"
+      - run: uv run --locked tox run -e "${{ matrix.python }}-${{ matrix.beartype }}-${{ matrix.backend }}"
 
   typecheck-push:
     if: github.event_name == 'push'
@@ -144,11 +148,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { env: py313-bt022-type-pyright1408 }
-          - { env: py313-bt022-type-mypy119 }
-          - { env: py313-bt022-type-ty }
+          - { env: py313-bt023rc0-type-pyright1408 }
+          - { env: py313-bt023rc0-type-mypy119 }
+          - { env: py313-bt023rc0-type-ty }
     name: ${{ matrix.env }}
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
-      - run: uv run tox run -e "${{ matrix.env }}"
+      - run: uv run --locked tox run -e "${{ matrix.env }}"

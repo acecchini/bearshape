@@ -30,22 +30,34 @@ and this project follows
 
 ### Changed
 
+- Prepare `0.1.0rc0` with beartype `>=0.23.0rc0,<0.24`; older beartype versions
+    are no longer supported. Compatibility jobs test the exact rc0 dependency,
+    including Python 3.10 and 3.14 CPU backend environments.
+
 - CI lint and formatting now use the Ruff version in `uv.lock`, avoiding
     unreviewed tool upgrades that disagree with local checks.
+
 - Default type checks now target Python 3.10, with compatibility tests covering
     every supported Python target from 3.10 through 3.14 for pyright, mypy, and
     ty.
+
 - Renamed the distribution, import package, documentation, examples, tests, and
     release metadata to bearshape.
+
 - Normalized product-facing branding to lowercase `bearshape`.
+
 - Switched the documentation build from direct MkDocs usage to Zensical while
     preserving the existing Material-style site proportions and theme.
+
 - Hardened nearest-wrapper memo and scope resolution for plain `@beartype` usage
     in decorated call stacks.
+
 - Hardened standalone `is_bearable()` memo identity against recycled checker
     frame objects.
+
 - Array and tree runtime hints now report readable validation failures through
     custom beartype diagnostics instead of boolean-only validator output.
+
 - Backend `Like[...]` diagnostics now identify JAX, PyTorch, and CuPy hints with
     their owning `bearshape` backend module instead of `numpy`.
 

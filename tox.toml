@@ -1,29 +1,23 @@
 requires = ["tox>=4.40", "tox-uv>=1.33"]
 env_list = [
   "dev",
+  "py310-bt023rc0-cpu",
+  "py314-bt023rc0-cpu",
   # Runtime: {python}-{beartype}-{backend}. Keep default environments
   # installable as backend Python floors and ceilings move independently.
   # Intermediate and cross-axis versions can still be tested manually.
-  "py310-bt020-numpy22",
-  "py310-bt020-jax05",
-  "py310-bt020-torch26",
-  "py310-bt020-optree014",
-  "py310-bt022-numpy22",
-  "py310-bt022-jax05",
-  "py310-bt022-torch26",
-  "py310-bt022-optree014",
-  "py313-bt020-numpy24",
-  "py313-bt020-jax09",
-  "py313-bt020-torch210",
-  "py313-bt020-optree019",
-  "py313-bt022-numpy24",
-  "py313-bt022-jax09",
-  "py313-bt022-torch210",
-  "py313-bt022-optree019",
+  "py310-bt023rc0-numpy22",
+  "py310-bt023rc0-jax05",
+  "py310-bt023rc0-torch26",
+  "py310-bt023rc0-optree014",
+  "py313-bt023rc0-numpy24",
+  "py313-bt023rc0-jax09",
+  "py313-bt023rc0-torch210",
+  "py313-bt023rc0-optree019",
   # Check Python 3.13 with its compatible dependencies; CI also covers 3.10-3.14.
   { product = [
     ["py313"],
-    ["bt022"],
+    ["bt023rc0"],
     ["type"],
     ["pyright1408", "mypy119", "ty"],
   ] },
@@ -41,11 +35,7 @@ deps = [
   "pytest-xdist>=3.5.0",
 
   # --- beartype ---
-  # env_list uses bt020 and bt022; intermediate versions available for manual testing
-  # e.g. `tox run -e py310-bt021-numpy23`
-  { replace = "if", condition = "factor.bt020", then = "beartype>=0.20,<0.21" },
-  { replace = "if", condition = "factor.bt021", then = "beartype>=0.21,<0.22" },
-  { replace = "if", condition = "factor.bt022", then = "beartype>=0.22,<0.23" },
+  { replace = "if", condition = "factor.bt023rc0", then = "beartype==0.23.0rc0" },
 
   # --- numpy ---
   # env_list uses numpy22 and numpy24; intermediate versions available for manual testing
@@ -85,11 +75,11 @@ deps = [
   { replace = "if", condition = "factor.optree018", then = "optree>=0.18,<0.19" },
   { replace = "if", condition = "factor.optree019", then = "optree>=0.19,<0.20" },
 
-  # --- type factor (installs all backends for type checking) ---
-  { replace = "if", condition = "factor.type", then = "numpy>=2.2" },
-  { replace = "if", condition = "factor.type", then = "jax[cpu]>=0.5" },
-  { replace = "if", condition = "factor.type", then = "torch>=2.6" },
-  { replace = "if", condition = "factor.type", then = "optree>=0.14" },
+  # --- CPU runtime and type checking (all CPU backends) ---
+  { replace = "if", condition = "factor.type or factor.cpu", then = "numpy>=2.2" },
+  { replace = "if", condition = "factor.type or factor.cpu", then = "jax[cpu]>=0.5" },
+  { replace = "if", condition = "factor.type or factor.cpu", then = "torch>=2.6" },
+  { replace = "if", condition = "factor.type or factor.cpu", then = "optree>=0.14" },
 
   # --- typechecker versions ---
   # env_list uses pyright1408, mypy119, ty; older versions available for manual testing
@@ -104,7 +94,11 @@ deps = [
   { replace = "if", condition = "factor.ty", then = "ty" },
 ]
 commands = [["pytest", "tests/", "-n", "auto", { replace = "posargs", default = [], extend = true }]]
-commands_pre = [["python", "tools/validate_tox_env.py", "{env_name}"]]
+commands_pre = [
+  ["python", "tools/validate_tox_env.py", "{env_name}"],
+  ["python", "-c", "import beartype; print('beartype', beartype.__version__); assert beartype.__version__ == '0.23.0rc0'"],
+  { replace = "if", condition = "factor.cpu", then = [["python", "-c", "import numpy, jax, torch, optree; print([(m.__name__, m.__version__) for m in (numpy, jax, torch, optree)])"]], else = [], extend = true },
+]
 
 # ---------------------------------------------------------------------------
 # Locked dev — latest everything from uv.lock

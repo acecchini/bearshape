@@ -9,7 +9,7 @@ description: Install bearshape with your preferred array backend.
 ## Requirements
 
 - **Python** >= 3.10
-- **beartype** >= 0.20, installed automatically with `bearshape`
+- **beartype** >= 0.23.0rc0, < 0.24, installed automatically with `bearshape`
 
 ## Install with pip
 

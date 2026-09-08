@@ -1,13 +1,13 @@
 [project]
 name = "bearshape"
-version = "0.0.1"
+version = "0.1.0rc0"
 description = "Elegant runtime shape and dtype checking for NumPy, JAX, PyTorch, and CuPy arrays — powered by beartype."
 readme = "README.md"
 license = "MIT"
 authors = [{ name = "acecchini", email = "ale.cecchini.valette@gmail.com" }]
 requires-python = ">=3.10"
 dependencies = [
-  "beartype>=0.20,<0.23", # Tested with 0.20-0.22; see tox.toml
+  "beartype>=0.23.0rc0,<0.24", # Exact candidate tested in tox.toml
   "typing_extensions>=4.6",
 ]
 keywords = [
