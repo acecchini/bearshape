@@ -27,6 +27,7 @@ jobs:
       - name: Spell Check Repo
         uses: crate-ci/typos@v1.45.0
 
+
   distributions:
     runs-on: ubuntu-latest
     steps:
@@ -35,6 +36,21 @@ jobs:
       - run: uv build --sdist
       - run: uv build dist/*.tar.gz --wheel
       - run: uv run --locked --only-group dev python tools/check_distribution.py dist/*.whl dist/*.tar.gz
+
+  minimal-install:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.14"]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57
+      - run: uv build --wheel
+      - run: uv venv --python "${{ matrix.python-version }}" .minimal
+      - run: uv pip install --python .minimal/bin/python dist/*.whl "beartype==0.23.0rc0"
+      - run: .minimal/bin/python -I tools/smoke_minimal.py
+
 
   typecheck:
     runs-on: ubuntu-latest

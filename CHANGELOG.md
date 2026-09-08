@@ -8,6 +8,7 @@ and this project follows
 
 ## [Unreleased]
 
+
 - Accept ordinary convertible inputs in static Like annotations: NumPy numeric
     casting families and JAX/Torch scalars, arrays and nested sequences.
     Preserve native result types after explicit conversion.
@@ -25,6 +26,12 @@ and this project follows
     public overloads.
 - Include LICENSE in wheel/source distributions and ship the regression suite
     and its configuration in the source archive. Verify actual archive contents.
+
+- Maintain JAX jit/vmap/grad and Torch autograd/compiler-boundary tests, with
+    explicit tracing and compilation guidance.
+- Verify a normally installed wheel and custom array factory without optional
+    backend dependencies on Python 3.10 and 3.14.
+
 
 ### Added
 

@@ -669,6 +669,7 @@ class TestTorchNumericScalarBoolRejection:
     assert not is_bearable(True, I64ScalarLike)
 
 
+
 class TestTorchConversionContract:
   @pytest.mark.parametrize("case", ["negative_stride", "byte_order"])
   def test_rejects_numpy_layouts_rejected_by_torch(self, case: str) -> None:
@@ -716,3 +717,32 @@ class TestTorchConversionContract:
   def test_supported_sequences_remain_convertible(self, value: object) -> None:
     assert torch.as_tensor(value).shape == (2,)
     assert is_bearable(value, F32Like[N])
+
+class TestTorchTransformations:
+  def test_autograd_preserves_gradient_and_checks_rank(self) -> None:
+    @beartype
+    def loss(x: F32[N]) -> F32[bearshape.Scalar]:
+      return (x * x).sum()
+
+    x = torch.ones(3, dtype=torch.float32, requires_grad=True)
+    loss(x).backward()
+    assert torch.equal(x.grad, torch.full((3,), 2.0))
+    with pytest.raises(BeartypeCallHintParamViolation):
+      loss(torch.ones((2, 3), dtype=torch.float32))
+
+  def test_validation_outside_compile_checks_python_calls(self) -> None:
+    @beartype
+    @torch.compile(backend="eager")
+    def add(x: F32[N], y: F32[N]) -> F32[N]:
+      return x + y
+
+    x = torch.ones(3, dtype=torch.float32, requires_grad=True)
+    result = add(x, x)
+    assert torch.equal(result, torch.full((3,), 2.0))
+    result.sum().backward()
+    assert torch.equal(x.grad, torch.full((3,), 2.0))
+    with pytest.raises(BeartypeCallHintParamViolation):
+      add(x, torch.ones(4, dtype=torch.float32))
+    with pytest.raises(BeartypeCallHintParamViolation):
+      add(torch.ones(3, dtype=torch.int32), x)
+

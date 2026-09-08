@@ -23,6 +23,7 @@ nav = [
     "features/index.md",
     "features/dimensions.md",
     "features/static-typing.md",
+    "features/frameworks.md",
     "features/array-types.md",
     "features/like-types.md",
     "features/tree-annotations.md",
