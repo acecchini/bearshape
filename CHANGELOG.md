@@ -13,6 +13,8 @@ and this project follows
     them.
 - Update the locked checker versions and make `check(conf=None)` match its
     public overloads.
+- Include LICENSE in wheel/source distributions and ship the regression suite
+    and its configuration in the source archive. Verify actual archive contents.
 
 ### Added
 
