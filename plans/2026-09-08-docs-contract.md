@@ -18,7 +18,7 @@ Users must be able to read rendered shape/casting tables, distinguish runtime ch
 - [x] (2026-09-08) Executed all five guide example blocks plus scalar dot on both Python endpoints, including valid results and expected violations.
 - [x] (2026-09-08) Maintained checker validates expected table rows, admonitions, favicon and snippet syntax; visually inspected the casting table and Boolean warning in the local browser.
 - [x] (2026-09-08) Hook formatting round trip and docs-only build pass; notebook outputs and formatter before/after evidence retained externally.
-- [ ] Verify newly wired hosted documentation/notebook jobs.
+- [x] (2026-09-08) Shared hosted validation including docs and both notebook endpoints passes in run 34218035673 at f8d582b. The simultaneous earlier run was cancelled after the PR base changed.
 - [ ] Obtain user validation before merge.
 
 ## Surprises & Discoveries
@@ -43,7 +43,7 @@ The pinned formatter originally flattened a valid table. Explicit gfm support pr
 ## Context and Orientation
 
 
-Worktree `/Users/ale/Code/bearshape-worktrees/docs-contract`, branch `codex/docs-contract`, base integration `b2a1df0`. `docs/features/` contains dimensions, Like, Tree, decoration and static guides. `docs/getting-started/` owns installation and quickstart. `zensical.toml` defines navigation/assets and markdown extensions. `README.md` is the concise entry point. The example notebook contains 29 code cells according to the audit; inspect actual contents before execution.
+Worktree `/Users/ale/Code/bearshape-worktrees/docs-contract`, branch `codex/docs-contract`, base CI PR #23 at `f396e72`. `docs/features/` contains dimensions, Like, Tree, decoration and static guides. `docs/getting-started/` owns installation and quickstart. `zensical.toml` defines navigation/assets and markdown extensions. `README.md` is the concise entry point. The example notebook contains 29 code cells according to the audit; inspect actual contents before execution.
 
 ## Plan of Work
 
@@ -83,3 +83,5 @@ Evidence belongs under `/Users/ale/Code/bearshape-implementation-2026-09-08/evid
 Use the existing Zensical documentation system and public bearshape API. Add no runtime dependency. Any additional formatter or execution tooling belongs in the appropriate development group or an isolated validation environment and must have a demonstrated use.
 
 Revision note — 2026-09-08: Stacked on CI PR #23 to add semantic docs and endpoint notebook jobs to shared validation. Kept outputs per interpreter under build/ and enabled only the development notebook dependency group for execution.
+
+Revision note — 2026-09-08: Actual five guide blocks and scalar-dot consumer checks pass on both endpoints; shared hosted run 34218035673 passes with required notebook/docs jobs.
