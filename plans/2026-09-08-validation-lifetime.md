@@ -12,10 +12,10 @@ A failed manual check must not poison the next independent check or retain its a
 
 
 - [x] (2026-09-08) Read current memo, replay, array, tree, decorator and upstream error paths.
-- [ ] Open early draft PR and add failing lifetime regressions.
-- [ ] Prototype frame-owned state and prove diagnostic lifetime on exact rc0.
-- [ ] Investigate whole-union rollback feasibility without upstream patches or bytecode heuristics.
-- [ ] Implement the proven lifetime design and validate all supported contexts.
+- [x] (2026-09-08) Opened PR #15 and reproduced eight failures in nine new regression cases.
+- [x] (2026-09-08) External prototype passed existing runtime tests on exact rc0 at Python 3.10/3.14.
+- [x] (2026-09-08) Demonstrated that frame lifetime does not fix native union rollback; no branch transaction callback is exposed by the inspected rc0 union generator. A04 remains a release gate.
+- [x] (2026-09-08) Implemented live-frame memo ownership and removed global/cached replay state; runtime, checker, coverage and hook validation passed.
 - [ ] Record unresolved contract gates and obtain user validation before merge.
 
 ## Surprises & Discoveries
@@ -33,7 +33,7 @@ Decision: Native composite unions require a separate feasibility result. Rationa
 ## Outcomes & Retrospective
 
 
-Investigation is beginning. A03 remains open until boolean reuse, accurate diagnostics and object release pass. A04 remains open until whole-alternative rollback is proven or an enforceable revised contract is explicitly accepted.
+A03 is fixed locally. All 1,043 runtime tests pass on baseline and both exact-rc0 endpoints; all 30 current typing tests pass. The required dev tox environment passed 1,073 tests with five expected skip records and 91.31% combined coverage. Nine new lifetime cases pass, including object release and mutation. Hooks passed. A04 remains open: frame ownership provides invocation lifetime but cannot observe a native union alternative failing after a successful leaf.
 
 ## Context and Orientation
 
@@ -85,3 +85,12 @@ Evidence directory: `/Users/ale/Code/bearshape-implementation-2026-09-08/evidenc
 Keep public check/check_context and array/tree syntax unchanged. Runtime dependencies remain beartype and typing_extensions. Per-call state must not live on cached hint definitions. Diagnostic replay must belong to the current invocation; future calls cannot be mistaken for replay.
 
 Revision note — 2026-09-08: Added the lifetime and union feasibility plan before experimentation.
+
+## Composite union feasibility result
+
+
+The inspected exact-rc0 generator `beartype/_check/code/_pep/pep484/codepep484604union.py` expands union alternatives into native boolean expressions. Its corresponding snippets in `_data/check/code/pep/datacodepep484604.py` provide no callback entering, committing, or rolling back an entire alternative. The public instance-check and diagnostic hooks see leaves. For `tuple[F32[N], str] | tuple[F32[C], int]`, the first alternative can bind N and then fail at the plain str test without calling another bearshape validator. Resetting N at the next leaf would also erase legitimate earlier-argument bindings in other annotations.
+
+The external prototype independently confirms the original audit example still rejects a valid length-three final argument after a length-two successful C alternative. A03 is therefore independently fixable; A04 needs an upstream composition boundary or a deliberately accepted/enforced alternative API/contract. No upstream code was modified, no unsupported workaround was added, and no failing union test was hidden as a passing regression. This remains a production-release blocker for the promised general native-composition semantics.
+
+Validation evidence — 2026-09-08: `lifetime-before.log` records eight failures and one existing-success control; `lifetime-after.log` records 187 targeted passes; runtime endpoint logs each record 1,043 passes/five expected skips. `lifetime-checkers.log`: 30 passed. `lifetime-coverage.log`: 1,073 passed/five skips, 91.31% coverage. `lifetime-mutation.log`: nine passes using supported ndarray.resize on NumPy 2.5. `lifetime-hooks.log`: passed. Source shrank by removing ReplayFailureState and thread-local frame bookkeeping.

@@ -18,6 +18,11 @@ and this project follows
 
 ### Fixed
 
+- Validation state now belongs to its active invocation. Failed boolean
+    composite checks no longer poison later checks of the same object or retain
+    failed arrays through cached annotation state. Diagnostic checks preserve
+    the current call's dimension bindings and restore temporary changes.
+
 - Structured dtype normalization now exposes its NumPy input type to all
     supported checkers while retaining NumPy's runtime validation.
 

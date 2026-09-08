@@ -58,9 +58,8 @@ from collections.abc import Callable
 
 from beartype.door import TypeHint
 
-from ._memo import ShapeMemo, has_untagged_memo
+from ._memo import ShapeMemo
 from ._runtime_hints import (
-  ReplayFailureState,
   ValidationFailure,
   get_runtime_validator,
   hint_label,
@@ -104,7 +103,7 @@ class Structure(str):
 class _TreeChecker:
   """Beartype validator for tree leaf types and structure consistency."""
 
-  __slots__ = ("_fail_state", "_get_ops", "_leaf_type", "_repr", "_structure_spec")
+  __slots__ = ("_get_ops", "_leaf_type", "_repr", "_structure_spec")
 
   def __init__(
     self,
@@ -116,7 +115,6 @@ class _TreeChecker:
     self._leaf_type = leaf_type
     self._structure_spec = structure_spec
     self._get_ops = get_ops
-    self._fail_state = ReplayFailureState()
     spec_str = f", {structure_spec}" if structure_spec else ""
     self._repr = f"Tree[{hint_label(leaf_type)}{spec_str}]"
 
@@ -124,56 +122,38 @@ class _TreeChecker:
     return self.instancecheck(obj)
 
   def instancecheck(self, obj: object) -> bool:
-    if self._fail_state.should_replay(obj):
-      return False
-
     tree_ops = self._get_ops()
     from ._memo import get_memo, get_scope, pop_memo, push_memo
 
-    # Bridge memo + runtime scope so leaf checks reuse the caller's bindings
-    # and can resolve ``Value(...)`` expressions against the same parameters.
     memo = get_memo()
     scope = get_scope()
     snap = memo.snapshot()
-    has_prior = any(snap)
+    valid = False
+    push_memo(memo, scope=scope)
+    try:
+      valid = self._validate(obj, tree_ops, memo) is None
+    finally:
+      pop_memo()
+      if not valid:
+        memo.restore(snap)
+    return valid
+
+  def instancecheck_str(self, obj: object) -> str:
+    tree_ops = self._get_ops()
+    from ._memo import get_memo, get_scope, pop_memo, push_memo
+
+    memo = get_memo()
+    scope = get_scope()
+    snap = memo.snapshot()
     push_memo(memo, scope=scope)
     try:
       failure = self._validate(obj, tree_ops, memo)
     finally:
       pop_memo()
-
-    if failure is None:
-      self._fail_state.clear()
-      return True
-
-    memo.restore(snap)
-    if has_prior and not has_untagged_memo():
-      self._fail_state.record(obj, memo, failure)
-    else:
-      self._fail_state.clear()
-    return False
-
-  def instancecheck_str(self, obj: object) -> str:
-    detail = self._fail_state.detail_for(obj)
-    if detail is None:
-      tree_ops = self._get_ops()
-      from ._memo import get_memo, get_scope, pop_memo, push_memo
-
-      memo = get_memo()
-      scope = get_scope()
-      snap = memo.snapshot()
-      push_memo(memo, scope=scope)
-      try:
-        failure = self._validate(obj, tree_ops, memo)
-      finally:
-        pop_memo()
       memo.restore(snap)
-      if failure is None:
-        detail = ValidationFailure(f"unexpectedly accepted {obj!r} for {self!r}")
-      else:
-        detail = failure
-    self._fail_state.clear()
-    return detail.message
+    if failure is None:
+      return f"unexpectedly accepted {obj!r} for {self!r}"
+    return failure.message
 
   def _validate(
     self, obj: object, tree_ops: tp.Any, memo: ShapeMemo
