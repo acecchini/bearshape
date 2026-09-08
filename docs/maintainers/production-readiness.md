@@ -219,6 +219,26 @@ what the publisher would download; it does not rebuild distributions. Later
 source changes produce their own source-archive hashes and require their
 applicable validation before publication.
 
+The subsequent
+[Node 24 validation run](https://github.com/acecchini/bearshape/actions/runs/34223582731)
+also completed 38 successful jobs and skipped publication. It includes the four
+additional call-boundary cases: 1,101 installed-consumer tests pass at each
+endpoint with one absent-CuPy skip. Its source is
+`6f40e4a484b70535c58e2c86a645a64ab1079143`; its wheel is byte-identical to the
+GPU-validated wheel above. Its updated source archive has SHA256:
+
+```text
+38d89d4ce1b351601ff8602a9a27b4e9af46db056be3ac0eaf41a68ac56a3706
+```
+
+[#30](https://github.com/acecchini/bearshape/pull/30) updates artifact/Pages
+actions to reviewed Node 24 releases. Required docs validation successfully
+packaged the 46-file Pages archive, including this report and the logo. The
+inspected action logs no longer contain the Node 20 deprecation warning. Actual
+Pages deployment remains unperformed during this review. The current upstream
+download action still emits a `Buffer()` deprecation notice; no suppression was
+added. Artifact digest verification and all consumers passed.
+
 ## Performance observations
 
 A matched comparison uses normally installed baseline/candidate wheels on the

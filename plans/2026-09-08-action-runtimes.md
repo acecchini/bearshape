@@ -13,9 +13,10 @@ The validated release pipeline should not depend on GitHub forcibly substituting
 
 - [x] (2026-09-08) Created codex/action-runtimes and matching worktree from the handoff candidate.
 - [x] (2026-09-08) Verified upstream release tags, action inputs, Node 24 runtime and Pages' embedded artifact upload.
-- [ ] Open focused draft PR and update four action pins.
-- [ ] Validate hooks, actionlint, hosted artifact consumers and a validation-only release run.
-- [ ] Record results and obtain user validation before merge.
+- [x] (2026-09-08) Opened #30 and updated all four reviewed action pins; required docs validation now packages Pages without deployment.
+- [x] (2026-09-08) Hooks/actionlint and all PR checks pass. Validation-only run 34223582731 completed 38 jobs successfully and skipped publication; inspected action logs have no Node 20 warning.
+- [x] (2026-09-08) Recorded final hashes, 1,101 installed-consumer tests per endpoint, unchanged GPU-validated wheel and inspected 46-file Pages archive.
+- [ ] Obtain user validation before merge.
 
 ## Surprises & Discoveries
 
@@ -36,7 +37,7 @@ Decision: Validate Pages packaging without deploying the site during this task. 
 ## Outcomes & Retrospective
 
 
-Implementation pending. No package behavior, release authorization or ownership controls change. A04 and CuPy static policy remain open decisions.
+The Node 24 artifact pipeline succeeds end to end. Named artifact upload/download, full installed consumers, release evidence and Pages packaging are verified. The wheel is byte-identical to the artifact that passed 95 GPU tests at both endpoints. Actual Pages deployment was not run. The latest upstream downloader still emits a Buffer() deprecation notice; it is recorded without suppression and does not affect the successful digest/consumer checks. No package behavior, release authorization or ownership controls change. A04 and CuPy static policy remain open decisions.
 
 ## Context and Orientation
 
@@ -76,3 +77,5 @@ Record logs under /Users/ale/Code/bearshape-implementation-2026-09-08/evidence/a
 
 
 No Python dependency or API changes. GitHub Actions pins and the required docs packaging check are the only implementation surface. Keep OIDC write permissions confined to the actual deployment jobs.
+
+Revision note — 2026-09-08: Final validation-only run https://github.com/acecchini/bearshape/actions/runs/34223582731 used source 6f40e4a484b70535c58e2c86a645a64ab1079143. Wheel SHA256 c1806203da013c9eaf2482a309c686a984c0a7031a495efbd100a824536b57d2; sdist SHA256 38d89d4ce1b351601ff8602a9a27b4e9af46db056be3ac0eaf41a68ac56a3706. Artifact identity and nondeployment were verified, with owner review still pending.
