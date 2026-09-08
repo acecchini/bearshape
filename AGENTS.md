@@ -30,6 +30,8 @@ evidence; current owner decisions take precedence.
 - bearshape is independently versioned; the candidate is `0.1.0rc0`.
 - The current dependency and test target is beartype `0.23.0rc0`, with metadata
   `>=0.23.0rc0,<0.24`. Full native composite-union rollback is still incorrect.
+  A tested local upstream proposal and explicit integration regressions are
+  documented in `tools/upstream/README.md`; it has not shipped upstream.
   The owner chose full composition through supported upstream integration and
   permits a later candidate. Keep rc0 validation until a concrete replacement is
   implemented and tested; update metadata, lock, preflight and CI together.

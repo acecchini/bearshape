@@ -15,11 +15,12 @@ The user requested resolving this defect after approving the earlier implementat
 
 - [x] (2026-09-08) Read the current agent contract, roadmap, prior feasibility evidence, bearshape memo/checker implementation and beartype union generator.
 - [x] (2026-09-08) Created branch `codex/union-transactions` and matching worktree at `/Users/ale/Code/bearshape-worktrees/union-transactions` from main `795ec391123437beb5167de1e1519411dbabe479`.
-- [ ] Commit this plan and open an early bearshape draft PR.
-- [ ] Reproduce the defect and add focused failing regression coverage before the implementation.
-- [ ] Prototype and validate a minimal upstream transaction interface in an isolated beartype source worktree.
-- [ ] Connect bearshape through that interface and prove nested, return, explicit/automatic, async, exception and lifetime behavior.
-- [ ] Validate upstream tests, bearshape CPU runtime, four checkers, hooks and normal installed artifacts at Python endpoints as relevant.
+- [x] (2026-09-08) Committed the plan and opened draft PR #34 before implementation.
+- [x] (2026-09-08) Initial regressions reproduced 12 failures and two passes on published rc0 before implementation; expanded the suite to 22 behavioral cases.
+- [x] (2026-09-08) Implemented the snapshot protocol in isolated upstream commit `4aef992d1cd0a6d09fe5c3784523c44e0874b178`, based on `a2729e0e358bf963ee6f177e300ae08a622d05d6`. No upstream message, fork push or PR submitted.
+- [x] (2026-09-08) Connected the shared runtime-hint metaclass to existing memo snapshots. All 22 integration cases pass, including late aliases, sampling, cancellation and thread isolation.
+- [x] (2026-09-08) Normally installed packages passed 1,124 tests plus five existing CPU skip records on each of Python 3.10.20 and 3.14.5, including all four checkers. Upstream serial unit tests passed 426/439 with 20/7 pre-existing skips. Upstream pyright passed.
+- [ ] Finish hooks, immutable archive consumers and final performance measurements.
 - [ ] Prepare a concrete upstream patch and submission text, update handoff evidence and distinguish local fix from availability in a released dependency.
 
 ## Surprises & Discoveries
@@ -41,7 +42,7 @@ Decision: Prepare any upstream proposal locally before seeking permission to sub
 ## Outcomes & Retrospective
 
 
-Implementation is pending. The initial evidence rules out a leaf-only correction. The required outcome is a tested transaction boundary around complete native alternatives, including diagnostic traversal, without claiming that a local patch has already shipped upstream.
+A working local fix now passes the original example and all 22 expanded integration cases on both Python endpoints. The small bearshape adapter uses a proposed upstream snapshot hook; the source extension owns branch boundaries, exception cleanup, diagnostic replay and lazy-reference registration. Published rc0 still fails because it does not implement this hook. Final archive/evidence preparation and upstream submission approval remain outstanding.
 
 ## Context and Orientation
 
@@ -113,3 +114,20 @@ Baseline main is `795ec391123437beb5167de1e1519411dbabe479`. Prior upstream base
 No new third-party runtime dependencies. Use existing ShapeMemo snapshot/restore and upstream public plugin conventions. The proposed upstream protocol must remain optional, avoid imports of bearshape/backends, deduplicate shared state providers, clean up on all outcomes and avoid retaining caller objects after checks end. Its final callable signatures, discovery rules, diagnostic behavior and supported scope must be specified before promotion from prototype.
 
 Revision note — 2026-09-08: Created the focused plan before implementing the union rollback fix.
+
+## Implementation discoveries and concrete interface
+
+
+The optional upstream hook is `__beartype_snapshot__() -> Callable[[], None]`. All bearshape hint classes expose the same static getter object, so their shared state is snapshotted once per boundary. The getter returns a closure holding the active ShapeMemo and a copy of its three binding maps. It imports no optional backend and no upstream private API. Existing leaf rollback remains for published rc0 and bare Python instance checking.
+
+Upstream collects getter identities during its existing sanitized code-generation traversal. Union alternatives receive deferred start/commit/rollback expression boundaries only when a descendant opts into state or could resolve lazily. One closure around the complete expression preserves the lexical scope of generated assignment expressions; a separate closure per alternative would lose variables shared by the generator's sampling logic. ExitStack unwinds failed branches and exceptions, including a broken plugin rollback. Diagnostic traversal uses the same getter set, retains successful sibling bindings while describing a failure, and restores all diagnostic changes afterward.
+
+Late aliases required additional evidence. The first prototype passed 14 cases but failed an alias defined after decoration. Lazy references now enrol a newly discovered getter in active transactions before validation mutates state. The generator retains beartype's existing preference for concrete classes before unresolved proxies, so `Optional["NotYetDefined"]` still accepts None. No unused reference is resolved eagerly. Transactions use ContextVar tracking and invocation-owned snapshots, not a global binding cache.
+
+Upstream tests exposed dedicated NoReturn and legacy tuple diagnostic paths outside the ordinary expression generator. These retain their original special handling. A parallel run also hit an existing shared bytecode-cache cleanup race; the upstream project's suite passes serially without modifying or skipping that fixture. Test-only dynamic classes require distinct qualified names because upstream caches some hint representations.
+
+The first benchmark observed a cost for stateful hints (strict small-array call about 20 to 31 microseconds), while a native NumPy-only annotation remained about 0.11 microseconds. This is a correctness-versus-overhead tradeoff for the upstream proposal; final matched normal-install measurements are pending. No portable performance guarantee is made.
+
+The local patch file is `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/union-transactions/beartype-stateful-hints.patch`. Apply it to a clean checkout of the recorded upstream base with `git apply --check` followed by `git apply`; normal-install both packages into an isolated interpreter as documented in `tools/upstream/README.md`. The patch must be accepted and published upstream before dependency metadata, lock and required CI are migrated. Do not turn this local result into a released-rc0 compatibility claim.
+
+Revision note — 2026-09-08: Recorded the working callback design, successful endpoint suites, upstream patch commit, discovered alias/diagnostic paths and remaining artifact/review steps.

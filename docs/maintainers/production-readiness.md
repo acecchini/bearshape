@@ -6,14 +6,15 @@ candidate is independently versioned from beartype and requires
 target until a supported replacement is implemented and validated.
 
 **Release readiness is withheld.** Native composite-union rollback remains
-incorrect in one important composition case. The owner selected full composition
-through supported upstream integration and permits a later beartype candidate;
-explicitly limited native CuPy static support is accepted. The owner approved
-merging the reviewed production work on 8 September 2026. PR #31 integrated all
-reviewed heads into main at `df81f00e2f62bda956244e680c980f87db1d4671`; its
-post-merge CI passed all 36 jobs. Repository/publication protections still
-require configuration, and publication or ownership transfer requires separate
-authorization.
+incorrect with published rc0. A tested local upstream patch is now prepared; its
+availability and validation are recorded below. The owner selected full
+composition through supported upstream integration and permits a later beartype
+candidate; explicitly limited native CuPy static support is accepted. The owner
+approved merging the reviewed production work on 8 September 2026. PR #31
+integrated all reviewed heads into main at
+`df81f00e2f62bda956244e680c980f87db1d4671`; its post-merge CI passed all 36
+jobs. Repository/publication protections still require configuration, and
+publication or ownership transfer requires separate authorization.
 
 ## Purpose and intended users
 
@@ -221,6 +222,37 @@ exceptions. Cover nested unions, return checks, explicit/automatic scopes, async
 paths and object lifetime before changing the compatibility floor and rerunning
 the complete normal-install matrix. No upstream message or patch has been
 submitted on the owner's behalf.
+
+### Tested local union fix, pending upstream review
+
+The follow-up implementation in PR #34 exposes a shared snapshot callback from
+bearshape runtime hints and pairs it with a local beartype source extension.
+Upstream patch commit `4aef992d1cd0a6d09fe5c3784523c44e0874b178`, based on
+`a2729e0e358bf963ee6f177e300ae08a622d05d6`, adds complete-alternative
+transactions, exception cleanup and isolated diagnostic replay. Lazy forward
+references join active transactions before mutating state, while unselected
+references remain unresolved. There is no runtime monkeypatch or replacement
+type checker.
+
+The original probe and all 22 explicit integration cases pass with the patch.
+Normally installed packages passed 1,124 combined runtime, static-checker and
+integration tests on both Python 3.10.20 and 3.14.5, with five existing CPU skip
+records per interpreter (CuPy plus four platform precision cases). Upstream's
+own serial unit suite passed 426 tests on Python 3.10 and 439 on Python 3.14,
+with 20 and seven pre-existing skip records respectively. Upstream pyright
+reports no errors. The focused plan records final artifact identities and
+performance measurements.
+
+This demonstrates a working local fix, not compatibility provided by published
+rc0. The dependency metadata and lock are unchanged, and the new integration
+suite under `tools/upstream/` is explicitly invoked rather than silently skipped
+or marked xfail. Normal rc0 CI can remain green while that separate suite fails
+on rc0. After upstream acceptance and release, adopt the concrete dependency
+across metadata, lock, preflight and CI, move the cases into the required suite,
+and rerun candidate validation including CUDA. The patch has not been submitted
+upstream, and no package has been published or ownership transferred.
+
+See `tools/upstream/README.md` in the repository for commands.
 
 ### CuPy static boundary
 

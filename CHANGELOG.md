@@ -62,6 +62,11 @@ and this project follows
 
 ### Added
 
+- Prepare an opt-in snapshot adapter and 22 explicit integration regressions for
+    the proposed beartype transaction protocol. The local upstream patch fixes
+    failed native union alternatives, including diagnostics and lazy aliases;
+    published beartype rc0 still requires the upstream change.
+
 - Add the production contract/test map, reproducible runtime measurements and
     ownership handoff evidence with unresolved release decisions stated
     explicitly.
