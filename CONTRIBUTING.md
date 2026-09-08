@@ -60,3 +60,20 @@ resolve imports.
 
 When adding a backend version, update `tox.toml`, `tools/validate_tox_env.py`,
 and the GitHub workflow matrix together.
+
+## Check release archives
+
+Build the source distribution first, then build the wheel from that archive:
+
+```bash
+uv build --sdist
+uv build dist/bearshape-<version>.tar.gz --wheel
+uv run --locked --only-group dev python tools/check_distribution.py \
+  dist/bearshape-<version>-py3-none-any.whl dist/bearshape-<version>.tar.gz
+```
+
+Replace `<version>` with the project version. The check verifies license text,
+metadata, inline typing information, matching package contents, and downstream
+test inputs. It prints artifact hashes for release evidence. The source archive
+includes the tests, lockfile and configuration needed to run `uv sync --locked`
+and `uv run --locked pytest`. CuPy still requires a separate CUDA environment.

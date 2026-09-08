@@ -12,10 +12,10 @@ A downstream user must receive the actual MIT license notice with the installed 
 
 
 - [x] (2026-09-08) Created isolated feature worktree and reviewed uv's inclusion rules and the audit evidence.
-- [ ] Open draft PR and reproduce missing archive contents.
-- [ ] Include license and deliberate downstream testing inputs; add archive validation.
-- [ ] Rebuild a wheel from the sdist and validate normal installation outside the checkout.
-- [ ] Record hooks, archive hashes, and remaining integrated exact-rc0 validation.
+- [x] (2026-09-08) Opened PR #18 and reproduced missing License-File metadata/license with the new archive check.
+- [x] (2026-09-08) Included license/testing inputs, added the archive validator and required CI job.
+- [x] (2026-09-08) Rebuilt and normally installed the wheel in an external consumer; root imports no optional backend. Copied archive tests pass against the installed wheel: 652 passed, seven explicit missing-backend/platform skips.
+- [x] (2026-09-08) All hooks pass; recorded hashes and retained exact-rc0 integrated artifact validation as a separate release gate.
 
 ## Surprises & Discoveries
 
@@ -32,7 +32,7 @@ Decision: Add one small archive validation command usable by CI/release work. Ch
 ## Outcomes & Retrospective
 
 
-Implementation pending. Exact beartype rc0 installation requires integrating PR #13 because this independent branch retains main's old dependency bound. Record this distinction rather than treating a source overlay or dependency-free install as distribution proof.
+Implemented complete source/wheel contents with executable archive checks. The unchanged artifacts fail, while the rebuilt artifacts pass and support 652 installed-wheel tests. Exact beartype rc0 installation requires integrating PR #13 because this independent branch retains main's old dependency bound. Record this distinction rather than treating a source overlay or dependency-free install as distribution proof.
 
 ## Context and Orientation
 
@@ -73,7 +73,7 @@ Use separate output directories so old and new archives remain inspectable. Do n
 ## Artifacts and Notes
 
 
-Evidence belongs under `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/`, with `distribution-` filenames. Record actual command results and hashes here as work proceeds.
+Evidence is under `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/`: `distribution-before-check.log` fails for the absent License-File; `distribution-after-check.json` records the matching archive check and hashes; `distribution-install.log` shows a normal wheel install and site-packages import with only declared dependencies before optional NumPy/optree installation; `distribution-installed-tests.log` reports 652 passed and seven explicit platform/missing-JAX/Torch skips; `distribution-hooks-final.log` is clean. The isolated consumer is `/Users/ale/Code/bearshape-implementation-2026-09-08/distribution-consumer`; it contains no package source tree. Its tests came from the sdist.
 
 ## Interfaces and Dependencies
 
@@ -81,3 +81,5 @@ Evidence belongs under `/Users/ale/Code/bearshape-implementation-2026-09-08/evid
 The archive validator accepts a wheel path followed by an sdist path and exits nonzero for missing/mismatched required contents. Use Python's standard library for archive/metadata/hash inspection. Keep runtime dependencies and public API unchanged. Test/archive tooling uses uv, already the project's supported development tool.
 
 Revision note — 2026-09-08: Added focused distribution plan before implementation.
+
+Revision note — 2026-09-08: Implemented archive integrity checks and recorded normal external wheel installation plus downstream runtime evidence. Final combined rc0 artifacts remain an integration requirement.

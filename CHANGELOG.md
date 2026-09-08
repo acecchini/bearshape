@@ -8,6 +8,9 @@ and this project follows
 
 ## [Unreleased]
 
+- Include LICENSE in wheel/source distributions and ship the regression suite
+    and its configuration in the source archive. Verify actual archive contents.
+
 ### Added
 
 - A GitHub Actions workflow for trusted publishing to PyPI, with automatic
