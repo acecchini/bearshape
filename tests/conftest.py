@@ -1,6 +1,6 @@
 """Tox-aware test filtering.
 
-When running under tox with a factor-based env name (e.g. ``py310-bt022-numpy24``),
+When running under tox with a factor-based env name (e.g. ``py310-bt023rc0-numpy24``),
 only the tests relevant to the active backend are collected. When running
 ``uv run pytest`` directly (no ``TOX_ENV_NAME``), all tests run unfiltered.
 """
@@ -39,7 +39,9 @@ def pytest_collection_modifyitems(
 
   factors = set(env_name.split("-"))
 
-  if "type" in factors:
+  if "cpu" in factors:
+    allowed = {i.path.name for i in items if i.path.name != "test_typecheck.py"}
+  elif "type" in factors:
     allowed = {"test_typecheck.py"}
   else:
     backend = next(
