@@ -21,15 +21,15 @@ The recommended release policy is to make `0.23.0rc0` the minimum beartype versi
 
 - [x] (2026-09-08) Completed the production audit and preserved its evidence outside the repository.
 - [x] (2026-09-08) Prepared this implementation proposal without changing the repository.
-- [ ] M0: Record accepted independent versioning (`0.1.0rc0`) and create focused branches/worktrees and draft PRs (goal and first two worktrees created; draft PRs pending).
-- [ ] M1: Establish installable exact-rc0 environments and promote demonstrated defects into regression tests.
-- [ ] M2: Prove the validation lifetime and composite-union design is feasible against unmodified rc0; repair actual import-hook integration.
-- [ ] M3: Implement invocation-scoped validation state and correct composite rollback using the proven design.
-- [ ] M4: Make backend Like validation and documented conversion rules agree.
-- [ ] M5: Establish useful consumer typing for pyright, mypy, ty, and pyrefly.
+- [x] (2026-09-08) M0: Accepted independent `0.1.0rc0` versioning, active goal, and focused branches/worktrees/PRs #12–#18.
+- [x] (2026-09-08) M1: PR #13 makes exact rc0 normally installable; locked suite and exact-candidate CPU endpoint suites pass. Subsequent PRs preserve failing-before regressions.
+- [ ] M2: Import-hook repair is implemented in PR #14. Native composite-alternative rollback is not feasible through the inspected rc0 leaf callbacks; user decision on upstream integration versus an enforceable restricted contract is pending.
+- [ ] M3: Invocation-owned state and diagnostic replay removal are implemented in PR #15 (1,043 runtime tests on exact rc0 endpoints; 91.31% dev coverage). Whole-alternative rollback remains a release blocker.
+- [x] (2026-09-08) M4: PR #16 fixes seven converter false positives; thirteen oracle cases and 1,047 runtime tests pass on exact rc0 endpoints. CuPy GPU proof remains open under M6.
+- [ ] M5: PR #17 implements four-engine positive/negative/inference conformance on Python 3.10–3.14. Broader Like, Shaped, Tree and native CuPy static models remain.
 - [ ] M6: Complete runtime feature, framework-integration, import-boundary, and performance validation.
 - [ ] M7: Align hooks, dependencies, tox, and CI with the tested support contract.
-- [ ] M8: Repair contract documentation and validate complete wheel and source artifacts.
+- [ ] M8: PR #18 implements license/source inclusion and archive inspection; isolated wheel validation is in progress. Rendered contract docs and examples remain.
 - [ ] M9: Enforce release validation, prepare the ownership handoff, and obtain final user review before merge.
 
 ## Surprises & Discoveries
@@ -44,6 +44,8 @@ Checker success can hide information loss. Locked ty 0.0.40 accepts the current 
 The repository layout is already reasonable: about 5,114 source lines across 16 implementation/public modules plus the package initializer. Combined coverage was 91.04%, with 89.39% branch coverage. CuPy had no local runtime coverage. The five skip records include an unavailable entire CuPy test module and four platform-specific extended-precision cases.
 
 Build and workflow success also hid release defects. LICENSE is absent from both archives. The publication workflow builds an arbitrary selected ref without a test gate. The audited GitHub response reported main unprotected; organization rulesets, environment approval rules, and PyPI publisher configuration were not inspected. Documentation built successfully with malformed rendered tables and admonitions. CPU Torch compatibility jobs installed CUDA-related dependencies despite the root project's CPU index configuration.
+
+Implementation discovery (2026-09-08): a failed native union alternative can bind a dimension in a bearshape leaf and then fail in an ordinary `str` check. rc0's generated boolean union expression has no bearshape-visible whole-alternative entry/exit boundary. Frame-owned memo state fixes independent-call leakage and diagnostic object retention, but does not solve this separate compositional failure. No bytecode heuristic, upstream monkeypatch, hidden expected failure, or reduced contract was introduced. The concrete integration decision is pending user input.
 
 ## Decision Log
 
@@ -346,3 +348,5 @@ Revision note — 2026-09-08: Initial proposal derived from the completed audit.
 The roadmap PR owns this living program. Planned independent changes are rc0 compatibility/release metadata; caller-package claw integration; validation lifetime and composite feasibility; backend conversion; consumer typing; CI/dependency enforcement; documentation; distribution contents; and publication gates. Runtime feature/performance evidence accompanies the relevant fixes. Where one change requires another, use an explicit dependent PR and record its base. All PRs remain unmerged pending user validation.
 
 Revision note — 2026-09-08 implementation start: User selected `0.1.0rc0`, independent versioning, and separate PRs. These decisions supersede the original single-PR proposal. Goal created; implementation work is beginning.
+
+Revision note — 2026-09-08: Recorded implemented PRs and validation evidence, with the unresolved native-union design decision and remaining typing/artifact/docs work stated explicitly.
