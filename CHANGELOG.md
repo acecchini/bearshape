@@ -87,6 +87,9 @@ and this project follows
 
 ### Changed
 
+- Update artifact and Pages actions to reviewed Node 24 releases and exercise
+    Pages packaging in required documentation validation.
+
 - Require immutable tag/version identity and full candidate validation before
     publishing the tested artifacts; add a validation-only release path.
 
