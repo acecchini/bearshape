@@ -31,8 +31,8 @@ from ._dimensions import Dimension, _ValueExpr
 from ._dtypes import DtypeSpec
 from ._dtypes import extract_dtype_str as extract_dtype_str
 from ._memo import ShapeMemo as ShapeMemo
-from ._memo import get_memo, get_scope, has_untagged_memo
-from ._runtime_hints import ReplayFailureState, ValidationFailure, make_runtime_hint
+from ._memo import get_memo, get_scope
+from ._runtime_hints import ValidationFailure, make_runtime_hint
 from ._shape import (
   ANONYMOUS,
   ANONYMOUS_VARIADIC,
@@ -180,7 +180,7 @@ class _ArrayChecker:
   ``Float32Array[N, C]``) and reused across all functions that share it.
   """
 
-  __slots__ = ("_array_type", "_dtype_spec", "_fail_state", "_repr", "_shape_spec")
+  __slots__ = ("_array_type", "_dtype_spec", "_repr", "_shape_spec")
 
   def __init__(
     self,
@@ -196,7 +196,6 @@ class _ArrayChecker:
       self._array_type = tp.cast("type[object]", array_type)
       self._dtype_spec = tp.cast("DtypeSpec", dtype_spec)
       self._shape_spec = shape_spec
-    self._fail_state = ReplayFailureState()
 
     # Pre-compute repr for beartype error messages
     dims = ", ".join(repr(d) for d in self._shape_spec)
@@ -206,39 +205,28 @@ class _ArrayChecker:
     return self.instancecheck(obj)
 
   def instancecheck(self, obj: object) -> bool:
-    if self._fail_state.should_replay(obj):
-      return False
-
     memo = get_memo()
     scope = get_scope()
     snap = memo.snapshot()
-    has_prior = any(snap)
-    failure = self._validate(obj, memo, scope)
-    if failure is None:
-      self._fail_state.clear()
-      return True
-
-    memo.restore(snap)
-    if has_prior and not has_untagged_memo():
-      self._fail_state.record(obj, memo, failure)
-    else:
-      self._fail_state.clear()
-    return False
+    valid = False
+    try:
+      valid = self._validate(obj, memo, scope) is None
+    finally:
+      if not valid:
+        memo.restore(snap)
+    return valid
 
   def instancecheck_str(self, obj: object) -> str:
-    detail = self._fail_state.detail_for(obj)
-    if detail is None:
-      memo = get_memo()
-      scope = get_scope()
-      snap = memo.snapshot()
+    memo = get_memo()
+    scope = get_scope()
+    snap = memo.snapshot()
+    try:
       failure = self._validate(obj, memo, scope)
+    finally:
       memo.restore(snap)
-      if failure is None:
-        detail = ValidationFailure(f"unexpectedly accepted {obj!r} for {self!r}")
-      else:
-        detail = failure
-    self._fail_state.clear()
-    return detail.message
+    if failure is None:
+      return f"unexpectedly accepted {obj!r} for {self!r}"
+    return failure.message
 
   def _validate(
     self, obj: object, memo: ShapeMemo, scope: dict[str, object]
@@ -363,7 +351,6 @@ class _ArrayLikeChecker:
     "_asarray",
     "_casting",
     "_dtype_spec",
-    "_fail_state",
     "_is_structured",
     "_repr",
     "_shape_spec",
@@ -386,7 +373,6 @@ class _ArrayLikeChecker:
     self._is_structured: bool = dtype_spec._structured is not None
     self._asarray = asarray
     self._trusted_types = trusted_types
-    self._fail_state = ReplayFailureState()
 
     dims = ", ".join(repr(d) for d in shape_spec)
     self._repr = f"{name}[{dims}]"
@@ -395,39 +381,28 @@ class _ArrayLikeChecker:
     return self.instancecheck(obj)
 
   def instancecheck(self, obj: object) -> bool:
-    if self._fail_state.should_replay(obj):
-      return False
-
     memo = get_memo()
     scope = get_scope()
     snap = memo.snapshot()
-    has_prior = any(snap)
-    failure = self._validate(obj, memo, scope)
-    if failure is None:
-      self._fail_state.clear()
-      return True
-
-    memo.restore(snap)
-    if has_prior and not has_untagged_memo():
-      self._fail_state.record(obj, memo, failure)
-    else:
-      self._fail_state.clear()
-    return False
+    valid = False
+    try:
+      valid = self._validate(obj, memo, scope) is None
+    finally:
+      if not valid:
+        memo.restore(snap)
+    return valid
 
   def instancecheck_str(self, obj: object) -> str:
-    detail = self._fail_state.detail_for(obj)
-    if detail is None:
-      memo = get_memo()
-      scope = get_scope()
-      snap = memo.snapshot()
+    memo = get_memo()
+    scope = get_scope()
+    snap = memo.snapshot()
+    try:
       failure = self._validate(obj, memo, scope)
+    finally:
       memo.restore(snap)
-      if failure is None:
-        detail = ValidationFailure(f"unexpectedly accepted {obj!r} for {self!r}")
-      else:
-        detail = failure
-    self._fail_state.clear()
-    return detail.message
+    if failure is None:
+      return f"unexpectedly accepted {obj!r} for {self!r}"
+    return failure.message
 
   def _validate(
     self, obj: object, memo: ShapeMemo, scope: dict[str, object]
