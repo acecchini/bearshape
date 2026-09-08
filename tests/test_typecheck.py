@@ -138,8 +138,11 @@ def _diagnostics(tool: str, output: str) -> Counter[tuple[str, int, str]]:
 
 @pytest.mark.typecheck
 @pytest.mark.parametrize("tool", SELECTED_CHECKERS)
-def test_valid_consumers_and_source(tool: str) -> None:
-  result = _run(tool, ["src", "tests/typing"])
+def test_valid_consumers_and_source(tool: str, pytestconfig: pytest.Config) -> None:
+  targets = ["tests/typing"]
+  if not pytestconfig.getoption("--installed-package"):
+    targets.insert(0, "src")
+  result = _run(tool, targets)
   assert result.returncode == 0, (
     f"{tool} rejected valid code on Python {PYTHON_TARGET}:\n{result.stdout}\n{result.stderr}"
   )

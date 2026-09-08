@@ -92,3 +92,16 @@ Use `uv run --locked prek run -a` for the normal hooks and
 Pre-push checks use the locked four-checker harness and runtime suite. The
 required CI gate accepts only successful completion of every required job. CuPy
 GPU validation remains a separate hardware-backed requirement.
+
+To validate the installed artifact after building the sdist and its wheel, run:
+
+```bash
+uv run --locked python tools/check_installed.py \
+  dist/*.whl dist/*.tar.gz --python 3.10
+```
+
+Repeat with `--python 3.14`. The command installs locked dependencies and the
+wheel normally in a temporary environment, then runs copied runtime and checker
+fixtures with no package source directory. It reports artifact hashes and
+installed module origins. `--installed-package` is an explicit pytest mode for
+this consumer check; ordinary source validation continues to include `src`.
