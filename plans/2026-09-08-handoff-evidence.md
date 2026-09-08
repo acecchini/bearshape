@@ -15,7 +15,7 @@ Receiving maintainers need a concise, accurate map of what bearshape does, which
 - [x] (2026-09-08) Opened #29 and mapped 17 feature families to positive/negative tests; added four default-argument/wrapped-signature cases passing at both endpoints.
 - [x] (2026-09-08) Added a bounded benchmark and compared normally installed wheels with identical Python/backend versions; recorded medians/spread and profiled scope cost.
 - [x] (2026-09-08) Wrote the support/module map, A01–A10 closure table, exact artifact/run evidence and concrete administrative proposal.
-- [ ] Validate docs, hooks and current combined artifacts/hosted checks.
+- [x] (2026-09-08) Full hooks, rendered tables, 93 Python snippets, browser inspection and every hosted check passed at 6845638.
 - [ ] Present remaining contract decisions and obtain user validation before merge.
 
 ## Surprises & Discoveries
@@ -35,7 +35,7 @@ Decision: Keep ownership URLs pointed at the real current repository and documen
 ## Outcomes & Retrospective
 
 
-The feature map, matched measurement and handoff report are implemented. Strict native checks measured 19.8 microseconds versus 21.8 in the baseline; no material regression was observed. Scope/signature lookup remains a significant cost, with optimization deferred until the composition boundary is settled. Both exact hosted artifact GPU runs passed 95 tests; the release dry run completed 38 successful jobs and skipped publication. Documentation/hosted checks for this evidence PR remain. Production readiness remains withheld for A04 and the CuPy static support decision. The final review must distinguish implemented/validated source changes from administrative release readiness and merge approval.
+The feature map, matched measurement and handoff report are implemented. Strict native checks measured 19.8 microseconds versus 21.8 in the baseline; no material regression was observed. Scope/signature lookup remains a significant cost, with optimization deferred until the composition boundary is settled. Both exact hosted artifact GPU runs passed 95 tests; the release dry run completed 38 successful jobs and skipped publication. Documentation, browser inspection and all hosted checks for this evidence PR pass. Production readiness remains withheld for A04 and the CuPy static support decision. The final review must distinguish implemented/validated source changes from administrative release readiness and merge approval.
 
 ## Context and Orientation
 
@@ -81,3 +81,5 @@ Store measurement and handoff evidence under /Users/ale/Code/bearshape-implement
 No runtime dependency or public API changes. The benchmark uses standard timing tools plus the existing optional CPU backends. The report and navigation use the existing Zensical site and corrected Markdown formatter configuration.
 
 Revision note — 2026-09-08: Corrected an initial optree version mismatch by comparing two normal wheel environments with identical dependencies. Added focused boundary tests where the feature map found no direct proof; both Python endpoints pass.
+
+Revision note — 2026-09-08: Recorded the completed hosted validation and retained user merge approval as the only remaining review action for this focused scope. Program-level release decisions remain in the roadmap and handoff report.
