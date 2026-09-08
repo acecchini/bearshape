@@ -28,6 +28,13 @@ jobs:
       - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v7
         with:
           version: "0.11.17"
+      - name: Verify installed hook stages
+        run: |
+          uv run --locked --only-group dev prek install
+          test ! -e "$(git rev-parse --git-path hooks/commit-msg)"
+          message_file="$(mktemp)"
+          printf '%s\n' 'Hook stage validation' > "$message_file"
+          uv run --locked --only-group dev prek run --stage commit-msg --commit-msg-filename "$message_file"
       - run: uv run --locked --only-group dev prek run -a
       - run: uv run --locked --only-group dev prek run actionlint -a --stage manual
       - run: git diff --exit-code

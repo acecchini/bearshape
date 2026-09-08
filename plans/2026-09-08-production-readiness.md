@@ -30,7 +30,7 @@ The recommended release policy is to make `0.23.0rc0` the minimum beartype versi
 - [x] (2026-09-08) M6: #21 proves framework/minimal behavior; #26 passes 95 real CUDA tests at both endpoints, including the exact hosted artifact. #29 supplies 17 feature/test families, four default/wrapped-signature cases at both endpoints, and matched performance/profile evidence with no material regression.
 - [x] (2026-09-08) M7: #23 implements locked reusable validation across nine platform runtime lanes, five four-checker lanes and twelve compatibility factors, strict preflight/required gates, CPU resolution and aligned hooks. All hosted checks pass; #30 updates the artifact/Pages actions to Node 24 and passes the final validation-only run.
 - [x] (2026-09-08) M8: #18/#25 prove distribution contents and normal installs. The hosted release artifact passes 1,097 installed-consumer tests per endpoint (one absent-CuPy skip). #24 fixes Markdown rendering and executes all 29 notebook code cells at both endpoints; #29 adds the rendered handoff report.
-- [ ] M9: #28 gates immutable workflow/tag/package identity, validates the complete candidate and reuses its exact artifacts. Actual validation-only run 34221337124 completed 38 jobs successfully and skipped publication. #29 prepares the full handoff/admin proposal. Remaining: supported native-union integration, administrative controls and execution of the approved merges.
+- [ ] M9: #28 gates immutable workflow/tag/package identity, validates the complete candidate and reuses its exact artifacts. Actual validation-only run 34221337124 completed 38 jobs successfully and skipped publication. #29 prepares the full handoff/admin proposal. Remaining: supported native-union integration and administrative controls. The approved history is integrated in main through PR #31.
 
 ## Surprises & Discoveries
 
@@ -77,7 +77,7 @@ Decision: Separate code readiness, publication, and administrative transfer. Rat
 ## Outcomes & Retrospective
 
 
-Implementation outcome: sixteen focused implementation/evidence PRs and separate roadmap/validation aggregates preserve independent review. Normal exact-rc0 installation, caller-sensitive claw behavior, invocation lifetime, selected backend conversion, four-checker consumers, Like and Tree static inputs, framework/GPU behavior, locked CI, rendered/executed docs, archives and publication gates are implemented and validated. The owner approved merging the reviewed work on 2026-09-08; PR #31 coordinates that integration and updates agent guidance. The exact hosted wheel passes CPU/checker consumers and real CUDA tests; the release dry run never enters publication. Native whole-alternative union rollback remains incorrect because rc0 exposes no reliable whole-alternative boundary, and CuPy native typing lacks adequate upstream stubs. The open union integration and administrative protections prevent a production-ready verdict. Do not trade them for green test counts.
+Implementation outcome: sixteen focused implementation/evidence PRs and separate roadmap/validation aggregates preserve independent review. Normal exact-rc0 installation, caller-sensitive claw behavior, invocation lifetime, selected backend conversion, four-checker consumers, Like and Tree static inputs, framework/GPU behavior, locked CI, rendered/executed docs, archives and publication gates are implemented and validated. The owner approved merging the reviewed work on 2026-09-08; PR #31 integrated every reviewed head into main at df81f00e2f62bda956244e680c980f87db1d4671, with all 36 main CI jobs passing. PR #33 corrects defects found by installing and exercising the actual Git hooks. The exact hosted wheel passes CPU/checker consumers and real CUDA tests; the release dry run never enters publication. Native whole-alternative union rollback remains incorrect because rc0 exposes no reliable whole-alternative boundary, and CuPy native typing lacks adequate upstream stubs. The open union integration and administrative protections prevent a production-ready verdict. Do not trade them for green test counts.
 
 ## Context and Orientation
 
@@ -355,7 +355,7 @@ Revision note — 2026-09-08: Initial proposal derived from the completed audit.
 ## Implementation PR map
 
 
-The roadmap PR owns this living program. Planned independent changes are rc0 compatibility/release metadata; caller-package claw integration; validation lifetime and composite feasibility; backend conversion; consumer typing; CI/dependency enforcement; documentation; distribution contents; and publication gates. Runtime feature/performance evidence accompanies the relevant fixes. Where one change requires another, use an explicit dependent PR and record its base. Merge approval was granted on 2026-09-08; retain every reviewed head and verify the final main gate.
+The roadmap PR owns this living program. Planned independent changes are rc0 compatibility/release metadata; caller-package claw integration; validation lifetime and composite feasibility; backend conversion; consumer typing; CI/dependency enforcement; documentation; distribution contents; and publication gates. Runtime feature/performance evidence accompanies the relevant fixes. Where one change requires another, use an explicit dependent PR and record its base. Merge approval was granted on 2026-09-08 and executed through PR #31; every reviewed head is preserved and its main gate passed.
 
 Revision note — 2026-09-08 implementation start: User selected `0.1.0rc0`, independent versioning, and separate PRs. These decisions supersede the original single-PR proposal. Goal created; implementation work is beginning.
 
@@ -384,3 +384,19 @@ and merge authorization; PR #31 updates AGENTS/CLAUDE, PLANS, contributor/tool
 commands and Pages deployment semantics. A later dependency is allowed but no
 available fix is claimed. Historical exact-rc0 acceptance records remain proof
 of the tested baseline, not a restriction against the newly selected path.
+
+Revision note — 2026-09-08 merge execution: PR #31 integrated the complete
+approved history without squashing. Main run 34229683377 passed all 36 jobs;
+Pages run 34229683120 built and skipped deployment. Dependent PRs were closed
+as integrated after ancestry verification. Twenty clean merged worktrees and
+local branches were removed with generated evidence preserved. PR #33 fixes
+actual hook stage routing and Git environment isolation, adds four regressions
+(23 release-tool cases total), and passed hosted run 34231187384. The root
+checkout's hook installation is active; its temporary checkout-path setting
+introduced by the old fixture was restored and verified clean.
+
+An isolated normal install of upstream beartype main at
+a2729e0e358bf963ee6f177e300ae08a622d05d6 reports 0.23.0rc1 and still fails the
+native-union probe. Keep the current rc0 lock; the owner allows a later candidate
+but no working supported integration exists in either tested version. The
+production goal remains incomplete for that integration and release controls.

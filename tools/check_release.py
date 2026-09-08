@@ -18,6 +18,14 @@ _VERSION = re.compile(
 )
 
 
+def git_environment(git: str) -> dict[str, str]:
+  """Clear hook-local Git variables before addressing an explicit repository."""
+  local_names = subprocess.check_output(
+    [git, "rev-parse", "--local-env-vars"], text=True
+  ).splitlines()
+  return {key: value for key, value in os.environ.items() if key not in local_names}
+
+
 def resolve_release(
   *,
   repository: Path,
@@ -42,9 +50,11 @@ def resolve_release(
     message = "git is required to resolve the release commit"
     raise RuntimeError(message)
 
+  environment = git_environment(git)
+
   def revision(ref: str) -> str:
     return subprocess.check_output(
-      [git, "rev-parse", "--verify", ref], cwd=repository, text=True
+      [git, "rev-parse", "--verify", ref], cwd=repository, env=environment, text=True
     ).strip()
 
   commit = revision("HEAD^{commit}")
@@ -74,6 +84,7 @@ def resolve_release(
     ancestry = subprocess.run(
       [git, "merge-base", "--is-ancestor", commit, "refs/remotes/origin/main"],
       cwd=repository,
+      env=environment,
       check=False,
     )
     if ancestry.returncode == 1:

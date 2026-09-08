@@ -1,10 +1,11 @@
 default_language_version:
   python: "3.10"
 
+default_stages: [pre-commit]
+
 default_install_hook_types:
   - pre-commit
   - pre-push
-  - commit-msg
   - post-checkout
   - post-merge
   - post-rewrite

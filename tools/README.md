@@ -74,10 +74,11 @@ the normal development venv: installed optional backends must cause it to fail.
 `check_release.py` is the release workflow's identity check, not a standalone
 publisher. It reads `PROJECT_VERSION`, `RELEASE_REF`, `PUBLISH` and GitHub
 event, ref, workflow-SHA and output variables from `pypi.yml`. It verifies
-canonical version/tag/history and event consistency for publication. Test it
-through `uv run --locked pytest tests/test_release.py -q`; the tests create
-disposable real Git histories. Validation-only dispatch, publication and
-environment requirements are documented in `CONTRIBUTING.md`.
+canonical version/tag/history and event consistency for publication. Its Git
+subprocesses clear hook-local repository variables. Test it through
+`uv run --locked pytest tests/test_release.py -q`; the tests create disposable
+real Git histories. Validation-only dispatch, publication and environment
+requirements are documented in `CONTRIBUTING.md`.
 
 ## Open upstream integration and performance
 

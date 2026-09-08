@@ -46,11 +46,17 @@ and this project follows
 
 ### Maintenance
 
+- Scope file hooks to pre-commit and remove the unused commit-message shim.
+    Isolate release tooling and disposable Git tests from inherited hook
+    repository variables; verify installed hook stages in CI.
+
 - Align shared Codex/Claude guidance, execution-plan policy, contributor
     commands and tool documentation with the four-checker production validation
     workflow.
+
 - Record the accepted full-union upstream integration path and limited native
     CuPy static support; retain a runnable probe for the open union defect.
+
 - Build documentation on pushes while requiring explicit manual dispatch for
     Pages deployment; scope Pages/OIDC write permissions to that job.
 

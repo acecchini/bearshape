@@ -105,7 +105,10 @@ Run a failing regression first when practical. Broaden validation when inputs or
 unresolved risks justify it, not by repeatedly rerunning unchanged expensive
 suites. Do not lower coverage, suppress diagnostics or remove negative fixtures
 to obtain green checks. Stage new files before running hooks; review formatting
-changes before committing.
+changes before committing. Git subprocesses targeting a different repository
+must clear the names reported by `git rev-parse --local-env-vars`; use the
+existing `git_environment` helper for release tooling and its fixtures. Real
+hook execution is part of validation when changing lifecycle stages.
 
 CI, nightly and candidate validation share `.github/workflows/validate.yml`.
 Required lanes include CPU backends, four checkers, compatibility floors, docs,
