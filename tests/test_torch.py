@@ -669,7 +669,6 @@ class TestTorchNumericScalarBoolRejection:
     assert not is_bearable(True, I64ScalarLike)
 
 
-
 class TestTorchConversionContract:
   @pytest.mark.parametrize("case", ["negative_stride", "byte_order"])
   def test_rejects_numpy_layouts_rejected_by_torch(self, case: str) -> None:
@@ -718,6 +717,7 @@ class TestTorchConversionContract:
     assert torch.as_tensor(value).shape == (2,)
     assert is_bearable(value, F32Like[N])
 
+
 class TestTorchTransformations:
   def test_autograd_preserves_gradient_and_checks_rank(self) -> None:
     @beartype
@@ -745,4 +745,3 @@ class TestTorchTransformations:
       add(x, torch.ones(4, dtype=torch.float32))
     with pytest.raises(BeartypeCallHintParamViolation):
       add(torch.ones(3, dtype=torch.int32), x)
-

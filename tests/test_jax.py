@@ -675,7 +675,6 @@ class TestJaxNumericScalarBoolRejection:
     assert not is_bearable(True, I64ScalarLike)
 
 
-
 class TestJaxConversionContract:
   def test_shaped_like_rejects_unsupported_numpy_dtype(self) -> None:
     from bearshape.jax import ShapedLike
@@ -697,6 +696,7 @@ class TestJaxConversionContract:
 
     value = jnp.ones(3, dtype=jnp.float32)
     assert accept(value) is value
+
 
 class TestJaxTransformations:
   def test_jit_inner_validation_runs_during_tracing(self) -> None:
@@ -751,4 +751,3 @@ class TestJaxTransformations:
     np.testing.assert_array_equal(loss(x), np.full(3, 2.0))
     with pytest.raises(BeartypeCallHintParamViolation):
       loss(jnp.ones((2, 3), dtype=jnp.float32))
-

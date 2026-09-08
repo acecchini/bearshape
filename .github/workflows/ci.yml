@@ -27,7 +27,6 @@ jobs:
       - name: Spell Check Repo
         uses: crate-ci/typos@v1.45.0
 
-
   distributions:
     runs-on: ubuntu-latest
     steps:
@@ -50,7 +49,6 @@ jobs:
       - run: uv venv --python "${{ matrix.python-version }}" .minimal
       - run: uv pip install --python .minimal/bin/python dist/*.whl "beartype==0.23.0rc0"
       - run: .minimal/bin/python -I tools/smoke_minimal.py
-
 
   typecheck:
     runs-on: ubuntu-latest

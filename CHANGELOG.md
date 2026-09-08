@@ -8,12 +8,12 @@ and this project follows
 
 ## [Unreleased]
 
-
 - Accept ordinary convertible inputs in static Like annotations: NumPy numeric
     casting families and JAX/Torch scalars, arrays and nested sequences.
     Preserve native result types after explicit conversion.
 
 - Allow nonnumeric NumPy dtypes in static Shaped and ShapedLike annotations.
+
 - Replace nominal static Tree stubs with a shared model for ordinary typed
     leaves, lists, tuples and dictionaries, preserving expected leaf errors.
     Document the concrete-type alias pattern for custom JAX nodes.
@@ -24,14 +24,15 @@ and this project follows
 
 - Update the locked checker versions and make `check(conf=None)` match its
     public overloads.
+
 - Include LICENSE in wheel/source distributions and ship the regression suite
     and its configuration in the source archive. Verify actual archive contents.
 
 - Maintain JAX jit/vmap/grad and Torch autograd/compiler-boundary tests, with
     explicit tracing and compilation guidance.
+
 - Verify a normally installed wheel and custom array factory without optional
     backend dependencies on Python 3.10 and 3.14.
-
 
 ### Added
 
@@ -42,7 +43,6 @@ and this project follows
     used by the backend aliases resolve on every supported Python version.
 
 ### Fixed
-
 
 - `bearshape_this_package()` now instruments the calling package correctly,
     including annotated parameters and returns in subsequently imported modules.
