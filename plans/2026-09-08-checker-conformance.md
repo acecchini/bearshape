@@ -12,16 +12,16 @@ A checker must accept valid consumer calls, reject deliberately wrong calls, and
 
 
 - [x] (2026-09-08) Inspected current checker harness, configuration and audited tool results.
-- [ ] Open draft PR and reproduce information loss with consumer fixtures.
-- [ ] Update the tested tool baseline and correct check's configuration overload.
-- [ ] Implement positive, negative, and inferred-type checks with verified diagnostics.
-- [ ] Validate every advertised Python target, tox checker selection and hooks.
-- [ ] Record results and remaining annotation-model work.
+- [x] (2026-09-08) Opened PR #17; old ty fails four real inferred-type assertions.
+- [x] (2026-09-08) Updated four checker tools and corrected check's configuration overload.
+- [x] (2026-09-08) Eight batched conformance tests pass, including four intended error sites per checker.
+- [x] (2026-09-08) Python 3.10–3.14 all pass; each selected floor tox environment runs two tests successfully. Hooks pass.
+- [x] (2026-09-08) Locked dev tox passes 1,042 tests, five platform/backend skips, 91.04% coverage; Tree/Like/CuPy model work remains separate.
 
 ## Surprises & Discoveries
 
 
-Current tests start each checker per fixture and then again on the whole source tree. They can pass while aliases lose useful types. `_tool_path` resolves the Python symlink before locating tools, which can select the wrong interpreter installation. Pyrefly 1.2.0 reports a mismatch between check's omitted overload configuration and the implementation's None default.
+Current tests start each checker per fixture and then again on the whole source tree. They can pass while aliases lose useful types. `_tool_path` resolves the Python symlink before locating tools, which can select the wrong interpreter installation. NumPy contextual inference can hide the intended wrong-dtype error in an inline array constructor; the negative fixture uses an explicitly typed int32 array variable to test the caller contract consistently. Checker factor selection matches a complete tool name plus optional digits so the generic `type` factor cannot accidentally select `ty`. Pyrefly 1.2.0 reports a mismatch between check's omitted overload configuration and the implementation's None default.
 
 ## Decision Log
 
@@ -33,7 +33,7 @@ Decision: Start with audited pyright 1.1.411, mypy 2.3.1, ty 0.0.79 and pyrefly 
 ## Outcomes & Retrospective
 
 
-Implementation pending. This PR will establish tool integration and core array/decorator conformance. Static Tree acceptance, broader Like inputs and CuPy native typing remain explicitly open under the production roadmap.
+Implemented tool integration and core array/decorator conformance on Python 3.10–3.14. The harness reduces thirty redundant successful-check tests to eight stronger batches covering source, useful inference, and intended errors. Static Tree acceptance, broader Like inputs and CuPy native typing remain explicitly open under the production roadmap.
 
 ## Context and Orientation
 
@@ -77,7 +77,7 @@ Preserve the original checkout and lock resolutions unrelated to the deliberate 
 ## Artifacts and Notes
 
 
-Save initial and final checker logs in `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/`; record tool versions and the expected-diagnostic contract here. Subsequent Tree/Like PRs extend the same harness instead of creating independent test frameworks.
+Evidence is in `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/`: `checker-ty-before.log` records four inferred-type failures with ty 0.0.40; `checker-harness-first.log` records eight passing current-tool tests; `checker-python-3.11.log` through `checker-python-3.14.log` record successful interpreter-matched runs; `checker-tox-final.log` records dev coverage and two passing tests in each floor lane; `checker-hooks-final.log` records clean hooks. Current lock: pyright 1.1.411, mypy 2.3.1, ty 0.0.79, pyrefly 1.2.0. The floor lanes prove pyright 1.1.408 and mypy 1.19.x as well as exact ty/pyrefly baseline versions. Subsequent Tree/Like PRs extend the same harness instead of creating independent test frameworks.
 
 ## Interfaces and Dependencies
 
@@ -85,3 +85,5 @@ Save initial and final checker logs in `/Users/ale/Code/bearshape-implementation
 Keep ParamSpec-based decorator signature preservation and the existing public annotation syntax. Runtime dependencies remain unchanged. Checker tools are development dependencies. Use typing_extensions.assert_type for the Python 3.10-compatible inference fixtures.
 
 Revision note — 2026-09-08: Added focused checker-conformance plan before implementation.
+
+Revision note — 2026-09-08: Implemented the four-engine consumer harness, explicit pyrefly default configuration, and all Python/floor validation. Native Tree, broader Like, and CuPy typing remain separate work.

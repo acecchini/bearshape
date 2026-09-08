@@ -55,6 +55,7 @@ jobs:
           - { env: py313-bt022-type-pyright1408 }
           - { env: py313-bt022-type-mypy119 }
           - { env: py313-bt022-type-ty }
+          - { env: py313-bt022-type-pyrefly }
     name: ${{ matrix.env }}
     steps:
       - uses: actions/checkout@v6
