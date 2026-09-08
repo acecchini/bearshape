@@ -21,16 +21,16 @@ The recommended release policy is to make `0.23.0rc0` the minimum beartype versi
 
 - [x] (2026-09-08) Completed the production audit and preserved its evidence outside the repository.
 - [x] (2026-09-08) Prepared this implementation proposal without changing the repository.
-- [x] (2026-09-08) M0: Accepted independent `0.1.0rc0` versioning, active goal, and focused branches/worktrees/PRs #12–#22.
+- [x] (2026-09-08) M0: Accepted independent `0.1.0rc0` versioning, active goal, and focused branches/worktrees/PRs #12–#30.
 - [x] (2026-09-08) M1: PR #13 makes exact rc0 normally installable; locked suite and exact-candidate CPU endpoint suites pass. Subsequent PRs preserve failing-before regressions.
 - [ ] M2: Import-hook repair is implemented in PR #14. Native composite-alternative rollback is not feasible through the inspected rc0 leaf callbacks; user decision on upstream integration versus an enforceable restricted contract is pending.
 - [ ] M3: Invocation-owned state and diagnostic replay removal are implemented in PR #15 (1,043 runtime tests on exact rc0 endpoints; 91.31% dev coverage). Whole-alternative rollback remains a release blocker.
-- [x] (2026-09-08) M4: PR #16 fixes seven converter false positives; thirteen oracle cases and 1,047 runtime tests pass on exact rc0 endpoints. CuPy GPU proof remains open under M6.
+- [x] (2026-09-08) M4: PR #16 fixes seven converter false positives; thirteen oracle cases and 1,047 runtime tests pass on exact rc0 endpoints. CuPy GPU proof is now supplied by PR #26 and the exact hosted artifact runs under M6.
 - [ ] M5: PR #17 implements four-engine positive/negative/inference conformance on Python 3.10–3.14. PR #19 corrects Like/Shaped inputs and PR #20 replaces nominal Tree stubs; all four checkers pass real positive/negative/inference fixtures on Python 3.10–3.14. Native CuPy stub limitations await a support-contract decision.
-- [ ] M6: PR #21 proves six JAX/Torch transformations and normally installed minimal custom-array operation at both Python endpoints. CuPy baseline passes 83 tests on H200 with Python 3.10.20 and 3.14.3. Corrected combined GPU, remaining feature map and performance evidence remain.
-- [ ] M7: Align hooks, dependencies, tox, and CI with the tested support contract.
-- [ ] M8: PR #18 implements license/source inclusion and archive inspection; isolated normally installed wheel validation passes 652 tests (seven documented platform/backend skips). Rendered contract docs and examples remain.
-- [ ] M9: Enforce release validation, prepare the ownership handoff, and obtain final user review before merge.
+- [x] (2026-09-08) M6: #21 proves framework/minimal behavior; #26 passes 95 real CUDA tests at both endpoints, including the exact hosted artifact. #29 supplies 17 feature/test families, four default/wrapped-signature cases at both endpoints, and matched performance/profile evidence with no material regression.
+- [x] (2026-09-08) M7: #23 implements locked reusable validation across nine platform runtime lanes, five four-checker lanes and twelve compatibility factors, strict preflight/required gates, CPU resolution and aligned hooks. All hosted checks pass; #30 addresses observed action-runtime deprecation and is undergoing final validation.
+- [x] (2026-09-08) M8: #18/#25 prove distribution contents and normal installs. The hosted release artifact passes 1,097 installed-consumer tests per endpoint (one absent-CuPy skip). #24 fixes Markdown rendering and executes all 29 notebook code cells at both endpoints; #29 adds the rendered handoff report.
+- [ ] M9: #28 gates immutable workflow/tag/package identity, validates the complete candidate and reuses its exact artifacts. Actual validation-only run 34221337124 completed 38 jobs successfully and skipped publication. #29 prepares the full handoff/admin proposal. Remaining: #30 final action validation, native-union/CuPy policy decisions, administrative controls and user merge review.
 
 ## Surprises & Discoveries
 
@@ -67,7 +67,7 @@ Decision: Separate code readiness, publication, and administrative transfer. Rat
 ## Outcomes & Retrospective
 
 
-Planning outcome: the audit has been translated into an ordered program with concrete failure reproductions, file ownership, compatibility decisions, feasibility gates, and release acceptance. No defect has been fixed by writing this plan. All implementation milestones remain open. The largest uncertainty is whether plain beartype/DOOR composite checks provide a reliable boundary for both diagnostic lifetime and alternative rollback in exact rc0. The other major design uncertainty is an honest checker-portable Tree model that accepts ordinary typed callers without falling back to Any.
+Implementation outcome: sixteen focused implementation/evidence PRs and separate roadmap/validation aggregates preserve independent review. Normal exact-rc0 installation, caller-sensitive claw behavior, invocation lifetime, selected backend conversion, four-checker consumers, Like and Tree static inputs, framework/GPU behavior, locked CI, rendered/executed docs, archives and publication gates are implemented and validated. Main remains untouched and every PR remains unmerged pending user validation. The exact hosted wheel passes CPU/checker consumers and real CUDA tests; the release dry run never enters publication. Native whole-alternative union rollback remains incorrect because rc0 exposes no reliable whole-alternative boundary, and CuPy native typing lacks adequate upstream stubs. These decisions and administrative protections prevent a production-ready verdict. Do not trade them for green test counts.
 
 ## Context and Orientation
 
@@ -352,3 +352,17 @@ Revision note — 2026-09-08 implementation start: User selected `0.1.0rc0`, ind
 Revision note — 2026-09-08: Recorded implemented PRs and validation evidence, with the unresolved native-union design decision and remaining typing/artifact/docs work stated explicitly.
 
 Revision note — 2026-09-08: Recorded PRs #19–#22, combined runtime/checker validation, minimal installation and actual H200 baseline evidence. CuPy native creation/reshape returns Any or Unknown under all four installed checkers because the backend lacks ndarray stubs; no full static-support claim was added. GPU transfer was initially blocked, then approved after proving the payload matched the public repository commit.
+
+
+## Implemented review map and current release boundary
+
+
+PR #12 owns this roadmap. Focused PRs #13–#21 cover rc0 compatibility, caller import hooks, validation lifetime, conversion, checker conformance, archive contents, Like inputs, Tree consumers and framework/minimal validation. #22 is their validation aggregate. Focused #23–#26 add CI, docs, installed consumers and CUDA proofs; #27 aggregates them without modifying their actual PR bases. #28 adds the publication gate, #29 the feature/performance/handoff evidence, and #30 the observed Node runtime maintenance. Preserve the prerequisite relationships in each PR before requesting merge approval.
+
+The validated release run https://github.com/acecchini/bearshape/actions/runs/34221337124 used source 3ee4c1d8a0c3d22f537a24b447a9d75e025a5b2d. Wheel SHA256 c1806203da013c9eaf2482a309c686a984c0a7031a495efbd100a824536b57d2; sdist SHA256 e2454095144fb4bb5a08d3bd998d0f6a8bee4bc5ad81dfab763c339ca91666df. Both Python endpoints passed 1,097 installed consumer tests with one absent-CuPy skip, and the exact same wheel passed 95 GPU tests per endpoint on H200/CUDA 12.9/CuPy 14.2.0. Later source changes require their own archive identity and applicable validation.
+
+Matched normally installed baseline/candidate measurements on CPython 3.10.20 with NumPy 2.2.6 and optree 0.19.1 show strict checks around 19.8 microseconds versus 21.8 in the baseline, explicit checks around 14 microseconds, and expected conversion/tree scaling. Scope/signature discovery remains costly; no speculative cache was added while the composition boundary is unresolved. Evidence files performance-matched-*.json and performance-profile.log record versions, origins, medians and spread.
+
+Read-only controls inspection found main unprotected, no repository rulesets, and no approval reviewers on pypi; its policies allow main and v* tags with admin bypass. PyPI publisher configuration remains unverified. docs/maintainers/production-readiness.md in #29 gives the exact proposed protections, release process, module/support map, migrations and A01–A10 review links. No owner settings, package publication, repository transfer or messages to other maintainers occurred.
+
+Revision note — 2026-09-08: Updated M6–M9 and the outcome with the completed independent PRs, exact installed/GPU artifact evidence, actual release dry run, performance observations and remaining release decisions. #30 final hosted action validation remains in progress.
