@@ -12,9 +12,9 @@ Calling `bearshape_this_package()` in a user's package initializer must instrume
 
 
 - [x] (2026-09-08) Read the wrapper and its mocked forwarding test.
-- [ ] Open the draft PR and reproduce unchecked real-package calls.
-- [ ] Replace forwarding with a direct upstream alias and update docs/changelog.
-- [ ] Validate parameter, return, configuration, nested-module and sibling-package behavior on baseline and exact rc0.
+- [x] (2026-09-08) Opened PR #14; both real-package regressions failed before the fix.
+- [x] (2026-09-08) Replaced forwarding with a direct alias and updated docs/changelog.
+- [x] (2026-09-08) Passed baseline and exact-rc0 Python 3.10/3.14 integration tests, full CPU runtime suite, all three current checkers, and hooks.
 - [ ] Record evidence and request user validation before merge.
 
 ## Surprises & Discoveries
@@ -30,7 +30,7 @@ Decision: Directly re-export `beartype.claw.beartype_this_package` as `bearshape
 ## Outcomes & Retrospective
 
 
-Implementation pending. Success means bad input and return shapes raise real beartype violations after package instrumentation, with the documented valid calls still succeeding.
+The alias fixes actual caller-package checking. Both regression variants passed on baseline and exact rc0 at Python 3.10/3.14. The complete baseline runtime suite passed 1,035 tests with five expected skip records. Pyright, mypy, ty, and hooks passed. Hosted CI and user validation remain pending.
 
 ## Context and Orientation
 
@@ -80,3 +80,5 @@ Save failing and passing logs under `/Users/ale/Code/bearshape-implementation-20
 The public name stays `bearshape.claw.bearshape_this_package`, including upstream's keyword-only conf argument. There is no additional runtime dependency and no new root export. Tests use NumPy and pytest already included in development dependencies.
 
 Revision note — 2026-09-08: Added focused plan before implementing the caller-package fix.
+
+Validation evidence — 2026-09-08: `claw-before.log` shows two failures for unchecked caller parameters. `claw-after.log` shows 55 targeted passes; each `claw-rc0-py310.log`/`claw-rc0-py314.log` shows two passes. `claw-runtime.log` records 1,035 passes and the expected CuPy/platform-precision skips. `claw-checkers.log` and `claw-hooks.log` pass. No source changes were needed beyond replacing the wrapper and removing its obsolete mock.

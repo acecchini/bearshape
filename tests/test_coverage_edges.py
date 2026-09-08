@@ -8,7 +8,6 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from beartype import BeartypeConf
 
 import bearshape._memo as memo_mod
 from bearshape import N
@@ -17,7 +16,6 @@ from bearshape._dtypes import FLOAT32, extract_dtype_str
 from bearshape._memo import ShapeMemo, bindings_str, get_memo
 from bearshape._shape import FixedDim, NamedDim, VariadicDim, check_shape
 from bearshape._tree import _TreeFactory
-from bearshape.claw import bearshape_this_package
 from bearshape.numpy import F32
 
 
@@ -605,21 +603,3 @@ class TestTrustedArrayCache:
       dtype = np.dtype(np.float32)
 
     assert not _is_trusted_array(Fake())
-
-
-class TestClawWrapper:
-  def test_bearshape_this_package_delegates_to_beartype(
-    self, monkeypatch: pytest.MonkeyPatch
-  ) -> None:
-    captured: dict[str, object] = {}
-
-    def _fake_beartype_this_package(*, conf: object) -> None:
-      captured["conf"] = conf
-
-    import bearshape.claw as claw_mod
-
-    monkeypatch.setattr(claw_mod, "_beartype_this_package", _fake_beartype_this_package)
-    conf = BeartypeConf()
-    bearshape_this_package(conf=conf)
-
-    assert captured["conf"] is conf
