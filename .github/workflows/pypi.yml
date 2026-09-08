@@ -1,4 +1,4 @@
-name: Publish to PyPI
+name: Validate or publish release
 
 on:
   release:
@@ -6,48 +6,108 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: Git ref to build and publish, for example `v0.0.1`
+        description: Ref to validate; publication requires v<project-version>
         required: true
         type: string
+      publish:
+        description: Publish validated artifacts to PyPI after environment approval
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  build:
-    name: Build distributions
+  resolve:
     runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.identity.outputs.sha }}
+      version: ${{ steps.identity.outputs.version }}
+      publish: ${{ steps.identity.outputs.publish }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.event.release.tag_name }}
-
-      - uses: actions/setup-python@v5
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v7
         with:
-          python-version: "3.10"
+          version: "0.11.17"
+          python-version: "3.14"
+      - name: Resolve and validate release identity
+        id: identity
+        env:
+          RELEASE_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.event.release.tag_name }}
+          PUBLISH: ${{ github.event_name == 'release' || inputs.publish }}
+        run: |
+          PROJECT_VERSION="$(uv version --short)" uv run --locked --only-group dev python tools/check_release.py
 
-      - uses: astral-sh/setup-uv@v7
+  validate:
+    needs: resolve
+    uses: ./.github/workflows/validate.yml
+    with:
+      ref: ${{ needs.resolve.outputs.sha }}
 
-      - run: uv build
-
-      - uses: actions/upload-artifact@v4
+  evidence:
+    needs: [resolve, validate]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
-          name: python-package-distributions
+          ref: ${{ needs.resolve.outputs.sha }}
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v7
+        with:
+          version: "0.11.17"
+          python-version: "3.14"
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: candidate-distributions
           path: dist/
+      - name: Record validated artifact identity
+        env:
+          SOURCE_SHA: ${{ needs.resolve.outputs.sha }}
+          PROJECT_VERSION: ${{ needs.resolve.outputs.version }}
+        run: |
+          uv run --locked --only-group dev python tools/check_distribution.py dist/*.whl dist/*.tar.gz > release-evidence.json
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          path = Path("release-evidence.json")
+          evidence = json.loads(path.read_text())
+          if evidence["version"] != os.environ["PROJECT_VERSION"]:
+              raise SystemExit("Validated artifact version differs from resolved project version")
+          evidence["source_sha"] = os.environ["SOURCE_SHA"]
+          evidence["run_url"] = f"{os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
+          path.write_text(json.dumps(evidence, indent=2) + "\n")
+          print(path.read_text())
+          PY
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-evidence
+          path: release-evidence.json
+          if-no-files-found: error
 
   publish:
-    name: Publish to PyPI
-    needs: build
+    name: Publish validated artifacts to PyPI
+    if: needs.resolve.outputs.publish == 'true'
+    needs: [resolve, validate, evidence]
     runs-on: ubuntu-latest
     environment:
       name: pypi
       url: https://pypi.org/p/bearshape
     permissions:
+      contents: read
       id-token: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: python-package-distributions
+          name: candidate-distributions
           path: dist/
-
-      - uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1

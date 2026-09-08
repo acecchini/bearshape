@@ -13,9 +13,10 @@ from __future__ import annotations
 
 import sys
 
-PYTHONS = {"py310", "py311", "py312", "py313"}
-BEARTYPES = {"bt020", "bt021", "bt022"}
+PYTHONS = {"py310", "py311", "py312", "py313", "py314"}
+BEARTYPES = {"bt023rc0"}
 BACKENDS = {
+  "cpu",
   "numpy22",
   "numpy23",
   "numpy24",
@@ -36,17 +37,7 @@ BACKENDS = {
   "optree018",
   "optree019",
 }
-CHECKERS = {
-  "pyright1392",
-  "pyright1400",
-  "pyright1408",
-  "mypy115",
-  "mypy116",
-  "mypy117",
-  "mypy118",
-  "mypy119",
-  "ty",
-}
+CHECKERS = {"pyright1408", "mypy119", "ty", "pyrefly"}
 SPECIAL = {"dev"}
 
 

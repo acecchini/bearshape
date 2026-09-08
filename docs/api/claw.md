@@ -1,5 +1,5 @@
 ---
-description: Thin wrapper around beartype.claw for package-wide instrumentation.
+description: Alias for beartype.claw for package-wide instrumentation.
 ---
 
 # `bearshape.claw`
@@ -14,8 +14,8 @@ from bearshape.claw import bearshape_this_package
 
 `bearshape_this_package(*, conf: BeartypeConf = BeartypeConf()) -> None`
 
-It forwards directly to `beartype.claw.beartype_this_package`, but gives
-bearshape users a semantic entry point that matches the rest of the library.
+It is a direct alias for `beartype.claw.beartype_this_package`, preserving
+upstream caller-package discovery and configuration.
 
 ### Example
 

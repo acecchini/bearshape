@@ -1,18 +1,17 @@
 ---
-description: How bearshape annotations map onto pyright, mypy, and ty.
+description: How bearshape annotations map onto pyright, mypy, ty, and pyrefly.
 ---
 
 # Static Typing
 
-bearshape supports **pyright**, **mypy**, and **ty**. The repository runs all
-three against the typing fixtures in `tests/typing/` via
+bearshape supports **pyright**, **mypy**, **ty**, and **pyrefly**. The
+repository runs all four against the typing fixtures in `tests/typing/` via
 `tests/test_typecheck.py`.
 
 At a high level:
 
 - under `TYPE_CHECKING`, backend array aliases resolve to real static array
-    types such as `numpy.typing.ANDArray`, `jax.Array`, `torch.Tensor`, or
-    `cupy.ndarray`
+    types such as `numpy.typing.NDArray`, `jax.Array`, or `torch.Tensor`
 - pre-defined dimensions such as `N`, `C`, and `Scalar` are represented in a
     checker-friendly way
 - some syntax is still inherently runtime-only and needs either targeted ignores
@@ -40,6 +39,7 @@ def keep_last(x: F32[__, C]) -> F32[__, C]:
   return x
 
 @check
+@beartype
 async def async_identity(x: F32[N]) -> F32[N]:
   return x
 ```
@@ -58,15 +58,14 @@ checkers model directly:
 
 <!-- markdownlint-disable MD013 -->
 
-| Pattern | Example | Typical workaround | | -------------------------- |
--------------------- | ----------------------------------------------- | | Fixed
-integer literal dims | `F32[N, 3, H, W]` | targeted `# type: ignore` or
-checker-only alias | | Arithmetic dims | `F32[N + 2]` | targeted
-`# type: ignore` or checker-only alias | | `Value(...)` dims |
-`F32[Value("size")]` | targeted `# type: ignore` | | Variadic dims |
-`F32[~B, C]` | targeted `# type: ignore` or checker-only alias | | Broadcastable
-dims | `F32[+N, C]` | targeted `# type: ignore` or checker-only alias | | Tree
-structure args | `Tree[F32[N], T]` | targeted `# type: ignore` |
+| Pattern                    | Example              | Typical workaround                              |
+| -------------------------- | -------------------- | ----------------------------------------------- |
+| Fixed integer literal dims | `F32[N, 3, H, W]`    | targeted `# type: ignore` or checker-only alias |
+| Arithmetic dims            | `F32[N + 2]`         | targeted `# type: ignore` or checker-only alias |
+| `Value(...)` dims          | `F32[Value("size")]` | targeted `# type: ignore`                       |
+| Variadic dims              | `F32[~B, C]`         | targeted `# type: ignore` or checker-only alias |
+| Broadcastable dims         | `F32[+N, C]`         | targeted `# type: ignore` or checker-only alias |
+| Tree structure args        | `Tree[F32[N], T]`    | targeted `# type: ignore`                       |
 
 <!-- markdownlint-enable MD013 -->
 
@@ -156,7 +155,7 @@ Notes:
 ## Custom dimensions
 
 Custom dimensions are runtime objects. To make them usable in annotations across
-all three checkers, define a checker-only alias:
+all four checkers, define a checker-only alias:
 
 ```python
 import typing as tp
@@ -165,8 +164,8 @@ from bearshape import Dimension, N
 from bearshape.numpy import F32, I64
 
 if tp.TYPE_CHECKING:
-  type Vocab = int
-  type Embed = int
+  Vocab: tp.TypeAlias = int
+  Embed: tp.TypeAlias = int
 else:
   Vocab = Dimension("Vocab")
   Embed = Dimension("Embed")
@@ -181,35 +180,66 @@ keep in their toolbox first.
 
 ## Tree annotations
 
-`Tree` has a split contract:
+`Tree[Leaf]` supports ordinary leaves, lists, tuples (including named tuples),
+dictionaries and None. Existing typed containers such as `list[int]` and
+`dict[str, list[int]]` can be passed to `Tree[int]`. Wrong leaves, including
+strings hidden inside a numeric tree, are checked by the consumer fixtures. An
+empty container or None has no leaves for the default backend traversal.
 
-- `Tree[F32[N, C]]` is checker-friendly and tested
-- `Tree[F32[N], T]`, `Tree[F32[N], T, ...]`, and similar structure-bearing forms
-    are runtime-only and need a targeted ignore
+The static model describes container behavior; it cannot infer backend node
+registration or tree structure. The selected backend must actually recognize a
+custom container. For a registered JAX node, keep its concrete static type with
+the existing conditional-alias pattern:
 
 ```python
-from bearshape import N, T
+from typing import TYPE_CHECKING, TypeAlias
+
+from bearshape import N
+from bearshape.jax import Tree
 from bearshape.numpy import F32
-from bearshape.optree import Tree
 
-def leaves_only(x: Tree[F32[N]]) -> Tree[F32[N]]:
-  return x
-
-def structure_checked(x: Tree[F32[N], T]) -> Tree[F32[N]]:  # type: ignore[valid-type]
-  return x
+# Batch is your concrete class, registered with jax.tree_util.
+if TYPE_CHECKING:
+  BatchTree: TypeAlias = Batch
+else:
+  BatchTree = Tree[F32[N]]
 ```
 
-## Backend notes
+The executable fixture `tests/typing/check_tree_consumers.py` contains the
+complete registered class and a decorated consumer. Tree structure arguments
+such as `Tree[F32[N], T]` remain runtime-only; use a checker-only leaf alias as
+shown above when you need a named structure constraint.
 
-The typing model differs slightly from runtime behavior:
+The optree backend uses its default registry. A class registered only in an
+optree namespace is not automatically recognized by this Tree annotation.
 
-- `bearshape.jax.F32Like[...]` and `bearshape.torch.F32Like[...]` accept scalars
-    and nested sequences at runtime, but static checkers see them as `jax.Array`
-    and `torch.Tensor`
-- `Shaped[...]` and `ShapedLike[...]` accept any dtype at runtime, while their
-    static aliases are approximations
-- backend `ScalarLike` aliases validate Python and NumPy scalar values, not
-    backend-native 0-D arrays
+## Convertible input and native result types
 
-For backend-native scalar arrays, annotate the input as a `Like` type with
-`Scalar`, for example `F32Like[Scalar]`.
+NumPy Like annotations describe convertible numeric families, including other
+precisions accepted by same-kind casting. JAX/Torch Like annotations include
+numeric scalars, NumPy arrays and nested sequences as well as native arrays.
+Convert the value explicitly to obtain a native array result. Like validation
+does not convert the function argument for you.
+
+The consumer fixtures test these calls, inferred results and expected errors
+with pyright, mypy, ty and pyrefly. NumPy Shaped retains ndarray methods while
+allowing nonnumeric dtypes. Runtime validates dimension relationships and
+value/device-dependent conversion constraints.
+
+Backend ScalarLike aliases describe Python and NumPy scalar values. For a
+backend-native scalar array, use a shaped alias with Scalar, such as
+`F32Like[Scalar]`.
+
+## CuPy typing boundary
+
+CuPy runtime validation uses real `cupy.ndarray` instances. Its current 14.2.0
+wheel does not provide ndarray stubs: native creation and reshape results are
+Any or Unknown in the four tested checkers. bearshape's CuPy static model is a
+limited shape/dtype protocol. It does not provide the native-method and inferred
+result guarantees tested for NumPy, JAX and Torch. Runtime GPU tests and static
+annotation acceptance are separate evidence.
+
+The release policy accepts this explicit CuPy limitation alongside separately
+verified GPU runtime behavior. Native CuPy method inference is not part of the
+supported static contract. Stronger claims require actual installed-backend
+consumer fixtures, not only the fallback protocol.

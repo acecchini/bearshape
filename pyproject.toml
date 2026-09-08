@@ -1,13 +1,14 @@
 [project]
 name = "bearshape"
-version = "0.0.1"
+version = "0.1.0rc0"
 description = "Elegant runtime shape and dtype checking for NumPy, JAX, PyTorch, and CuPy arrays — powered by beartype."
 readme = "README.md"
 license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "acecchini", email = "ale.cecchini.valette@gmail.com" }]
 requires-python = ">=3.10"
 dependencies = [
-  "beartype>=0.20,<0.23", # Tested with 0.20-0.22; see tox.toml
+  "beartype>=0.23.0rc0,<0.24", # Exact candidate tested in tox.toml
   "typing_extensions>=4.6",
 ]
 keywords = [
@@ -24,7 +25,6 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -50,7 +50,12 @@ build-backend = "uv_build"
 # .shape and .dtype only. Users install their own numpy/jax/torch/cupy/optree.
 # CuPy requires CUDA and is not included here; install separately for GPU envs.
 optional = ["numpy>=2.2.0", "torch>=2.6.0", "jax[cpu]>=0.5.0", "optree>=0.14.0"]
-static = ["pyright>=1.1.408", "mypy>=1.19,<1.20", "ty>=0.0.28"]
+static = [
+  "pyright>=1.1.408",
+  "mypy>=1.19,<3",
+  "ty>=0.0.79",
+  "pyrefly>=1.2,<2",
+]
 docs = ["zensical>=0.0.43"]
 test = [
   "pytest>=9.0.2",
@@ -59,7 +64,7 @@ test = [
   "tox>=4.52.0",
   "tox-uv>=1.34.0",
 ]
-notebook = ["ipykernel>=7.2.0"]
+notebook = ["ipykernel>=7.2.0", "nbclient>=0.11.0"]
 dev = ["ruff>=0.15.9", "prek>=0.3.8"]
 
 [tool.uv]
@@ -69,6 +74,10 @@ python-preference = "only-managed"
 
 [tool.uv.build-backend]
 module-name = "bearshape"
+source-include = [
+  "tests/**", "tools/**", "pytest.toml", "tox.toml", "ty.toml", "ruff.toml",
+  "uv.lock", "CONTRIBUTING.md", "CHANGELOG.md",
+]
 
 [tool.uv.sources]
 torch = [{ index = "pytorch-cpu" }]
@@ -101,8 +110,11 @@ reportUnusedImport = "warning"
 # Check the oldest supported Python, not the interpreter running the checker.
 pythonVersion = "3.10"
 pythonPlatform = "Linux"
-venvPath = "."
-venv = ".venv"
+
+[tool.pyrefly]
+preset = "default"
+project-includes = ["src", "tests/typing"]
+python-version = "3.10"
 
 [tool.mypy]
 python_version = "3.10"

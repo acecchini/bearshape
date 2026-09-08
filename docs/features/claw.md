@@ -7,7 +7,7 @@ description: Package-wide instrumentation with beartype.claw — no per-function
 # Import Hook (beartype.claw)
 
 If you want package-wide instrumentation rather than decorating individual
-functions, use `beartype.claw` or bearshape's thin wrapper around it.
+functions, use `beartype.claw` or bearshape's alias for its package hook.
 
 ## Usage
 
@@ -25,7 +25,7 @@ functions, use `beartype.claw` or bearshape's thin wrapper around it.
     beartype_this_package()
     ```
 
-`bearshape_this_package()` is a semantic wrapper around
+`bearshape_this_package()` is a direct alias for
 `beartype.claw.beartype_this_package()`. Runtime behavior is the same.
 
 ## What it gives you
@@ -67,9 +67,9 @@ bearshape_this_package(conf=BeartypeConf(
 
 <!-- markdownlint-disable MD013 -->
 
-| Approach | Best for | | --------------------------------------- |
----------------------------------------- | | `@beartype` per function |
-Fine-grained control, specific functions | | `beartype.claw` /
-`bearshape_this_package` | Entire packages, library-wide checking |
+| Approach                                   | Best for                                 |
+| ------------------------------------------ | ---------------------------------------- |
+| `@beartype` per function                   | Fine-grained control, specific functions |
+| `beartype.claw` / `bearshape_this_package` | Entire packages, library-wide checking   |
 
 <!-- markdownlint-enable MD013 -->

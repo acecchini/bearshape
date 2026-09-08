@@ -23,7 +23,6 @@ from __future__ import annotations
 import contextvars
 import inspect
 import sys
-import threading
 import types
 import typing as tp
 from dataclasses import dataclass, field
@@ -32,14 +31,11 @@ __all__ = [
   "ShapeMemo",
   "get_memo",
   "get_scope",
-  "has_untagged_memo",
   "pop_memo",
   "push_memo",
 ]
 
-_FRAME_STACK_GC_THRESHOLD = 8
-_FRAME_MARKER_NAME = "__bearshape_memo_marker__"
-_FRAME_MARKER_MISSING = object()
+_FRAME_MEMO_NAME = "__bearshape_memo__"
 
 
 @dataclass
@@ -131,26 +127,7 @@ def pop_memo() -> None:
   _explicit_owner_stack.set(_explicit_owner_stack.get()[:-1])
 
 
-def has_untagged_memo() -> bool:
-  """True when an untagged explicit memo is active (check_context scope).
-
-  Untagged entries are pushed by :class:`check_context` (and :class:`_TreeChecker`)
-  and are unconditionally visible to all validators.  When such a memo is active,
-  beartype's error-generation re-invocation still sees the real memo with bindings,
-  so the replay guard is unnecessary.
-  """
-  stack = _explicit_stack.get()
-  if not stack:
-    return False
-  owners = _explicit_owner_stack.get()
-  return owners[-1] is None
-
-
-# ---------------------------------------------------------------------------
-# Frame-based auto-detection (used by Is[_ShapeChecker] validators)
-# ---------------------------------------------------------------------------
-
-_local = threading.local()
+# Automatic state is owned by the live checking frame, never a global cache.
 
 
 def _frame_at_or_none(_depth: int) -> types.FrameType | None:
@@ -199,25 +176,6 @@ def _nearest_runtime_frame(_depth: int) -> types.FrameType | None:
   return _frame_at_or_none(_depth)
 
 
-def _frame_token(frame: types.FrameType) -> object:
-  token = frame.f_locals.get(_FRAME_MARKER_NAME)
-  if token is None:
-    token = object()
-    frame.f_locals[_FRAME_MARKER_NAME] = token
-  return token
-
-
-def _active_frame_tokens() -> set[object]:
-  active: set[object] = set()
-  f: types.FrameType | None = sys._getframe(0)
-  while f is not None:
-    token = f.f_locals.get(_FRAME_MARKER_NAME, _FRAME_MARKER_MISSING)
-    if token is not _FRAME_MARKER_MISSING:
-      active.add(token)
-    f = f.f_back
-  return active
-
-
 def get_memo(_depth: int = 2) -> ShapeMemo:
   """Return the memo for the current checking context.
 
@@ -225,7 +183,7 @@ def get_memo(_depth: int = 2) -> ShapeMemo:
 
   1. If an explicit memo was pushed (via ``@bearshape.check``), use it.
   2. Otherwise, identify the call context from the beartype wrapper frame
-     and reuse or create a memo keyed by that frame's identity.
+     and reuse or create the memo held in that live frame.
   3. If all else fails, return a fresh temporary memo (no cross-arg checking).
 
   Parameters
@@ -250,57 +208,16 @@ def get_memo(_depth: int = 2) -> ShapeMemo:
       return explicit[-1]
     # Fall through to frame-based detection
 
-  # 2. Frame-based detection
+  # 2. The frame owns its memo for the entire call, including error reporting.
   frame = _find_beartype_wrapper_frame(_depth=_depth)
-  if frame is None:
-    frame = _frame_at_or_none(_depth)
   if frame is None:
     return ShapeMemo()
 
-  token = _frame_token(frame)
-  code = frame.f_code
-
-  if not hasattr(_local, "frame_stack"):
-    _local.frame_stack = []  # list[tuple[object, object, int, ShapeMemo]]
-
-  # Stack entries: (frame_token, code_obj, max_lasti, memo)
-  # CPython can recycle frame object ids across separate beartype checker calls.
-  # A private token stored in the live frame locals gives each call frame a stable
-  # identity without keeping the frame object alive after the check returns.
-  stack: list[tuple[object, object, int, ShapeMemo]] = _local.frame_stack
-  lasti: int = frame.f_lasti
-
-  # Fast path: same frame as last check (next param in same call)
-  if stack and stack[-1][0] is token and stack[-1][1] is code:
-    _, _, prev_lasti, prev_memo = stack[-1]
-    if lasti >= prev_lasti:
-      # Same call, advancing through params — update max_lasti
-      stack[-1] = (token, code, lasti, prev_memo)
-      return prev_memo
-    # f_lasti went backwards → frame-id was reused (new call to same fn).
-    # Discard the stale entry and fall through to create a fresh memo.
-    stack.pop()
-
-  # Check deeper in stack (returning to outer call after inner completed)
-  for i in range(len(stack) - 2, -1, -1):
-    if stack[i][0] is token and stack[i][1] is code:
-      _, _, prev_lasti, prev_memo = stack[i]
-      if lasti >= prev_lasti:
-        del stack[i + 1 :]
-        stack[i] = (token, code, lasti, prev_memo)
-        return prev_memo
-      # Frame-id reuse at a deeper level — discard everything from i onward
-      del stack[i:]
-      break
-
-  # New call context — clean stale entries when stack grows large
-  if len(stack) > _FRAME_STACK_GC_THRESHOLD:
-    active = _active_frame_tokens()
-    stack[:] = [(t, c, li, m) for t, c, li, m in stack if t in active]
-
-  memo = ShapeMemo()
-  stack.append((token, code, lasti, memo))
-  return memo
+  memo = frame.f_locals.get(_FRAME_MEMO_NAME)
+  if memo is None:
+    memo = ShapeMemo()
+    frame.f_locals[_FRAME_MEMO_NAME] = memo
+  return tp.cast("ShapeMemo", memo)
 
 
 def get_scope(_depth: int = 2) -> dict[str, object]:
@@ -325,7 +242,7 @@ def get_scope(_depth: int = 2) -> dict[str, object]:
     return {}
 
   locals_map = dict(frame.f_locals)
-  locals_map.pop(_FRAME_MARKER_NAME, None)
+  locals_map.pop(_FRAME_MEMO_NAME, None)
 
   # beartype wrappers expose runtime arguments as ``args`` / ``kwargs`` plus
   # the wrapped function object. Rebind those to parameter names so

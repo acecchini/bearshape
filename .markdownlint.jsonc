@@ -1,5 +1,7 @@
 {
   "default": true,
+  // Admonition bodies are indented prose, not fenced code blocks.
+  "MD046": false,
   "MD024": {
     "siblings_only": true
   }

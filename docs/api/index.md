@@ -11,22 +11,15 @@ implementation file.
 
 <!-- markdownlint-disable MD013 -->
 
-| Module | What it exports | | -------------------------------- |
-\---------------------------------------------------------------------------------------------------------------------------------------------------------------
-| | **[`bearshape`](bearshape.md)** | Lightweight root API: dimension symbols,
-structure symbols, `DtypeSpec`, `make_array_type`, `make_array_like_type`,
-`check`, `check_context`, and `__version__` | |
-**[`bearshape.numpy`](numpy.md)** | NumPy array aliases, `Like` aliases,
-`ScalarLike` aliases, `Structured`, `ArrayLike`, and `make_scalar_like_type` | |
-**[`bearshape.jax`](jax.md)** | JAX array aliases, JAX `Like` aliases, NumPy
-`ScalarLike` re-exports, `make_scalar_like_type`, `Tree`, and `Structure` | |
-**[`bearshape.torch`](torch.md)** | PyTorch array aliases, Torch `Like` aliases,
-NumPy `ScalarLike` re-exports, and `make_scalar_like_type` | |
-**[`bearshape.cupy`](cupy.md)** | CuPy array aliases, CuPy `Like` aliases, NumPy
-`ScalarLike` re-exports, and `make_scalar_like_type` | |
-**[`bearshape.optree`](optree.md)** | Explicit `Tree` backend using OpTree plus
-`Structure` | | **[`bearshape.claw`](claw.md)** | Thin wrapper around
-`beartype.claw.beartype_this_package` |
+| Module                              | What it exports                                                     |
+| ----------------------------------- | ------------------------------------------------------------------- |
+| **[`bearshape`](bearshape.md)**     | Dimensions, structures, dtype specs, factories and memo helpers     |
+| **[`bearshape.numpy`](numpy.md)**   | NumPy arrays, Like and ScalarLike aliases, Structured and ArrayLike |
+| **[`bearshape.jax`](jax.md)**       | JAX arrays, Like aliases, ScalarLike re-exports and Tree            |
+| **[`bearshape.torch`](torch.md)**   | Torch arrays, Like aliases and ScalarLike re-exports                |
+| **[`bearshape.cupy`](cupy.md)**     | CuPy arrays, Like aliases and ScalarLike re-exports                 |
+| **[`bearshape.optree`](optree.md)** | Explicit Tree backend and Structure                                 |
+| **[`bearshape.claw`](claw.md)**     | Caller-preserving alias of beartype_this_package                    |
 
 <!-- markdownlint-enable MD013 -->
 

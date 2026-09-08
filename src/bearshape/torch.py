@@ -33,16 +33,14 @@ _NUMPY_INSTALL_HINT = (
 )
 
 if tp.TYPE_CHECKING:
+  import numpy as np
   from torch import Tensor
 else:
   Tensor = tp.cast(
     "type[object]", require_attr("torch", "Tensor", install_hint=_TORCH_INSTALL_HINT)
   )
 
-try:
-  import numpy as np
-except ModuleNotFoundError as exc:
-  raise ModuleNotFoundError(_NUMPY_INSTALL_HINT) from exc
+require_module("numpy", install_hint=_NUMPY_INSTALL_HINT)
 
 from ._array_types import make_array_like_type as _make_array_like_type
 from ._array_types import make_array_type
@@ -198,10 +196,9 @@ def _torch_asarray(obj: object) -> tp.Any:
   return torch.as_tensor(obj)
 
 
-# Backend-scoped fast-path trust: only np.ndarray and torch.Tensor skip
-# conversion.  Foreign-backend arrays (e.g. jax.Array) fall through
-# to the slow path where torch.as_tensor() verifies actual convertibility.
-_TORCH_TRUSTED: tuple[type, ...] = (np.ndarray, Tensor)
+# Only native Torch arrays bypass conversion. NumPy and other foreign arrays
+# must satisfy this backend's conversion rules.
+_TORCH_TRUSTED: tuple[type, ...] = (Tensor,)
 
 
 def make_array_like_type(
@@ -216,8 +213,8 @@ def make_array_like_type(
 
   Defaults to ``torch.as_tensor`` for the slow path, so tensors, NumPy arrays,
   Python scalars, and nested sequences are accepted.
-  The fast path only trusts ``np.ndarray`` and ``torch.Tensor``; other
-  backend arrays (e.g. ``jax.Array``) go through the slow path.
+  The fast path only trusts ``torch.Tensor``. NumPy and other foreign arrays
+  go through the converter, including its layout and dtype restrictions.
   """
   return _make_array_like_type(
     dtype_spec, casting=casting, name=name, asarray=asarray, trusted_types=trusted_types
@@ -293,39 +290,89 @@ else:
   Shaped = make_array_type(Tensor, SHAPED)
 
 # ---------------------------------------------------------------------------
-# Like types — runtime: scalar | tensor | nested sequences; static: Tensor
+# Like types — runtime: scalar | tensor | nested sequences; static: convertible numeric inputs
 # ---------------------------------------------------------------------------
 
 if tp.TYPE_CHECKING:
-  BF16Like = TypeAliasType("BF16Like", Tensor, type_params=(_Dims,))
-  BoolLike = TypeAliasType("BoolLike", Tensor, type_params=(_Dims,))
+  from ._typing import BackendLike, IntegerDtype, NumericDtype, RealDtype, UnsignedDtype
 
-  I8Like = TypeAliasType("I8Like", Tensor, type_params=(_Dims,))
-  I16Like = TypeAliasType("I16Like", Tensor, type_params=(_Dims,))
-  I32Like = TypeAliasType("I32Like", Tensor, type_params=(_Dims,))
-  I64Like = TypeAliasType("I64Like", Tensor, type_params=(_Dims,))
+  BF16Like = TypeAliasType(
+    "BF16Like", BackendLike[Tensor, float, RealDtype], type_params=(_Dims,)
+  )
+  BoolLike = TypeAliasType(
+    "BoolLike", BackendLike[Tensor, bool, np.bool_], type_params=(_Dims,)
+  )
 
-  U8Like = TypeAliasType("U8Like", Tensor, type_params=(_Dims,))
-  U16Like = TypeAliasType("U16Like", Tensor, type_params=(_Dims,))
-  U32Like = TypeAliasType("U32Like", Tensor, type_params=(_Dims,))
-  U64Like = TypeAliasType("U64Like", Tensor, type_params=(_Dims,))
+  I8Like = TypeAliasType(
+    "I8Like", BackendLike[Tensor, int, IntegerDtype], type_params=(_Dims,)
+  )
+  I16Like = TypeAliasType(
+    "I16Like", BackendLike[Tensor, int, IntegerDtype], type_params=(_Dims,)
+  )
+  I32Like = TypeAliasType(
+    "I32Like", BackendLike[Tensor, int, IntegerDtype], type_params=(_Dims,)
+  )
+  I64Like = TypeAliasType(
+    "I64Like", BackendLike[Tensor, int, IntegerDtype], type_params=(_Dims,)
+  )
 
-  F16Like = TypeAliasType("F16Like", Tensor, type_params=(_Dims,))
-  F32Like = TypeAliasType("F32Like", Tensor, type_params=(_Dims,))
-  F64Like = TypeAliasType("F64Like", Tensor, type_params=(_Dims,))
+  U8Like = TypeAliasType(
+    "U8Like", BackendLike[Tensor, int, UnsignedDtype], type_params=(_Dims,)
+  )
+  U16Like = TypeAliasType(
+    "U16Like", BackendLike[Tensor, int, UnsignedDtype], type_params=(_Dims,)
+  )
+  U32Like = TypeAliasType(
+    "U32Like", BackendLike[Tensor, int, UnsignedDtype], type_params=(_Dims,)
+  )
+  U64Like = TypeAliasType(
+    "U64Like", BackendLike[Tensor, int, UnsignedDtype], type_params=(_Dims,)
+  )
 
-  C64Like = TypeAliasType("C64Like", Tensor, type_params=(_Dims,))
-  C128Like = TypeAliasType("C128Like", Tensor, type_params=(_Dims,))
+  F16Like = TypeAliasType(
+    "F16Like", BackendLike[Tensor, float, RealDtype], type_params=(_Dims,)
+  )
+  F32Like = TypeAliasType(
+    "F32Like", BackendLike[Tensor, float, RealDtype], type_params=(_Dims,)
+  )
+  F64Like = TypeAliasType(
+    "F64Like", BackendLike[Tensor, float, RealDtype], type_params=(_Dims,)
+  )
 
-  IntLike = TypeAliasType("IntLike", Tensor, type_params=(_Dims,))
-  UIntLike = TypeAliasType("UIntLike", Tensor, type_params=(_Dims,))
-  IntegerLike = TypeAliasType("IntegerLike", Tensor, type_params=(_Dims,))
-  FloatLike = TypeAliasType("FloatLike", Tensor, type_params=(_Dims,))
-  RealLike = TypeAliasType("RealLike", Tensor, type_params=(_Dims,))
-  ComplexLike = TypeAliasType("ComplexLike", Tensor, type_params=(_Dims,))
-  InexactLike = TypeAliasType("InexactLike", Tensor, type_params=(_Dims,))
-  NumLike = TypeAliasType("NumLike", Tensor, type_params=(_Dims,))
-  ShapedLike = TypeAliasType("ShapedLike", Tensor, type_params=(_Dims,))
+  C64Like = TypeAliasType(
+    "C64Like", BackendLike[Tensor, complex, NumericDtype], type_params=(_Dims,)
+  )
+  C128Like = TypeAliasType(
+    "C128Like", BackendLike[Tensor, complex, NumericDtype], type_params=(_Dims,)
+  )
+
+  IntLike = TypeAliasType(
+    "IntLike", BackendLike[Tensor, int, IntegerDtype], type_params=(_Dims,)
+  )
+  UIntLike = TypeAliasType(
+    "UIntLike", BackendLike[Tensor, int, UnsignedDtype], type_params=(_Dims,)
+  )
+  IntegerLike = TypeAliasType(
+    "IntegerLike", BackendLike[Tensor, int, IntegerDtype], type_params=(_Dims,)
+  )
+  FloatLike = TypeAliasType(
+    "FloatLike", BackendLike[Tensor, float, RealDtype], type_params=(_Dims,)
+  )
+  RealLike = TypeAliasType(
+    "RealLike", BackendLike[Tensor, float, RealDtype], type_params=(_Dims,)
+  )
+  ComplexLike = TypeAliasType(
+    "ComplexLike", BackendLike[Tensor, complex, NumericDtype], type_params=(_Dims,)
+  )
+  InexactLike = TypeAliasType(
+    "InexactLike", BackendLike[Tensor, complex, NumericDtype], type_params=(_Dims,)
+  )
+  NumLike = TypeAliasType(
+    "NumLike", BackendLike[Tensor, complex, NumericDtype], type_params=(_Dims,)
+  )
+  ShapedLike = TypeAliasType(
+    "ShapedLike", BackendLike[Tensor, complex, NumericDtype], type_params=(_Dims,)
+  )
 
 else:
   BF16Like = make_array_like_type(BFLOAT16, name="BF16Like")

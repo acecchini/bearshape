@@ -23,6 +23,7 @@ nav = [
     "features/index.md",
     "features/dimensions.md",
     "features/static-typing.md",
+    "features/frameworks.md",
     "features/array-types.md",
     "features/like-types.md",
     "features/tree-annotations.md",
@@ -42,13 +43,16 @@ nav = [
   { "Examples" = [
     "examples/index.md",
   ]},
+  { "Maintainers" = [
+    "maintainers/production-readiness.md",
+  ]},
 ]
 
 [project.theme]
 variant = "classic"
 custom_dir = "docs/overrides"
 language = "en"
-favicon = "assets/favicon.png"
+favicon = "assets/logo.svg"
 logo = "assets/logo.svg"
 features = [
   "navigation.instant",

@@ -92,8 +92,11 @@ repos:
           - mkdocs
           - --extensions
           - frontmatter
+          - --extensions
+          - gfm
         additional_dependencies:
           - mdformat-frontmatter==2.0.10
+          - mdformat-gfm==1.0.0
           - mdformat-mkdocs==v5.2.0b2
         priority: 30
 
@@ -118,19 +121,19 @@ repos:
       - id: shellcheck
         priority: 50
 
-  - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.408
-    hooks:
-      - id: pyright
-        stages: [pre-push]
-        pass_filenames: false
-        priority: 60
-
   - repo: local
     hooks:
+      - id: typecheck
+        name: four-checker conformance
+        entry: uv run --locked pytest tests/test_typecheck.py -q
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+        priority: 60
       - id: pytest
         name: pytest
-        entry: uv run --locked pytest tests/ -n auto -x -q
+        entry: uv run --locked pytest tests/ --ignore=tests/test_typecheck.py -n auto -x -q
         language: system
         pass_filenames: false
         always_run: true

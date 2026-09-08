@@ -132,9 +132,10 @@ surface:
 
 ```python
 import numpy as np
+from typing import TypeAlias
 from bearshape.numpy import ArrayLike
 
-type MyInput = ArrayLike[float, np.float32]
+MyInput: TypeAlias = ArrayLike[float, np.float32]
 ```
 
 It is useful when you want a checker-friendly custom alias that still follows

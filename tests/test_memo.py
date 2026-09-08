@@ -81,35 +81,12 @@ class TestFrameBasedMemo:
     # Third call: N=1
     g(np.ones((1,), dtype=np.float32))
 
-  def test_recycled_checker_frame_gets_fresh_memo(
-    self, monkeypatch: pytest.MonkeyPatch
-  ) -> None:
-    """Frame-id reuse across checker calls must not reuse stale bindings."""
-    import bearshape._memo as memo_mod
+  def test_repeated_boolean_calls_have_independent_memos(self) -> None:
+    from beartype.door import is_bearable
 
-    class FakeFrame:
-      def __init__(self) -> None:
-        self.f_code = object()
-        self.f_lasti = 6
-        self.f_locals = {"__beartype_pith_0": object()}
-
-    fake = FakeFrame()
-
-    monkeypatch.setattr(memo_mod._local, "frame_stack", [], raising=False)
-    monkeypatch.setattr(
-      memo_mod, "_find_beartype_wrapper_frame", lambda *, _depth: fake
-    )
-
-    first = get_memo()
-    first.single["N"] = 3
-    assert get_memo() is first
-
-    fake.f_lasti = 7
-    fake.f_locals = {"__beartype_pith_0": object()}
-
-    second = get_memo()
-    assert second is not first
-    assert second.single == {}
+    for size in range(1, 100):
+      array = np.ones(size, dtype=np.float32)
+      assert is_bearable((array, array), tuple[F32[N], F32[N]])
 
   def test_sequential_cross_arg(self) -> None:
     """Sequential calls with multiple args each get independent memos."""
@@ -235,3 +212,92 @@ class TestMemoEdgeCases:
 
     for i in range(1, 50):
       f(np.ones(i, dtype=np.float32))
+
+
+class TestIndependentCheckLifetime:
+  @pytest.mark.parametrize("kind", ["strict", "like", "tree"])
+  def test_failed_composite_does_not_poison_reused_object(self, kind: str) -> None:
+    from beartype.door import is_bearable
+
+    from bearshape.numpy import F32Like
+
+    if kind == "tree":
+      pytest.importorskip("optree")
+      from bearshape.optree import Tree
+
+      hint = Tree[F32[N]]
+    else:
+      hint = F32[N] if kind == "strict" else F32Like[N]
+
+    a = np.ones(2, dtype=np.float32)
+    b = np.ones(3, dtype=np.float32)
+    assert not is_bearable((a, b), tuple[hint, hint])
+    for _ in range(3):
+      assert is_bearable(b, hint)
+    assert is_bearable(a, hint)
+
+  @pytest.mark.parametrize("kind", ["strict", "like", "tree"])
+  def test_boolean_failure_releases_array(self, kind: str) -> None:
+    import gc
+    import weakref
+
+    from beartype.door import is_bearable
+
+    from bearshape.numpy import F32Like
+
+    if kind == "tree":
+      pytest.importorskip("optree")
+      from bearshape.optree import Tree
+
+      hint = Tree[F32[N]]
+    else:
+      hint = F32[N] if kind == "strict" else F32Like[N]
+
+    def fail_once() -> weakref.ReferenceType[np.ndarray]:
+      a = np.ones(2, dtype=np.float32)
+      b = np.ones(3, dtype=np.float32)
+      reference = weakref.ref(b)
+      assert not is_bearable((a, b), tuple[hint, hint])
+      return reference
+
+    reference = fail_once()
+    gc.collect()
+    assert reference() is None
+
+  def test_door_diagnostic_and_subsequent_check(self) -> None:
+    from beartype.door import die_if_unbearable, is_bearable
+    from beartype.roar import BeartypeDoorHintViolation
+
+    a = np.ones(2, dtype=np.float32)
+    b = np.ones(3, dtype=np.float32)
+    with pytest.raises(BeartypeDoorHintViolation, match="expected 2 but got 3"):
+      die_if_unbearable((a, b), tuple[F32[N], F32[N]])
+    assert is_bearable(b, F32[N])
+
+  def test_failed_check_does_not_follow_object_mutation(self) -> None:
+    from beartype.door import is_bearable
+
+    a = np.ones(2, dtype=np.float32)
+    b = np.ones(6, dtype=np.float32)
+    assert not is_bearable((a, b), tuple[F32[N], F32[N]])
+    b.resize((2, 3))
+    assert is_bearable(b, F32[N, C])
+    b.resize((6,))
+    assert is_bearable(b, F32[N])
+
+  def test_interleaved_thread_failures_remain_independent(self) -> None:
+    from concurrent.futures import ThreadPoolExecutor
+
+    from beartype.door import is_bearable
+
+    barrier = threading.Barrier(2)
+
+    def worker(size: int) -> bool:
+      a = np.ones(size, dtype=np.float32)
+      b = np.ones(size + 1, dtype=np.float32)
+      assert not is_bearable((a, b), tuple[F32[N], F32[N]])
+      barrier.wait(timeout=5)
+      return is_bearable(b, F32[N])
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+      assert all(pool.map(worker, (2, 7)))

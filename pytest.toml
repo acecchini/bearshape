@@ -10,5 +10,5 @@ addopts = [
   "-n=auto",
 ]
 markers = [
-  "typecheck: type-checker compatibility tests (pyright, mypy, ty)",
+  "typecheck: type-checker compatibility tests (pyright, mypy, ty, pyrefly)",
 ]

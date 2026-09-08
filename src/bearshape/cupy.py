@@ -47,10 +47,7 @@ else:
     "type[object]", require_attr("cupy", "ndarray", install_hint=_CUPY_INSTALL_HINT)
   )
 
-try:
-  import numpy as np
-except ModuleNotFoundError as exc:
-  raise ModuleNotFoundError(_NUMPY_INSTALL_HINT) from exc
+require_module("numpy", install_hint=_NUMPY_INSTALL_HINT)
 
 from ._array_types import make_array_like_type as _make_array_like_type
 from ._array_types import make_array_type
@@ -110,8 +107,9 @@ from .numpy import U64ScalarLike as U64ScalarLike
 from .numpy import UIntScalarLike as UIntScalarLike
 from .numpy import make_scalar_like_type as make_scalar_like_type
 
-# CuPy does not support float128, complex256, void, string, bytes, object,
-# datetime64, or timedelta64 dtypes.  Those types are NumPy-only (see numpy.py).
+# Extended-precision, structured, string, object and temporal aliases are
+# exposed by numpy.py. CuPy's converter determines which additional dtypes
+# its generic Shaped/Like annotations accept.
 # CuPy does not support bfloat16 natively, so BF16 is omitted (same as NumPy).
 __all__ = [
   # Array types
@@ -203,10 +201,9 @@ def _cupy_asarray(obj: object) -> tp.Any:
   return cp.asarray(obj)
 
 
-# Backend-scoped fast-path trust: only np.ndarray and cupy.ndarray skip
-# conversion.  Foreign-backend arrays (e.g. torch.Tensor) fall through
-# to the slow path where cp.asarray() verifies actual convertibility.
-_CUPY_TRUSTED: tuple[type, ...] = (np.ndarray, CuPyArray)
+# Only native CuPy arrays bypass conversion. NumPy and other foreign arrays
+# must satisfy this backend's conversion rules.
+_CUPY_TRUSTED: tuple[type, ...] = (CuPyArray,)
 
 
 def make_array_like_type(
@@ -221,8 +218,8 @@ def make_array_like_type(
 
   Defaults to ``cp.asarray`` for the slow path, so CuPy arrays, NumPy arrays,
   Python scalars, and nested sequences are accepted.
-  The fast path only trusts ``np.ndarray`` and ``cupy.ndarray``; other
-  backend arrays (e.g. ``torch.Tensor``) go through the slow path.
+  The fast path only trusts ``cupy.ndarray``. NumPy and other foreign arrays
+  go through the converter.
   """
   return _make_array_like_type(
     dtype_spec, casting=casting, name=name, asarray=asarray, trusted_types=trusted_types

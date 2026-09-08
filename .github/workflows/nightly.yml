@@ -5,58 +5,13 @@ on:
     - cron: "0 4 * * *"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
 
 jobs:
-  # -----------------------------------------------------------------------
-  # Full tox matrix — oldest + newest of each axis
-  # -----------------------------------------------------------------------
-
-  compat-nightly:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { python: py310, beartype: bt020, backend: numpy22 }
-          - { python: py310, beartype: bt020, backend: jax05 }
-          - { python: py310, beartype: bt020, backend: torch26 }
-          - { python: py310, beartype: bt020, backend: optree014 }
-          - { python: py310, beartype: bt022, backend: numpy22 }
-          - { python: py310, beartype: bt022, backend: jax05 }
-          - { python: py310, beartype: bt022, backend: torch26 }
-          - { python: py310, beartype: bt022, backend: optree014 }
-          - { python: py313, beartype: bt020, backend: numpy24 }
-          - { python: py313, beartype: bt020, backend: jax09 }
-          - { python: py313, beartype: bt020, backend: torch210 }
-          - { python: py313, beartype: bt020, backend: optree019 }
-          - { python: py313, beartype: bt022, backend: numpy24 }
-          - { python: py313, beartype: bt022, backend: jax09 }
-          - { python: py313, beartype: bt022, backend: torch210 }
-          - { python: py313, beartype: bt022, backend: optree019 }
-    name: ${{ matrix.python }}-${{ matrix.beartype }}-${{ matrix.backend }}
-    steps:
-      - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
-      - run: uv run tox run -e "${{ matrix.python }}-${{ matrix.beartype }}-${{ matrix.backend }}"
-
-  # -----------------------------------------------------------------------
-  # All typechecker versions
-  # -----------------------------------------------------------------------
-
-  typecheck-nightly:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { env: py313-bt022-type-pyright1408 }
-          - { env: py313-bt022-type-mypy119 }
-          - { env: py313-bt022-type-ty }
-    name: ${{ matrix.env }}
-    steps:
-      - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
-      - run: uv run tox run -e "${{ matrix.env }}"
+  validate:
+    uses: ./.github/workflows/validate.yml

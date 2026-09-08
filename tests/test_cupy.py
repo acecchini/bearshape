@@ -328,13 +328,13 @@ class TestCuPyLikeEdgeCases:
 
 
 class TestCuPyLikeTrustScope:
-  """CuPy Like fast path trusts only np.ndarray and cupy.ndarray."""
+  """CuPy Like fast path trusts only cupy.ndarray."""
 
   def test_cupy_ndarray_is_fast_path_trusted(self) -> None:
     from bearshape.cupy import _CUPY_TRUSTED
 
     assert cp.ndarray in _CUPY_TRUSTED
-    assert np.ndarray in _CUPY_TRUSTED
+    assert np.ndarray not in _CUPY_TRUSTED
 
 
 # =====================================================================
@@ -510,3 +510,127 @@ class TestCuPyNumericScalarBoolRejection:
     from bearshape.cupy import I64ScalarLike
 
     assert not is_bearable(True, I64ScalarLike)
+
+
+class TestCuPyConverterContract:
+  @pytest.mark.parametrize(
+    "value",
+    [
+      np.arange(6, dtype=np.float32)[::-1],
+      np.arange(6, dtype=np.dtype(">f4")),
+      np.arange(12, dtype=np.float32).reshape(3, 4).T,
+    ],
+    ids=["negative-stride", "non-native-endian", "transposed"],
+  )
+  def test_host_layouts_follow_cupy_converter(self, value: np.ndarray) -> None:
+    converted = cp.asarray(value)
+    assert converted.shape == value.shape
+    assert is_bearable(value, F32Like[...])
+    np.testing.assert_array_equal(cp.asnumpy(converted), value)
+
+  @pytest.mark.parametrize(
+    "value",
+    [
+      np.array(["text"]),
+      np.array([object()], dtype=object),
+    ],
+    ids=["string", "object"],
+  )
+  def test_unsupported_host_dtypes_fail_conversion_and_validation(
+    self, value: np.ndarray
+  ) -> None:
+    from bearshape.cupy import ShapedLike
+
+    with pytest.raises((TypeError, ValueError)):
+      cp.asarray(value)
+    assert not is_bearable(value, ShapedLike[...])
+
+  def test_structured_host_dtype_follows_cupy_conversion(self) -> None:
+    from bearshape.cupy import ShapedLike
+
+    host = np.zeros(2, dtype=[("value", np.float32)])
+    converted = cp.asarray(host)
+    assert converted.dtype == host.dtype
+    assert is_bearable(host, ShapedLike[...])
+    assert is_bearable(converted, Shaped[...])
+    np.testing.assert_array_equal(cp.asnumpy(converted), host)
+
+  def test_validation_preserves_original_host_argument(self) -> None:
+    @beartype
+    def accept(value: F32Like[N]) -> object:
+      return value
+
+    host = np.arange(5, dtype=np.float32)[::-1]
+    assert accept(host) is host
+
+
+class TestCuPyDeviceBehavior:
+  def test_native_validation_preserves_device_pointer_and_stream(self) -> None:
+    @beartype
+    def accept(value: F32[N]) -> F32Like[N]:
+      return value
+
+    stream = cp.cuda.Stream(non_blocking=True)
+    with stream:
+      value = cp.arange(6, dtype=cp.float32)
+      pointer, device = value.data.ptr, value.device.id
+      result = accept(value)
+      assert result is value
+      assert result.data.ptr == pointer
+      assert result.device.id == device
+      assert cp.cuda.get_current_stream() == stream
+      result += 1
+    stream.synchronize()
+    np.testing.assert_array_equal(cp.asnumpy(result), np.arange(1, 7))
+
+  def test_noncontiguous_device_view_remains_a_view(self) -> None:
+    @beartype
+    def accept(value: F32Like[N, C]) -> F32[N, C]:
+      return value
+
+    base = cp.arange(12, dtype=cp.float32).reshape(3, 4)
+    view = base.T
+    assert not view.flags.c_contiguous
+    assert accept(view) is view
+    view[0, 0] = 99
+    assert int(base[0, 0]) == 99
+
+
+class TestCuPyTrees:
+  def test_nested_device_tree_rejects_inconsistent_leaves(self) -> None:
+    pytest.importorskip("optree")
+    from bearshape.optree import Tree
+
+    @beartype
+    def accept(value: Tree[F32[N]]) -> Tree[F32[N]]:
+      return value
+
+    valid = {"a": [cp.ones(3, dtype=cp.float32)], "b": cp.zeros(3, dtype=cp.float32)}
+    assert accept(valid) is valid
+    for invalid in (
+      {"a": cp.ones(3, dtype=cp.float32), "b": cp.ones(4, dtype=cp.float32)},
+      {"a": cp.ones(3, dtype=cp.float32), "b": cp.ones(3, dtype=cp.int32)},
+    ):
+      with pytest.raises(BeartypeCallHintParamViolation):
+        accept(invalid)
+    assert accept({"next": cp.ones(5, dtype=cp.float32)})["next"].shape == (5,)
+
+  def test_device_tree_structure_binding(self) -> None:
+    pytest.importorskip("optree")
+    from bearshape import T
+    from bearshape.optree import Tree
+
+    @beartype
+    def accept(left: Tree[F32[N], T], right: Tree[F32[N], T]) -> object:
+      return right
+
+    left = {"a": cp.ones(3, dtype=cp.float32)}
+    right = {"a": cp.zeros(3, dtype=cp.float32)}
+    assert accept(left, right) is right
+    with pytest.raises(BeartypeCallHintParamViolation):
+      accept(left, [cp.ones(3, dtype=cp.float32)])
+
+  def test_failed_device_check_does_not_poison_independent_check(self) -> None:
+    short, long = cp.ones(2, dtype=cp.float32), cp.ones(3, dtype=cp.float32)
+    assert not is_bearable((short, long), tuple[F32[N], F32[N]])
+    assert is_bearable(long, F32[N])

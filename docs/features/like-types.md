@@ -83,11 +83,12 @@ clamp_pixel(256)  # Raises
 clamp_pixel(-1)  # Raises
 ```
 
-!!! warning "Boolean exclusion" Numeric scalar aliases (`I8ScalarLike`,
+!!! warning "Boolean exclusion"
 
-`F32ScalarLike`, `NumScalarLike`, etc.) reject `bool` and `np.bool_` values.
-Python `bool` is a subclass of `int`, but bearshape treats booleans as
-non-numeric. Use `BoolScalarLike` for boolean scalars.
+    Numeric scalar aliases (`I8ScalarLike`, `F32ScalarLike`, `NumScalarLike`, etc.)
+    reject `bool` and `np.bool_` values. Python `bool` is a subclass of `int`, but
+    bearshape treats booleans as non-numeric. Use `BoolScalarLike` for boolean
+    scalars.
 
 Available families include:
 
@@ -107,10 +108,11 @@ from bearshape.torch import U8ScalarLike
 from bearshape.cupy import U8ScalarLike
 ```
 
-!!! note Backend-native 0-D arrays such as `jnp.array(1.0)` or
+!!! note
 
-`torch.tensor(1.0)` are not `ScalarLike`. Use a `Like` alias with `Scalar`, for
-example `F32Like[Scalar]`.
+    Backend-native 0-D arrays such as `jnp.array(1.0)` or `torch.tensor(1.0)` are
+    not `ScalarLike`. Use a `Like` alias with `Scalar`, for example
+    `F32Like[Scalar]`.
 
 ## Backend-specific conversion behavior
 
@@ -122,8 +124,21 @@ The `Like` family is intentionally backend-aware:
 - `bearshape.torch` slow-path conversion uses `torch.as_tensor`
 - `bearshape.cupy` slow-path conversion uses `cupy.asarray`
 
-Static type checkers only see the backend array type, not the broader runtime
-acceptance of scalars and nested sequences.
+Only native backend arrays use the default metadata fast path. Foreign arrays,
+including NumPy arrays passed to JAX, Torch, or CuPy, must pass the target
+converter. A failed backend conversion is never rescued by a NumPy fallback. For
+example, Torch Like rejects negative-stride and non-native-endian NumPy arrays
+because `torch.as_tensor` rejects those layouts.
+
+Validation checks convertibility at that moment and may allocate an array. It
+does not replace the original function argument. Same-kind casting does not
+promise lossless conversion. Custom factory authors supplying `trusted_types`
+assert that those types can bypass their converter; use an empty tuple to force
+conversion for every input.
+
+Static NumPy/JAX/Torch Like aliases include supported scalar and nested-sequence
+input families. Convert explicitly inside the function to get a native backend
+result. See [Static Typing](static-typing.md) for tested calls and limitations.
 
 ## Custom `ScalarLike` types
 
@@ -170,12 +185,13 @@ surface.
 Both `make_array_like_type` and `make_scalar_like_type` use NumPy casting
 semantics:
 
-| Casting | Meaning | Example for target `float32` | | ------------- |
---------------------- | ---------------------------- | | `"no"` | Exact dtype
-only | only `float32` | | `"equiv"` | Same kind and size | `float32` but not
-`float64` | | `"safe"` | No information loss | `int16` yes, `float64` no | |
-`"same_kind"` | Same-kind conversion | `int32` yes, `complex64` no | |
-`"unsafe"` | Any cast NumPy allows | very permissive |
+| Casting       | Meaning               | Example for target `float32` |
+| ------------- | --------------------- | ---------------------------- |
+| `"no"`        | Exact dtype only      | only `float32`               |
+| `"equiv"`     | Same kind and size    | `float32` but not `float64`  |
+| `"safe"`      | No information loss   | `int16` yes, `float64` no    |
+| `"same_kind"` | Same-kind conversion  | `int32` yes, `complex64` no  |
+| `"unsafe"`    | Any cast NumPy allows | very permissive              |
 
 ## Default used by built-in `Like` aliases
 
@@ -206,11 +222,33 @@ F32Unsafe = make_array_like_type(FLOAT32, casting="unsafe", name="F32Unsafe")
 typing combinations:
 
 ```python
+from typing import TypeAlias
+
 import numpy as np
 from bearshape.numpy import ArrayLike
 
-type MyInputType = ArrayLike[float, np.float32]
+MyInputType: TypeAlias = ArrayLike[float, np.float32]
 ```
 
 That template is most useful when you want your own checker-friendly alias but
 still follow bearshape's "scalar or nested sequence or array" model.
+
+## Static input types
+
+Like annotations describe the input value. They do not replace it with an array;
+convert explicitly before using backend-specific methods. NumPy numeric Like
+aliases admit the input dtype families allowed by `same_kind` casting: booleans
+for BoolLike; booleans and unsigned integers for unsigned Like types; booleans
+and integers for signed integer Like types; those plus floating values for real
+Like types; and all numeric kinds for complex Like types. Input precision may
+differ from the target precision. Casting can lose precision.
+
+JAX and Torch Like annotations accept native arrays, numeric NumPy
+arrays/scalars, and ordinary numeric nested sequences. Their native array types
+do not encode dtype statically, so runtime checks still decide casting, shape,
+device, byte order and actual converter support. A NumPy `__array__` method
+alone is not a static guarantee of Torch conversion.
+
+NumPy Shaped accepts every NumPy generic dtype, including string, object,
+datetime and structured arrays. ShapedLike also admits ordinary string/bytes
+sequences. Shape relationships remain runtime checks in every checker.
