@@ -12,12 +12,13 @@ Maintainers need a single reproducible validation workflow that tests the candid
 
 
 - [x] (2026-09-08) Created matching branch/worktree from the combined candidate.
-- [ ] Open early draft PR and inspect current tool configuration.
-- [ ] Consolidate PR, push and nightly validation with explicit runtime/checker matrices.
-- [ ] Enforce expected backend versions/imports and CPU Torch in tox.
-- [ ] Run complete hooks and actionlint in CI; pin actions and maintain update configuration.
-- [ ] Validate local commands, hosted Linux/macOS/Windows jobs and final gate behavior.
-- [ ] Record evidence and obtain user validation before merge.
+- [x] (2026-09-08) Opened PR #23 and inspected actual uv/tox installer configuration.
+- [x] (2026-09-08) Added shared workflow with nine platform runtime lanes, five current checker lanes and twelve floor lanes.
+- [x] (2026-09-08) Backend preflight asserts exact rc0 and CPU Torch; tox forwards UV_TORCH_BACKEND=cpu.
+- [x] (2026-09-08) Full hooks/actionlint run in CI; validation/docs actions pinned with weekly update configuration. Publication action changes remain in M9.
+- [x] (2026-09-08) All hosted required jobs pass at 688e669; local dev and candidate endpoints pass; gate probes reject failure, skip and cancellation.
+- [x] (2026-09-08) Recorded implementation, hosted results and the reproduced pyright environment defect.
+- [ ] Obtain user validation before merge.
 
 ## Surprises & Discoveries
 
@@ -38,7 +39,7 @@ Decision: Use full commit pins for external actions with a maintained update con
 ## Outcomes & Retrospective
 
 
-Implementation pending. A successful CPU matrix does not prove CuPy GPU execution or resolve the native-union integration blocker.
+All 32 required hosted jobs pass at implementation commit 688e669, including the aggregate gate, plus the external secret scan. Local development tests pass 1,074 cases with five documented skips and 91.62% coverage; exact-candidate CPU endpoint lanes each pass 1,066 runtime tests. The narrower tox-driver install exposed pyright environment routing that a populated developer environment hid; removing the fixed venv selection makes the selected interpreter authoritative. A successful CPU matrix does not prove CuPy GPU execution or resolve the native-union integration blocker.
 
 ## Context and Orientation
 
