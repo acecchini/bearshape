@@ -189,3 +189,14 @@ then scope unspecified hooks to pre-commit and remove commit-msg from the
 installation list. Retain explicit pre-push, post-checkout/merge/rewrite and
 manual actionlint stages. Verify the real lifecycle after the fix and document
 how existing contributors remove the stale shim. No checks will be bypassed.
+
+Pre-push discovery (2026-09-08): Git exports repository-local variables into
+hooks. The release fixtures inherited them while initializing other repositories,
+which changed shared local `core.worktree` and caused parallel fixture failures.
+Restored that setting to its original absence and verified main is clean at the
+merged commit. New foreign-repository regressions fail before the fix. Clear
+Git's own `rev-parse --local-env-vars` list in the existing release tool and
+fixture subprocesses, retaining unrelated environment variables. Test fixture
+construction with an explicit foreign hook owner and verify its config and HEAD
+stay unchanged. The blocked pre-push prevents opening the follow-up PR until
+this focused correction passes; no verification hooks are bypassed.

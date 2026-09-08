@@ -17,14 +17,17 @@ from typing import TypeAlias
 import pytest
 
 _SCRIPT = Path(__file__).resolve().parents[1] / "tools/check_release.py"
-resolve_release = runpy.run_path(str(_SCRIPT))["resolve_release"]
+_RELEASE = runpy.run_path(str(_SCRIPT))
+resolve_release = _RELEASE["resolve_release"]
+git_environment = _RELEASE["git_environment"]
 Repository: TypeAlias = tuple[Path, Callable[..., str]]
 
 
-@pytest.fixture
-def repository(tmp_path: Path) -> Repository:
+def make_repository(tmp_path: Path) -> Repository:
   git = shutil.which("git")
   assert git is not None
+  environment = git_environment(git)
+  tmp_path.mkdir(exist_ok=True)
 
   def command(*args: str) -> str:
     return subprocess.check_output(
@@ -37,6 +40,7 @@ def repository(tmp_path: Path) -> Repository:
         *args,
       ],
       cwd=tmp_path,
+      env=environment,
       text=True,
       stderr=subprocess.PIPE,
     ).strip()
@@ -48,6 +52,11 @@ def repository(tmp_path: Path) -> Repository:
   command("update-ref", "refs/remotes/origin/main", "HEAD")
   command("tag", "v0.1.0rc0")
   return tmp_path, command
+
+
+@pytest.fixture
+def repository(tmp_path: Path) -> Repository:
+  return make_repository(tmp_path)
 
 
 def resolve(repository: Repository, **overrides: object) -> dict[str, str]:
@@ -211,3 +220,37 @@ def test_publication_workflow_must_match_candidate(
 ) -> None:
   with pytest.raises(ValueError, match="matching version tag and commit"):
     resolve(repository, **override)
+
+
+@pytest.mark.parametrize("variable", ["GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"])
+def test_release_identity_ignores_foreign_hook_repository(
+  repository: Repository, monkeypatch: pytest.MonkeyPatch, variable: str
+) -> None:
+  root, git = repository
+  expected = git("rev-parse", "HEAD")
+  foreign = root / "foreign"
+  git("init", "-b", "foreign", str(foreign))
+  git("-C", str(foreign), "commit", "--allow-empty", "-m", "Foreign history")
+  target = foreign if variable == "GIT_WORK_TREE" else foreign / ".git"
+  monkeypatch.setenv(variable, str(target))
+  assert resolve(repository, workflow_sha=expected)["sha"] == expected
+
+
+def test_synthetic_repositories_do_not_mutate_hook_owner(
+  repository: Repository, monkeypatch: pytest.MonkeyPatch
+) -> None:
+  owner, git = repository
+  original_head = git("rev-parse", "HEAD")
+  config = owner / ".git/config"
+  original_config = config.read_bytes()
+  for key, path in {
+    "GIT_DIR": owner / ".git",
+    "GIT_COMMON_DIR": owner / ".git",
+    "GIT_WORK_TREE": owner,
+    "GIT_INDEX_FILE": owner / ".git/index",
+  }.items():
+    monkeypatch.setenv(key, str(path))
+  child, child_git = make_repository(owner / "child")
+  assert Path(child_git("rev-parse", "--show-toplevel")) == child.resolve()
+  assert config.read_bytes() == original_config
+  assert git("rev-parse", "HEAD") == original_head

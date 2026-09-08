@@ -10,6 +10,13 @@ uv run --locked pytest tests/ --ignore=tests/test_typecheck.py -n auto
 uv run --locked pytest tests/test_typecheck.py -q
 ```
 
+When upgrading an existing checkout from the earlier hook configuration, remove
+its unused commit-message shim once with
+`uv run --locked prek uninstall --hook-type commit-msg`, then run the install
+command above. File checks default to pre-commit. Runtime/checker checks remain
+at pre-push, environment sync at checkout/merge/rewrite, and actionlint manual.
+CI verifies installation and that commit-message paths do not enter file checks.
+
 The checker harness runs pyright, mypy, ty and pyrefly against source and real
 positive/negative/inference consumers, with interpreter-matched settings. Direct
 checker commands are useful for debugging but do not replace that harness. Use
