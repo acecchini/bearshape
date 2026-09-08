@@ -160,3 +160,32 @@ CuPy plan progress text; verified src/tests/tools/dependency/workflow bytes were
 unchanged before maintenance. Added the standalone union reproducer and checked
 PyPI: rc0 is the only published 0.23 candidate. Current guidance records the
 owner's selected path without inventing a newer version or reducing support.
+
+## Merge-record follow-up
+
+
+PR #31 merged the complete approved history into main at
+`df81f00e2f62bda956244e680c980f87db1d4671`. Main CI run 34229683377 passed all 36
+jobs; Pages run 34229683120 built successfully and skipped deployment. GitHub
+marked main-based PRs merged automatically. Dependent PRs were closed with an
+integration record after verifying their heads are ancestors of main; GitHub
+refused retargeting them because they contained no new commits.
+
+The same authorized plan now continues on `codex/merge-record`, in its matching
+worktree, to record the actual merge outcome and upstream development-head
+failure and remove clean merged worktrees/branches. Open the bookkeeping PR
+before editing the handoff/roadmap. Runtime code, package metadata, dependencies
+and release settings stay as tested. Validate hooks, docs and hosted checks,
+then merge this evidence update under the existing owner approval.
+
+Lifecycle discovery (2026-09-08): installing the configured hooks on main
+exposed a real worktree commit failure. With no default stage restriction,
+`check-illegal-windows-names` ran at `commit-msg` and rejected
+`../../bearshape/.git/worktrees/merge-record/COMMIT_EDITMSG`. The attempted
+plan commit did not happen. The configuration installs a commit-message shim
+without defining any actual commit-message validators. Remove that generated
+unused shim, commit this plan with the normal pre-commit checks, open the PR,
+then scope unspecified hooks to pre-commit and remove commit-msg from the
+installation list. Retain explicit pre-push, post-checkout/merge/rewrite and
+manual actionlint stages. Verify the real lifecycle after the fix and document
+how existing contributors remove the stale shim. No checks will be bypassed.
