@@ -18,6 +18,9 @@ and this project follows
 
 ### Fixed
 
+- `bearshape_this_package()` now instruments the calling package correctly,
+    including annotated parameters and returns in subsequently imported modules.
+
 - Structured dtype normalization now exposes its NumPy input type to all
     supported checkers while retaining NumPy's runtime validation.
 
