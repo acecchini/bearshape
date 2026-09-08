@@ -43,6 +43,9 @@ nav = [
   { "Examples" = [
     "examples/index.md",
   ]},
+  { "Maintainers" = [
+    "maintainers/production-readiness.md",
+  ]},
 ]
 
 [project.theme]

@@ -46,6 +46,10 @@ and this project follows
 
 ### Added
 
+- Add the production contract/test map, reproducible runtime measurements and
+    ownership handoff evidence with unresolved release decisions stated
+    explicitly.
+
 - Add CUDA runtime evidence for CuPy conversion, native device/stream
     preservation and optree containers on the corrected candidate.
 

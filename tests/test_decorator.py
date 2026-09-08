@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-from beartype import beartype
+from beartype import BeartypeConf, beartype
 from beartype.roar import BeartypeCallHintParamViolation
 
 import bearshape
@@ -853,3 +853,45 @@ class TestCheckRejectsGenerators:
       @bearshape.check(conf=BeartypeConf())
       async def f(x: F32[N]) -> F32[N]:  # type: ignore[misc]
         yield x
+
+
+class TestCallBoundaryContracts:
+  @pytest.mark.parametrize("combined", [False, True])
+  def test_value_uses_default_and_keyword_arguments(self, combined: bool) -> None:
+    from beartype.roar import BeartypeCallHintReturnViolation
+
+    decorate = bearshape.check(conf=BeartypeConf()) if combined else beartype
+
+    @decorate
+    def make(output_size: int, *, size: int = 3) -> F32[Value("size")]:  # type: ignore[valid-type]
+      return np.ones(output_size, dtype=np.float32)
+
+    assert make(3).shape == (3,)
+    assert make(5, size=5).shape == (5,)
+    with pytest.raises(BeartypeCallHintReturnViolation):
+      make(4)
+    with pytest.raises(BeartypeCallHintReturnViolation):
+      make(3, size=5)
+
+  @pytest.mark.parametrize("combined", [False, True])
+  def test_wrapped_signature_remains_checked(self, combined: bool) -> None:
+    import inspect
+    from functools import wraps
+
+    decorate = bearshape.check(conf=BeartypeConf()) if combined else beartype
+
+    def original(value: F32[N]) -> F32[N]:
+      """Identity contract preserved through a wrapper."""
+      return value
+
+    @wraps(original)
+    def wrapped(*args: object, **kwargs: object) -> object:
+      return original(*args, **kwargs)  # type: ignore[arg-type]
+
+    checked = decorate(wrapped)
+    value = np.ones(3, dtype=np.float32)
+    assert checked(value) is value
+    assert inspect.signature(checked) == inspect.signature(original)
+    assert checked.__doc__ == original.__doc__
+    with pytest.raises(BeartypeCallHintParamViolation):
+      checked(np.ones(3, dtype=np.int32))

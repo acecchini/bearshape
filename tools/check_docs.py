@@ -11,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TABLE_ROWS = {
+  "maintainers/production-readiness": [10, 12, 18, 11, 12],
   "api/index": [8],
   "api/bearshape": [5, 3],
   "features/claw": [3],
