@@ -1,0 +1,184 @@
+name: Validate candidate
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Exact commit to validate; defaults to the caller event SHA
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  UV_TORCH_BACKEND: cpu
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v7
+        with:
+          version: "0.11.17"
+      - run: uv run --locked --only-group dev prek run -a
+      - run: uv run --locked --only-group dev prek run actionlint -a --stage manual
+      - run: git diff --exit-code
+
+  runtime:
+    name: Runtime (${{ matrix.os }}, ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        include:
+          - { os: macos-latest, python: "3.10" }
+          - { os: macos-latest, python: "3.14" }
+          - { os: windows-latest, python: "3.10" }
+          - { os: windows-latest, python: "3.14" }
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v7
+        with:
+          version: "0.11.17"
+          python-version: ${{ matrix.python }}
+          enable-cache: true
+      - run: uv sync --locked --no-default-groups --group optional --group test
+      - run: uv run --no-sync python tools/validate_runtime.py cpu
+      - run: >-
+          uv run --no-sync pytest tests/ --ignore=tests/test_typecheck.py -n 4
+          --cov=bearshape --cov-branch --cov-report=term-missing:skip-covered
+          --cov-fail-under=90
+
+  checkers:
+    name: Four checkers (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v7
+        with:
+          version: "0.11.17"
+          python-version: ${{ matrix.python }}
+          enable-cache: true
+      - run: uv sync --locked --no-default-groups --group optional --group static --group test
+      - run: uv run --no-sync python tools/validate_runtime.py type
+      - run: uv run --no-sync pytest tests/test_typecheck.py -v
+
+  compatibility:
+    name: Compatibility (${{ matrix.environment }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment:
+          - py310-bt023rc0-numpy22
+          - py310-bt023rc0-jax05
+          - py310-bt023rc0-torch26
+          - py310-bt023rc0-optree014
+          - py313-bt023rc0-numpy24
+          - py313-bt023rc0-jax09
+          - py313-bt023rc0-torch210
+          - py313-bt023rc0-optree019
+          - py313-bt023rc0-type-pyright1408
+          - py313-bt023rc0-type-mypy119
+          - py313-bt023rc0-type-ty
+          - py313-bt023rc0-type-pyrefly
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v7
+        with:
+          version: "0.11.17"
+          enable-cache: true
+      - run: uv run --locked --only-group test tox run -e "${{ matrix.environment }}"
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v7
+        with:
+          version: "0.11.17"
+      - run: uv run --locked --only-group docs zensical build --clean
+
+  distributions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v7
+        with:
+          version: "0.11.17"
+      - run: uv build --sdist
+      - run: uv build dist/*.tar.gz --wheel
+      - run: uv run --locked --only-group dev python tools/check_distribution.py dist/*.whl dist/*.tar.gz
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: candidate-distributions
+          path: dist/
+          if-no-files-found: error
+
+  minimal:
+    name: Minimal wheel (Python ${{ matrix.python }})
+    needs: distributions
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.14"]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v7
+        with:
+          version: "0.11.17"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: candidate-distributions
+          path: dist/
+      - run: uv venv --python "${{ matrix.python }}" .minimal
+      - run: uv pip install --python .minimal/bin/python dist/*.whl "beartype==0.23.0rc0"
+      - run: .minimal/bin/python -I tools/smoke_minimal.py
+
+  required:
+    name: Required validation
+    if: always()
+    needs:
+      [quality, runtime, checkers, compatibility, docs, distributions, minimal]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every validation job to succeed
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          results = json.loads(os.environ["RESULTS"])
+          failed = {name: job["result"] for name, job in results.items() if job["result"] != "success"}
+          if failed:
+              raise SystemExit(f"Required validation did not succeed: {failed}")
+          print("All required validation jobs succeeded")
+          PY

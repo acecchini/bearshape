@@ -30,6 +30,7 @@ env_list = [
 [env_run_base]
 runner = "uv-venv-runner"
 description = "{env_name}"
+set_env = { UV_TORCH_BACKEND = "cpu" }
 deps = [
   "pytest>=9.0.2",
   "pytest-xdist>=3.5.0",
@@ -90,8 +91,7 @@ deps = [
 commands = [["pytest", "tests/", "-n", "auto", { replace = "posargs", default = [], extend = true }]]
 commands_pre = [
   ["python", "tools/validate_tox_env.py", "{env_name}"],
-  ["python", "-c", "import beartype; print('beartype', beartype.__version__); assert beartype.__version__ == '0.23.0rc0'"],
-  { replace = "if", condition = "factor.cpu", then = [["python", "-c", "import numpy, jax, torch, optree; print([(m.__name__, m.__version__) for m in (numpy, jax, torch, optree)])"]], else = [], extend = true },
+  ["python", "tools/validate_runtime.py", "{env_name}"],
 ]
 
 # ---------------------------------------------------------------------------
@@ -101,7 +101,7 @@ commands_pre = [
 [env.dev]
 runner = "uv-venv-lock-runner"
 dependency_groups = ["dev", "optional", "static", "test"]
-commands_pre = []
+commands_pre = [["python", "tools/validate_runtime.py", "dev"]]
 commands = [
   [
     "pytest",

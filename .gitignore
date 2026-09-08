@@ -16,4 +16,5 @@ wheels/
 !.claude/commands/
 .vscode/
 .coverage
+.coverage.*
 site/

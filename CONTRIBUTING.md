@@ -77,3 +77,18 @@ metadata, inline typing information, matching package contents, and downstream
 test inputs. It prints artifact hashes for release evidence. The source archive
 includes the tests, lockfile and configuration needed to run `uv sync --locked`
 and `uv run --locked pytest`. CuPy still requires a separate CUDA environment.
+
+## Candidate validation
+
+CI and nightly use `.github/workflows/validate.yml`. Current locked CPU backends
+run on Python 3.10–3.14 on Linux, with endpoint jobs on macOS and Windows.
+Four-checker consumer tests run on every supported Python on Linux. Separate tox
+jobs exercise backend and checker floors with exact beartype 0.23.0rc0.
+`tools/validate_runtime.py` fails if an expected backend is absent or Torch is a
+CUDA/ROCm build in a CPU lane. Optional local skips do not establish support.
+
+Use `uv run --locked prek run -a` for the normal hooks and
+`uv run --locked prek run actionlint -a --stage manual` for workflow checks.
+Pre-push checks use the locked four-checker harness and runtime suite. The
+required CI gate accepts only successful completion of every required job. CuPy
+GPU validation remains a separate hardware-backed requirement.

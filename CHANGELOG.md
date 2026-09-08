@@ -8,6 +8,9 @@ and this project follows
 
 ## [Unreleased]
 
+- Share candidate validation across PRs, pushes and nightly runs, with explicit
+    CPU backends, four checkers, complete hooks and a required final gate.
+
 - Accept ordinary convertible inputs in static Like annotations: NumPy numeric
     casting families and JAX/Torch scalars, arrays and nested sequences.
     Preserve native result types after explicit conversion.
