@@ -122,6 +122,18 @@ The `Like` family is intentionally backend-aware:
 - `bearshape.torch` slow-path conversion uses `torch.as_tensor`
 - `bearshape.cupy` slow-path conversion uses `cupy.asarray`
 
+Only native backend arrays use the default metadata fast path. Foreign arrays,
+including NumPy arrays passed to JAX, Torch, or CuPy, must pass the target
+converter. A failed backend conversion is never rescued by a NumPy fallback. For
+example, Torch Like rejects negative-stride and non-native-endian NumPy arrays
+because `torch.as_tensor` rejects those layouts.
+
+Validation checks convertibility at that moment and may allocate an array. It
+does not replace the original function argument. Same-kind casting does not
+promise lossless conversion. Custom factory authors supplying `trusted_types`
+assert that those types can bypass their converter; use an empty tuple to force
+conversion for every input.
+
 Static type checkers only see the backend array type, not the broader runtime
 acceptance of scalars and nested sequences.
 

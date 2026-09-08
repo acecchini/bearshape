@@ -417,13 +417,13 @@ class _ArrayLikeChecker:
     if shape is not None and getattr(obj, "dtype", None) is not None:
       trusted = self._trusted_types
       if (trusted is not None and isinstance(obj, trusted)) or (
-        trusted is None and _is_trusted_array(obj)
+        trusted is None and self._asarray is None and _is_trusted_array(obj)
       ):
         return self._check(obj, tuple(shape), memo, scope)
 
     # Slow path: convert scalar / sequence / protocol object to array.
-    # Try the backend-specific converter first (jnp.asarray, torch.as_tensor),
-    # then fall back to np.asarray for scalars and nested sequences.
+    # Use the selected backend converter; a different backend cannot establish
+    # that this input satisfies the selected conversion contract.
     arr, failure = self._convert(obj)
     if arr is None:
       return failure
@@ -433,27 +433,19 @@ class _ArrayLikeChecker:
 
   def _convert(self, obj: object) -> tuple[object | None, ValidationFailure | None]:
     """Convert *obj* to an array with ``.shape`` and ``.dtype``."""
-    errors: list[str] = []
-
-    if self._asarray is not None:
-      try:
-        return self._asarray(obj), None
-      except Exception as e:  # noqa: BLE001
-        if str(e):
-          errors.append(str(e))
-
     try:
-      import numpy as np
+      converter = self._asarray
+      if converter is None:
+        import numpy as np
 
-      return np.asarray(obj), None
-    except Exception as e:  # noqa: BLE001
-      if str(e):
-        errors.append(str(e))
-
-    detail = "; ".join(dict.fromkeys(errors))
-    if detail:
-      return None, ValidationFailure(f"could not convert value to array: {detail}")
-    return None, ValidationFailure("could not convert value to array")
+        converter = np.asarray
+      return converter(obj), None
+    except Exception as exc:  # noqa: BLE001
+      # User-defined conversion protocols can raise arbitrary exceptions.
+      detail = str(exc)
+      if detail:
+        return None, ValidationFailure(f"could not convert value to array: {detail}")
+      return None, ValidationFailure("could not convert value to array")
 
   def _check(
     self, obj: object, shape: tuple[int, ...], memo: ShapeMemo, scope: dict[str, object]

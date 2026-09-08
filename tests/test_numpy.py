@@ -2278,3 +2278,17 @@ class TestStringLike:
 
   def test_rejects_bytes(self) -> None:
     assert not is_bearable(b"hello", StringLike)
+
+
+class TestCustomConversionContract:
+  @pytest.mark.parametrize("value", [[1.0, 2.0], np.ones(2, dtype=np.float32)])
+  def test_custom_converter_failure_has_no_numpy_fallback(self, value: object) -> None:
+    from bearshape._array_types import make_array_like_type
+    from bearshape._dtypes import FLOAT32
+
+    def reject(obj: object) -> object:
+      msg = "custom conversion rejected"
+      raise ValueError(msg)
+
+    hint = make_array_like_type(FLOAT32, asarray=reject)[N]
+    assert not is_bearable(value, hint)

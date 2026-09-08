@@ -39,10 +39,7 @@ else:
     "type[object]", require_attr("jax", "Array", install_hint=_JAX_INSTALL_HINT)
   )
 
-try:
-  import numpy as np
-except ModuleNotFoundError as exc:
-  raise ModuleNotFoundError(_NUMPY_INSTALL_HINT) from exc
+require_module("numpy", install_hint=_NUMPY_INSTALL_HINT)
 
 from ._array_types import make_array_like_type as _make_array_like_type
 from ._array_types import make_array_type
@@ -203,10 +200,9 @@ def _jax_asarray(obj: object) -> tp.Any:
   return jnp.asarray(obj)
 
 
-# Backend-scoped fast-path trust: only np.ndarray and jax.Array skip
-# conversion.  Foreign-backend arrays (e.g. torch.Tensor) fall through
-# to the slow path where jnp.asarray() verifies actual convertibility.
-_JAX_TRUSTED: tuple[type, ...] = (np.ndarray, JaxArray)
+# Only native JAX arrays bypass conversion. NumPy and other foreign arrays
+# must satisfy this backend's conversion rules.
+_JAX_TRUSTED: tuple[type, ...] = (JaxArray,)
 
 
 def make_array_like_type(
@@ -221,8 +217,8 @@ def make_array_like_type(
 
   Defaults to ``jnp.asarray`` for the slow path, so objects implementing
   ``__jax_array__`` are accepted in addition to standard array-likes.
-  The fast path only trusts ``np.ndarray`` and ``jax.Array``; other
-  backend arrays (e.g. ``torch.Tensor``) go through the slow path.
+  The fast path only trusts ``jax.Array``. NumPy and other foreign arrays
+  go through the converter, including its dtype restrictions.
   """
   return _make_array_like_type(
     dtype_spec, casting=casting, name=name, asarray=asarray, trusted_types=trusted_types

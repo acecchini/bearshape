@@ -27,6 +27,10 @@ and this project follows
     failed arrays through cached annotation state. Diagnostic checks preserve
     the current call's dimension bindings and restore temporary changes.
 
+- Backend `Like` checks now reject inputs that their selected converter cannot
+    handle, including unsupported NumPy layouts, byte order, dtypes, and foreign
+    protocols. Foreign arrays no longer bypass JAX/Torch/CuPy conversion, and a
+    failed backend converter is no longer masked by a NumPy fallback.
 
 - Structured dtype normalization now exposes its NumPy input type to all
     supported checkers while retaining NumPy's runtime validation.

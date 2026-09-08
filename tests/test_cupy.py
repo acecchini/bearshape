@@ -328,13 +328,13 @@ class TestCuPyLikeEdgeCases:
 
 
 class TestCuPyLikeTrustScope:
-  """CuPy Like fast path trusts only np.ndarray and cupy.ndarray."""
+  """CuPy Like fast path trusts only cupy.ndarray."""
 
   def test_cupy_ndarray_is_fast_path_trusted(self) -> None:
     from bearshape.cupy import _CUPY_TRUSTED
 
     assert cp.ndarray in _CUPY_TRUSTED
-    assert np.ndarray in _CUPY_TRUSTED
+    assert np.ndarray not in _CUPY_TRUSTED
 
 
 # =====================================================================
