@@ -37,17 +37,7 @@ BACKENDS = {
   "optree018",
   "optree019",
 }
-CHECKERS = {
-  "pyright1392",
-  "pyright1400",
-  "pyright1408",
-  "mypy115",
-  "mypy116",
-  "mypy117",
-  "mypy118",
-  "mypy119",
-  "ty",
-}
+CHECKERS = {"pyright1408", "mypy119", "ty", "pyrefly"}
 SPECIAL = {"dev"}
 
 

@@ -34,9 +34,7 @@ jobs:
       - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57
         with:
           enable-cache: true
-      - run: uv run --locked pyright src/ tests/typing/
-      - run: uv run --locked mypy src/
-      - run: uv run --locked ty check src/
+      - run: uv run --locked pytest tests/test_typecheck.py -v
 
   typecheck-compat:
     runs-on: ubuntu-latest
@@ -102,6 +100,7 @@ jobs:
           - { env: py313-bt023rc0-type-pyright1408 }
           - { env: py313-bt023rc0-type-mypy119 }
           - { env: py313-bt023rc0-type-ty }
+          - { env: py313-bt023rc0-type-pyrefly }
     name: ${{ matrix.env }}
     steps:
       - uses: actions/checkout@v6
@@ -151,6 +150,7 @@ jobs:
           - { env: py313-bt023rc0-type-pyright1408 }
           - { env: py313-bt023rc0-type-mypy119 }
           - { env: py313-bt023rc0-type-ty }
+          - { env: py313-bt023rc0-type-pyrefly }
     name: ${{ matrix.env }}
     steps:
       - uses: actions/checkout@v6

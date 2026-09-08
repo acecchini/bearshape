@@ -8,6 +8,12 @@ and this project follows
 
 ## [Unreleased]
 
+- Verify real consumer calls, inferred types, and expected errors with pyright,
+    mypy, ty, and pyrefly; require selected tools instead of silently skipping
+    them.
+- Update the locked checker versions and make `check(conf=None)` match its
+    public overloads.
+
 ### Added
 
 - A GitHub Actions workflow for trusted publishing to PyPI, with automatic

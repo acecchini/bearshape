@@ -19,7 +19,7 @@ env_list = [
     ["py313"],
     ["bt023rc0"],
     ["type"],
-    ["pyright1408", "mypy119", "ty"],
+    ["pyright1408", "mypy119", "ty", "pyrefly"],
   ] },
 ]
 
@@ -81,17 +81,11 @@ deps = [
   { replace = "if", condition = "factor.type or factor.cpu", then = "torch>=2.6" },
   { replace = "if", condition = "factor.type or factor.cpu", then = "optree>=0.14" },
 
-  # --- typechecker versions ---
-  # env_list uses pyright1408, mypy119, ty; older versions available for manual testing
-  { replace = "if", condition = "factor.pyright1392", then = "pyright==1.1.392" },
-  { replace = "if", condition = "factor.pyright1400", then = "pyright==1.1.400" },
+  # Checker floors; the locked dev environment exercises current versions.
   { replace = "if", condition = "factor.pyright1408", then = "pyright==1.1.408" },
-  { replace = "if", condition = "factor.mypy115", then = "mypy>=1.15,<1.16" },
-  { replace = "if", condition = "factor.mypy116", then = "mypy>=1.16,<1.17" },
-  { replace = "if", condition = "factor.mypy117", then = "mypy>=1.17,<1.18" },
-  { replace = "if", condition = "factor.mypy118", then = "mypy>=1.18,<1.19" },
   { replace = "if", condition = "factor.mypy119", then = "mypy>=1.19,<1.20" },
-  { replace = "if", condition = "factor.ty", then = "ty" },
+  { replace = "if", condition = "factor.ty", then = "ty==0.0.79" },
+  { replace = "if", condition = "factor.pyrefly", then = "pyrefly==1.2.0" },
 ]
 commands = [["pytest", "tests/", "-n", "auto", { replace = "posargs", default = [], extend = true }]]
 commands_pre = [
