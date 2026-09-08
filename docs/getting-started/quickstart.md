@@ -90,6 +90,7 @@ beartype wrapper stack:
 
 ```python
 import bearshape
+import numpy as np
 from beartype import beartype
 from bearshape import Value
 from bearshape.numpy import F32
@@ -97,7 +98,7 @@ from bearshape.numpy import F32
 @bearshape.check
 @beartype
 async def make_batch(size: int) -> F32[Value("size")]:  # type: ignore[valid-type]
-  ...
+  return np.ones(size, dtype=np.float32)
 ```
 
 That helper matters most when:

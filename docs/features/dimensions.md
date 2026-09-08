@@ -30,10 +30,17 @@ def forward(x: F32[N, C, H, W]) -> F32[N, C, H, W]:
 
 Pre-defined symbols:
 
-| Symbol | Typical use | | ------ | ------------------- | | `N` | Batch size,
-count | | `B` | Batch | | `C` | Channels | | `D` | Embedding dimension | | `K` |
-Number of heads | | `H` | Height | | `W` | Width | | `L` | Sequence length | |
-`P` | Points / parameters |
+| Symbol | Typical use         |
+| ------ | ------------------- |
+| `N`    | Batch size, count   |
+| `B`    | Batch               |
+| `C`    | Channels            |
+| `D`    | Embedding dimension |
+| `K`    | Number of heads     |
+| `H`    | Height              |
+| `W`    | Width               |
+| `L`    | Sequence length     |
+| `P`    | Points / parameters |
 
 ## Fixed dimensions
 
@@ -132,13 +139,13 @@ from bearshape.numpy import F32
 
 @beartype
 def dot(x: F32[N], y: F32[N]) -> F32[Scalar]:
-  return np.dot(x, y)
+  return np.asarray(np.dot(x, y), dtype=np.float32)
 ```
 
-!!! warning `Scalar` must be the only shape token. Mixed forms like
+!!! warning
 
-`F32[N, Scalar]` or `F32[Scalar, ...]` raise `TypeError` at hint construction
-time.
+    `Scalar` must be the only shape token. Mixed forms like `F32[N, Scalar]` or
+    `F32[Scalar, ...]` raise `TypeError` at hint construction time.
 
 ## Variadic dimensions
 
@@ -194,9 +201,9 @@ def last_dim(x: F32[..., C]) -> F32[..., C]:
   return x
 ```
 
-!!! note "One variadic per spec" Only one variadic dimension is allowed per
+!!! note "One variadic per spec"
 
-shape specification.
+    Only one variadic dimension is allowed per shape specification.
 
 ## Broadcastable dimensions
 
@@ -263,8 +270,8 @@ import typing as tp
 from bearshape import Dimension
 
 if tp.TYPE_CHECKING:
-  type Vocab = int
-  type Embed = int
+  Vocab: tp.TypeAlias = int
+  Embed: tp.TypeAlias = int
 else:
   Vocab = Dimension("Vocab")
   Embed = Dimension("Embed")
@@ -274,15 +281,18 @@ Unary operators work on custom dimensions too: `~Vocab`, `+Vocab`, `~+Vocab`.
 
 ## Summary table
 
-| Syntax | Meaning | Example | Behavior | | ---------- | ----------------------
-| -------- | ------------------------ | | _(none)_ | Named | `N` | Bind &
-enforce | | `int` | Fixed | `3` | Exact match | | `~` | Variadic | `~B` | Zero
-or more dims | | `+` | Broadcastable | `+N` | Size 1 always OK | | `~+` |
-Broadcastable variadic | `~+B` | Variadic + broadcast | | `Scalar` | Scalar |
-`Scalar` | Zero dimensions | | `__` | Anonymous | `__` | Match any, no binding |
-| `~__` | Anonymous variadic | `~__` | Zero or more, no binding | | `...` |
-Ellipsis (alias) | `...` | Same as `~__` | | arithmetic | Symbolic | `N + 1` |
-Expression |
+| Syntax     | Meaning                | Example  | Behavior                 |
+| ---------- | ---------------------- | -------- | ------------------------ |
+| _(none)_   | Named                  | `N`      | Bind & enforce           |
+| `int`      | Fixed                  | `3`      | Exact match              |
+| `~`        | Variadic               | `~B`     | Zero or more dims        |
+| `+`        | Broadcastable          | `+N`     | Size 1 always OK         |
+| `~+`       | Broadcastable variadic | `~+B`    | Variadic + broadcast     |
+| `Scalar`   | Scalar                 | `Scalar` | Zero dimensions          |
+| `__`       | Anonymous              | `__`     | Match any, no binding    |
+| `~__`      | Anonymous variadic     | `~__`    | Zero or more, no binding |
+| `...`      | Ellipsis (alias)       | `...`    | Same as `~__`            |
+| arithmetic | Symbolic               | `N + 1`  | Expression               |
 
 ## Static typing notes
 

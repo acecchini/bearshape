@@ -161,13 +161,15 @@ Runtime-only add-ons:
 
 ## Summary
 
-| Pattern | Meaning | | --------------------------- |
---------------------------------------- | | `Tree[LeafType]` | Leaf checking
-only | | `Tree[LeafType, T]` | Full structure binding | |
-`Tree[LeafType, T, ...]` | Top-level only | | `Tree[LeafType, ..., T]` |
-Bottom-level only | | `Tree[LeafType, T, S]` | T = top (one level), S = full
-remaining | | `Tree[LeafType, T, S, ...]` | T = top, S = next, inner unchecked |
-| `Tree[LeafType, ..., T, S]` | S = bottom, T = second-from-bottom |
+| Pattern                     | Meaning                                 |
+| --------------------------- | --------------------------------------- |
+| `Tree[LeafType]`            | Leaf checking only                      |
+| `Tree[LeafType, T]`         | Full structure binding                  |
+| `Tree[LeafType, T, ...]`    | Top-level only                          |
+| `Tree[LeafType, ..., T]`    | Bottom-level only                       |
+| `Tree[LeafType, T, S]`      | T = top (one level), S = full remaining |
+| `Tree[LeafType, T, S, ...]` | T = top, S = next, inner unchecked      |
+| `Tree[LeafType, ..., T, S]` | S = bottom, T = second-from-bottom      |
 
 ## Static container support and registration
 

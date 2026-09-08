@@ -56,9 +56,10 @@ Install `bearshape` and your backend packages explicitly.
     pip install bearshape numpy optree  # or install jax and use bearshape.jax.Tree
     ```
 
-!!! note `bearshape.jax`, `bearshape.torch`, and `bearshape.cupy` require `numpy`
+!!! note
 
-alongside the backend. The lightweight root import `import bearshape` does not.
+    `bearshape.jax`, `bearshape.torch`, and `bearshape.cupy` require `numpy`
+    alongside the backend. The lightweight root import `import bearshape` does not.
 
 ## Install with uv
 
@@ -68,12 +69,13 @@ uv add bearshape
 
 ## Optional dependencies
 
-| Package | Purpose | | -------- |
------------------------------------------------------------- | | `numpy` | NumPy
-array aliases, `ScalarLike`, and backend dtype helpers | | `torch` | PyTorch
-tensor aliases and Torch `Like` types | | `jax` | JAX array aliases, JAX `Like`
-types, and JAX `Tree` | | `cupy` | CuPy array aliases and CuPy `Like` types | |
-`optree` | Explicit OpTree backend via `bearshape.optree.Tree` |
+| Package  | Purpose                                                      |
+| -------- | ------------------------------------------------------------ |
+| `numpy`  | NumPy array aliases, `ScalarLike`, and backend dtype helpers |
+| `torch`  | PyTorch tensor aliases and Torch `Like` types                |
+| `jax`    | JAX array aliases, JAX `Like` types, and JAX `Tree`          |
+| `cupy`   | CuPy array aliases and CuPy `Like` types                     |
+| `optree` | Explicit OpTree backend via `bearshape.optree.Tree`          |
 
 ## Import boundaries
 

@@ -11,8 +11,7 @@ repository runs all four against the typing fixtures in `tests/typing/` via
 At a high level:
 
 - under `TYPE_CHECKING`, backend array aliases resolve to real static array
-    types such as `numpy.typing.NDArray`, `jax.Array`, `torch.Tensor`, or
-    `cupy.ndarray`
+    types such as `numpy.typing.NDArray`, `jax.Array`, or `torch.Tensor`
 - pre-defined dimensions such as `N`, `C`, and `Scalar` are represented in a
     checker-friendly way
 - some syntax is still inherently runtime-only and needs either targeted ignores
@@ -40,6 +39,7 @@ def keep_last(x: F32[__, C]) -> F32[__, C]:
   return x
 
 @check
+@beartype
 async def async_identity(x: F32[N]) -> F32[N]:
   return x
 ```
@@ -58,15 +58,14 @@ checkers model directly:
 
 <!-- markdownlint-disable MD013 -->
 
-| Pattern | Example | Typical workaround | | -------------------------- |
--------------------- | ----------------------------------------------- | | Fixed
-integer literal dims | `F32[N, 3, H, W]` | targeted `# type: ignore` or
-checker-only alias | | Arithmetic dims | `F32[N + 2]` | targeted
-`# type: ignore` or checker-only alias | | `Value(...)` dims |
-`F32[Value("size")]` | targeted `# type: ignore` | | Variadic dims |
-`F32[~B, C]` | targeted `# type: ignore` or checker-only alias | | Broadcastable
-dims | `F32[+N, C]` | targeted `# type: ignore` or checker-only alias | | Tree
-structure args | `Tree[F32[N], T]` | targeted `# type: ignore` |
+| Pattern                    | Example              | Typical workaround                              |
+| -------------------------- | -------------------- | ----------------------------------------------- |
+| Fixed integer literal dims | `F32[N, 3, H, W]`    | targeted `# type: ignore` or checker-only alias |
+| Arithmetic dims            | `F32[N + 2]`         | targeted `# type: ignore` or checker-only alias |
+| `Value(...)` dims          | `F32[Value("size")]` | targeted `# type: ignore`                       |
+| Variadic dims              | `F32[~B, C]`         | targeted `# type: ignore` or checker-only alias |
+| Broadcastable dims         | `F32[+N, C]`         | targeted `# type: ignore` or checker-only alias |
+| Tree structure args        | `Tree[F32[N], T]`    | targeted `# type: ignore`                       |
 
 <!-- markdownlint-enable MD013 -->
 
@@ -165,8 +164,8 @@ from bearshape import Dimension, N
 from bearshape.numpy import F32, I64
 
 if tp.TYPE_CHECKING:
-  type Vocab = int
-  type Embed = int
+  Vocab: tp.TypeAlias = int
+  Embed: tp.TypeAlias = int
 else:
   Vocab = Dimension("Vocab")
   Embed = Dimension("Embed")
@@ -230,3 +229,12 @@ value/device-dependent conversion constraints.
 Backend ScalarLike aliases describe Python and NumPy scalar values. For a
 backend-native scalar array, use a shaped alias with Scalar, such as
 `F32Like[Scalar]`.
+
+## CuPy typing boundary
+
+CuPy runtime validation uses real `cupy.ndarray` instances. Its current 14.2.0
+wheel does not provide ndarray stubs: native creation and reshape results are
+Any or Unknown in the four tested checkers. bearshape's CuPy static model is a
+limited shape/dtype protocol. It does not provide the native-method and inferred
+result guarantees tested for NumPy, JAX and Torch. Runtime GPU tests and static
+annotation acceptance are separate evidence.

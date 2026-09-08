@@ -67,9 +67,9 @@ bearshape_this_package(conf=BeartypeConf(
 
 <!-- markdownlint-disable MD013 -->
 
-| Approach | Best for | | --------------------------------------- |
----------------------------------------- | | `@beartype` per function |
-Fine-grained control, specific functions | | `beartype.claw` /
-`bearshape_this_package` | Entire packages, library-wide checking |
+| Approach                                   | Best for                                 |
+| ------------------------------------------ | ---------------------------------------- |
+| `@beartype` per function                   | Fine-grained control, specific functions |
+| `beartype.claw` / `bearshape_this_package` | Entire packages, library-wide checking   |
 
 <!-- markdownlint-enable MD013 -->

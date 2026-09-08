@@ -83,11 +83,12 @@ clamp_pixel(256)  # Raises
 clamp_pixel(-1)  # Raises
 ```
 
-!!! warning "Boolean exclusion" Numeric scalar aliases (`I8ScalarLike`,
+!!! warning "Boolean exclusion"
 
-`F32ScalarLike`, `NumScalarLike`, etc.) reject `bool` and `np.bool_` values.
-Python `bool` is a subclass of `int`, but bearshape treats booleans as
-non-numeric. Use `BoolScalarLike` for boolean scalars.
+    Numeric scalar aliases (`I8ScalarLike`, `F32ScalarLike`, `NumScalarLike`, etc.)
+    reject `bool` and `np.bool_` values. Python `bool` is a subclass of `int`, but
+    bearshape treats booleans as non-numeric. Use `BoolScalarLike` for boolean
+    scalars.
 
 Available families include:
 
@@ -107,10 +108,11 @@ from bearshape.torch import U8ScalarLike
 from bearshape.cupy import U8ScalarLike
 ```
 
-!!! note Backend-native 0-D arrays such as `jnp.array(1.0)` or
+!!! note
 
-`torch.tensor(1.0)` are not `ScalarLike`. Use a `Like` alias with `Scalar`, for
-example `F32Like[Scalar]`.
+    Backend-native 0-D arrays such as `jnp.array(1.0)` or `torch.tensor(1.0)` are
+    not `ScalarLike`. Use a `Like` alias with `Scalar`, for example
+    `F32Like[Scalar]`.
 
 ## Backend-specific conversion behavior
 
@@ -134,8 +136,9 @@ promise lossless conversion. Custom factory authors supplying `trusted_types`
 assert that those types can bypass their converter; use an empty tuple to force
 conversion for every input.
 
-Static type checkers only see the backend array type, not the broader runtime
-acceptance of scalars and nested sequences.
+Static NumPy/JAX/Torch Like aliases include supported scalar and nested-sequence
+input families. Convert explicitly inside the function to get a native backend
+result. See [Static Typing](static-typing.md) for tested calls and limitations.
 
 ## Custom `ScalarLike` types
 
@@ -182,12 +185,13 @@ surface.
 Both `make_array_like_type` and `make_scalar_like_type` use NumPy casting
 semantics:
 
-| Casting | Meaning | Example for target `float32` | | ------------- |
---------------------- | ---------------------------- | | `"no"` | Exact dtype
-only | only `float32` | | `"equiv"` | Same kind and size | `float32` but not
-`float64` | | `"safe"` | No information loss | `int16` yes, `float64` no | |
-`"same_kind"` | Same-kind conversion | `int32` yes, `complex64` no | |
-`"unsafe"` | Any cast NumPy allows | very permissive |
+| Casting       | Meaning               | Example for target `float32` |
+| ------------- | --------------------- | ---------------------------- |
+| `"no"`        | Exact dtype only      | only `float32`               |
+| `"equiv"`     | Same kind and size    | `float32` but not `float64`  |
+| `"safe"`      | No information loss   | `int16` yes, `float64` no    |
+| `"same_kind"` | Same-kind conversion  | `int32` yes, `complex64` no  |
+| `"unsafe"`    | Any cast NumPy allows | very permissive              |
 
 ## Default used by built-in `Like` aliases
 

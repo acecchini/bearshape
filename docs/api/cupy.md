@@ -59,7 +59,10 @@ CuPy `Like` aliases use `cupy.asarray` on the slow path, so they can accept:
 - NumPy arrays
 - Python scalars and nested sequences
 
-Static type checkers still see the result as `cupy.ndarray`.
+The static CuPy model is a limited shape/dtype protocol. Current CuPy wheels do
+not provide ndarray stubs, so native creation and method-result inference are
+not established by annotation acceptance. See the
+[typing boundary](../features/static-typing.md#cupy-typing-boundary).
 
 ## `ScalarLike` re-exports
 

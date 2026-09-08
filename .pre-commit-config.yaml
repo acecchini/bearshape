@@ -92,8 +92,11 @@ repos:
           - mkdocs
           - --extensions
           - frontmatter
+          - --extensions
+          - gfm
         additional_dependencies:
           - mdformat-frontmatter==2.0.10
+          - mdformat-gfm==1.0.0
           - mdformat-mkdocs==v5.2.0b2
         priority: 30
 

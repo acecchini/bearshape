@@ -44,11 +44,12 @@ without installed metadata it falls back to a non-empty string such as
 
 <!-- markdownlint-disable MD013 -->
 
-| Name | Meaning | | ------------------------------------------- |
----------------------------------------- | | `N`, `B`, `C`, `D`, `K`, `H`, `W`,
-`L`, `P` | Named dimensions | | `__` | Anonymous single dimension | | `Scalar` |
-Zero-dimensional array shape | | `Value("expr")` | Runtime value-based dimension
-expression |
+| Name                                        | Meaning                                  |
+| ------------------------------------------- | ---------------------------------------- |
+| `N`, `B`, `C`, `D`, `K`, `H`, `W`, `L`, `P` | Named dimensions                         |
+| `__`                                        | Anonymous single dimension               |
+| `Scalar`                                    | Zero-dimensional array shape             |
+| `Value("expr")`                             | Runtime value-based dimension expression |
 
 <!-- markdownlint-enable MD013 -->
 
@@ -58,9 +59,10 @@ Use `Dimension("Name")` to create your own.
 
 <!-- markdownlint-disable MD013 -->
 
-| Name | Meaning | | ------------------- | ---------------------------- | | `T`,
-`S` | Named tree structure symbols | | `Structure("Name")` | Custom tree
-structure symbol |
+| Name                | Meaning                      |
+| ------------------- | ---------------------------- |
+| `T`, `S`            | Named tree structure symbols |
+| `Structure("Name")` | Custom tree structure symbol |
 
 <!-- markdownlint-enable MD013 -->
 

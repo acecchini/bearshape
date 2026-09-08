@@ -42,6 +42,7 @@ normalize(np.ones((4,), dtype=np.float32))  # Raises
 
 ```python
 import bearshape
+import numpy as np
 from beartype import beartype
 from bearshape import Value
 from bearshape.numpy import F32
@@ -49,7 +50,7 @@ from bearshape.numpy import F32
 @bearshape.check
 @beartype
 async def make_batch(size: int) -> F32[Value("size")]:  # type: ignore[valid-type]
-  ...
+  return np.ones(size, dtype=np.float32)
 ```
 
 Use this pattern when:
@@ -67,8 +68,8 @@ from bearshape import Dimension, N
 from bearshape.numpy import F32, I64
 
 if tp.TYPE_CHECKING:
-  type Vocab = int
-  type Embed = int
+  Vocab: tp.TypeAlias = int
+  Embed: tp.TypeAlias = int
 else:
   Vocab = Dimension("Vocab")
   Embed = Dimension("Embed")
@@ -85,11 +86,12 @@ from beartype import beartype
 from bearshape import N, T
 from bearshape.numpy import F32
 from bearshape.optree import Tree
+import optree
 
 @beartype
 def accumulate(params: Tree[F32[N], T],
                grads: Tree[F32[N], T]) -> Tree[F32[N]]:  # type: ignore[valid-type]
-  ...
+  return optree.tree_map(lambda p, g: p + g, params, grads)
 ```
 
 Use leaf-only `Tree[F32[N]]` when you want cleaner static typing. Add structure
@@ -101,12 +103,20 @@ symbols like `T` when you want runtime structure equality too.
 from beartype import beartype
 from bearshape import Scalar
 from bearshape.numpy import F32Like, U8ScalarLike
+import numpy as np
 
 @beartype
 def to_scalar_array(x: F32Like[Scalar]) -> float:
-  ...
+  return float(np.asarray(x, dtype=np.float32))
 
 @beartype
 def clamp_pixel(value: U8ScalarLike) -> int:
   return int(value)
 ```
+
+## Verify the tour locally
+
+Run `uv run --locked python tools/check_notebook.py` to execute all cells in a
+fresh kernel from the selected environment. The executed copy is written under
+`build/`; checked-in output is cleared so it cannot be mistaken for current
+validation. Expected rejection examples assert the relevant beartype exception.

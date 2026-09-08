@@ -58,8 +58,10 @@ What it does **not** change:
 
 ## `@bearshape.check`
 
-`@bearshape.check` provides explicit memo management. Instead of discovering the
-correct beartype frame dynamically, it pushes a memo before the call and pops it
+Bare `@bearshape.check` provides explicit memo management; it does not check
+annotations by itself. Stack it above `@beartype`, or pass `conf=BeartypeConf()`
+to combine memo management and checking. Instead of discovering the correct
+beartype frame dynamically, it pushes a memo before the call and pops it
 afterwards.
 
 ### Usage mode 1: memo only
@@ -123,10 +125,10 @@ Generator functions are intentionally rejected:
 - sync generators raise `TypeError`
 - async generators raise `TypeError`
 
-!!! tip "When you don't need it" If plain `@beartype` is already working in your
+!!! tip "When you don't need it"
 
-codebase, keep it simple. `@bearshape.check` is an explicit escape hatch, not
-the default style.
+    If plain `@beartype` is already working in your codebase, keep it simple.
+    `@bearshape.check` is an explicit escape hatch, not the default style.
 
 ## `check_context`
 
@@ -154,14 +156,15 @@ with bearshape.check_context():
 
 ## Thread and async safety
 
-- frame-based auto-detection uses `threading.local()` for thread isolation
+- automatic dimension state belongs to the active beartype invocation frame
 - the explicit memo stack used by `@bearshape.check` and `check_context()` uses
     `contextvars.ContextVar`
 
-!!! note Child tasks inheriting an active parent context share the same live
+!!! note
 
-memo by reference. For full task isolation, each task should enter its own
-`check_context()`.
+    Child tasks inheriting an active parent context share the same live memo by
+    reference. For full task isolation, each task should enter its own
+    `check_context()`.
 
 ## `from __future__ import annotations`
 

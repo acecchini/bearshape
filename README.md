@@ -1,7 +1,6 @@
 # bearshape
 
 [![Python 3.10-3.14](docs/assets/images/python_versions_badge.svg)](https://www.python.org/)
-![Coverage 91%](https://img.shields.io/badge/coverage-91%25-34D058?style=flat-square&logo=codecov&logoColor=F01F7A&labelColor=1F2937)
 [![Docs](https://img.shields.io/badge/docs-live-526CFE?style=flat-square&logo=readthedocs&logoColor=white&labelColor=1F2937)](https://acecchini.github.io/bearshape/)
 
 Runtime shape and dtype checking for NumPy, JAX, PyTorch, CuPy, and
@@ -47,7 +46,8 @@ pip install bearshape numpy optree
 - backend-aware `Like[...]` conversion checks
 - scalar-like values and constrained runtime `Value(...)` dimensions
 - tree leaf and structure annotations through JAX or OpTree
-- annotation syntax exercised by pyright, mypy, and ty fixtures
+- annotation syntax exercised by pyright, mypy, ty, and pyrefly consumer
+    fixtures
 
 ## Public Surface
 
@@ -68,16 +68,12 @@ their own runtime dependencies.
 ## Development
 
 ```bash
-uv sync
-uv run prek run -a
-uv run pytest -n auto tests/
-uv run pytest -n auto tests/test_typecheck.py
-uv run pyright src tests/typing
-uv run mypy src tests/typing
-uv run ty check src tests/typing
+uv sync --locked
+uv run --locked prek run -a
+uv run --locked pytest tests/ -n auto
 ```
 
-CuPy runtime tests require a CUDA-capable environment and are deferred on
-CPU-only machines.
-
-See the documentation site for the full user guide and API reference.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for checker, backend and artifact
+validation. CuPy runtime tests require CUDA hardware. The
+[static typing guide](https://acecchini.github.io/bearshape/features/static-typing/)
+distinguishes checker-supported annotations from runtime-only shape expressions.

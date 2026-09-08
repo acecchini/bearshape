@@ -49,7 +49,7 @@ nav = [
 variant = "classic"
 custom_dir = "docs/overrides"
 language = "en"
-favicon = "assets/favicon.png"
+favicon = "assets/logo.svg"
 logo = "assets/logo.svg"
 features = [
   "navigation.instant",
