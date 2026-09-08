@@ -8,9 +8,14 @@ and this project follows
 
 ## [Unreleased]
 
+- Replace nominal static Tree stubs with a shared model for ordinary typed
+    leaves, lists, tuples and dictionaries, preserving expected leaf errors.
+    Document the concrete-type alias pattern for custom JAX nodes.
+
 - Verify real consumer calls, inferred types, and expected errors with pyright,
     mypy, ty, and pyrefly; require selected tools instead of silently skipping
     them.
+
 - Update the locked checker versions and make `check(conf=None)` match its
     public overloads.
 

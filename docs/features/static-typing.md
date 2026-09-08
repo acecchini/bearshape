@@ -181,23 +181,38 @@ keep in their toolbox first.
 
 ## Tree annotations
 
-`Tree` has a split contract:
+`Tree[Leaf]` supports ordinary leaves, lists, tuples (including named tuples),
+dictionaries and None. Existing typed containers such as `list[int]` and
+`dict[str, list[int]]` can be passed to `Tree[int]`. Wrong leaves, including
+strings hidden inside a numeric tree, are checked by the consumer fixtures. An
+empty container or None has no leaves for the default backend traversal.
 
-- `Tree[F32[N, C]]` is checker-friendly and tested
-- `Tree[F32[N], T]`, `Tree[F32[N], T, ...]`, and similar structure-bearing forms
-    are runtime-only and need a targeted ignore
+The static model describes container behavior; it cannot infer backend node
+registration or tree structure. The selected backend must actually recognize a
+custom container. For a registered JAX node, keep its concrete static type with
+the existing conditional-alias pattern:
 
 ```python
-from bearshape import N, T
+from typing import TYPE_CHECKING, TypeAlias
+
+from bearshape import N
+from bearshape.jax import Tree
 from bearshape.numpy import F32
-from bearshape.optree import Tree
 
-def leaves_only(x: Tree[F32[N]]) -> Tree[F32[N]]:
-  return x
-
-def structure_checked(x: Tree[F32[N], T]) -> Tree[F32[N]]:  # type: ignore[valid-type]
-  return x
+# Batch is your concrete class, registered with jax.tree_util.
+if TYPE_CHECKING:
+  BatchTree: TypeAlias = Batch
+else:
+  BatchTree = Tree[F32[N]]
 ```
+
+The executable fixture `tests/typing/check_tree_consumers.py` contains the
+complete registered class and a decorated consumer. Tree structure arguments
+such as `Tree[F32[N], T]` remain runtime-only; use a checker-only leaf alias as
+shown above when you need a named structure constraint.
+
+The optree backend uses its default registry. A class registered only in an
+optree namespace is not automatically recognized by this Tree annotation.
 
 ## Backend notes
 

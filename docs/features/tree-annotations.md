@@ -168,3 +168,18 @@ only | | `Tree[LeafType, T]` | Full structure binding | |
 Bottom-level only | | `Tree[LeafType, T, S]` | T = top (one level), S = full
 remaining | | `Tree[LeafType, T, S, ...]` | T = top, S = next, inner unchecked |
 | `Tree[LeafType, ..., T, S]` | S = bottom, T = second-from-bottom |
+
+## Static container support and registration
+
+`Tree[Leaf]` models ordinary leaves, lists, tuples (including named tuples),
+dictionaries and None. Typed variables such as `list[int]` and
+`dict[str, list[int]]` are valid inputs to `Tree[int]`; wrong nested leaves
+remain checker errors. Validation uses the backend registry and does not mutate
+the input containers.
+
+Static structural compatibility cannot establish that a custom class is
+registered. For custom JAX nodes, use the concrete node type in a TYPE_CHECKING
+alias and the Tree annotation at runtime; the
+[static typing guide](static-typing.md#tree-annotations) describes this existing
+pattern. The optree backend uses the default registry, so a class registered
+only in an optree namespace is not automatically traversed by this annotation.

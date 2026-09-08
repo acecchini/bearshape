@@ -12,30 +12,30 @@ Tree[int] should accept integer leaves and existing typed lists, tuples and dict
 
 
 - [x] (2026-09-08) Created feature worktree and tested recursive-container/protocol prototypes with all four checkers.
-- [ ] Open draft PR and reproduce the nominal stub's real-call failures.
-- [ ] Implement the smallest proven shared static model.
-- [ ] Verify nested valid/invalid containers, inference, strings and custom-node boundaries.
-- [ ] Run all checker/Python/floor and focused runtime checks.
-- [ ] Update docs, changelog and evidence with explicit support limits.
+- [x] (2026-09-08) Opened PR #20 and reproduced real-call failures with the old nominal stubs.
+- [x] (2026-09-08) Replaced both nominal stubs with one shared static model under TYPE_CHECKING.
+- [x] (2026-09-08) Verified ordinary pretyped containers, named tuples, arrays, empty inputs, strings, fourteen negative sites per checker, and the concrete custom JAX node alias.
+- [x] (2026-09-08) All four engines pass on Python 3.10–3.14 and floor lanes. Exact rc0 endpoints each pass 108 tree tests. Locked dev tox: 1,044 passed, five expected skips, 91.24% coverage.
+- [x] (2026-09-08) Updated docs/changelog and recorded default-registry limits. Hooks pass.
 
 ## Surprises & Discoveries
 
 
 A recursive alias using list/dict directly rejects already-typed containers because their element types are invariant. In the same prototype ty accepts even deliberate errors. A sequence/protocol model can admit strings through recursive iteration: type stubs expose inherited sequence behavior that is not equivalent to Python's runtime attributes. Another protocol version rejects direct strings but mypy accepts a list of strings.
 
-The current successful small probe uses private covariant protocols for list, tuple and mapping behavior, with a nonrecursive outer union. List's pop result carries recursive leaf information; tuple iteration and tuple concatenation distinguish it from self-iterating strings; mapping values carry recursive leaf information without constraining keys. All four engines accept six valid pretyped cases and reject both deliberate wrong cases. These protocol members are descriptive only; validation does not call them or mutate inputs. The full implementation must extend the probe to mixed nesting, NumPy leaves and additional invalid forms before promotion.
+The current successful small probe uses private covariant protocols for list, tuple and mapping behavior, with a nonrecursive outer union. List's pop result carries recursive leaf information; tuple indexing and tuple concatenation distinguish it from self-iterating strings; mapping values carry recursive leaf information without constraining keys. All four engines accept six valid pretyped cases and reject both deliberate wrong cases. These protocol members are descriptive only; validation does not call them or mutate inputs. The full implementation must extend the probe to mixed nesting, NumPy leaves and additional invalid forms before promotion.
 
 ## Decision Log
 
 
-Decision: Preserve Tree[Leaf] syntax and share the model in the TYPE_CHECKING section of `src/bearshape/_tree.py`, re-exporting it from optree/JAX. Rationale: the two public tree backends should not carry divergent fake nominal classes or duplicate static definitions. No runtime dependency or new module is needed. Date: 2026-09-08.
+Decision: Preserve Tree[Leaf] syntax and share the model in the TYPE_CHECKING section of `src/bearshape/_tree.py`, re-exporting it from optree/JAX. Rationale: the two public tree backends should not carry divergent fake nominal classes or duplicate static definitions. No runtime dependency or new module is needed. The existing typing_extensions.TypeAliasType represents the outer alias so ty also retains existing checker-only aliases built from Tree. Date: 2026-09-08.
 
 Decision: Establish tested static support for ordinary lists, tuples, dictionaries, leaves and None; keep arbitrary backend registration a runtime property. Rationale: Python static typing cannot infer a dynamically modified pytree registry. For custom nodes, document the existing TYPE_CHECKING alias pattern using the user's concrete node type and the runtime Tree annotation. This preserves existing runtime support without introducing a new public form or claiming every structural match is registered.
 
 ## Outcomes & Retrospective
 
 
-Implementation pending. Do not adopt a model merely because valid examples pass: exact negative diagnostics, especially direct/nested strings and invalid array dtypes, are required. State backend registration limits accurately. Structure-bearing Tree syntax remains runtime-only.
+Implemented real ordinary-container acceptance and maintained exact negative diagnostics for direct/nested strings and invalid array dtypes. The same positive consumer executes with beartype, including a custom registered JAX node; a separate runtime test rejects that node with the wrong leaf dtype. State backend registration limits accurately. Structure-bearing Tree syntax remains runtime-only.
 
 ## Context and Orientation
 
@@ -77,7 +77,7 @@ Keep prototypes outside the source package and preserve their counterexamples. O
 ## Artifacts and Notes
 
 
-Prototypes are under `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/tree-typing-prototypes/`: `recursive_containers.py`, `recursive_protocols.py`, `reverse_protocols.py`, and `pop_protocols.py`, with per-engine outputs. The first three demonstrate why acceptance-only validation is inadequate. Save production before/after and matrix evidence as `tree-typing-*.log` in the evidence directory.
+Prototypes are under `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/tree-typing-prototypes/`: `recursive_containers.py`, `recursive_protocols.py`, `reverse_protocols.py`, and `pop_protocols.py`, with per-engine outputs. The first three demonstrate why acceptance-only validation is inadequate. Production evidence uses `tree-typing-*.log`: `before` captures the nominal-stub failures; `focused` captures the initial 115 passing tree/checker tests; `tox` captures 1,044 passing dev tests, 91.24% coverage and all floor engines; `python-3.11` through `python-3.14` capture the interpreter-matched checker matrix; `rc0-py310` and `rc0-py314` each report 108 passing tree tests; `hooks-final` is clean. The final model uses tuple indexing because pinned pyrefly describes named-tuple iteration as Iterable rather than Iterator. A namespaced optree custom registration is not visible to the current default-registry Tree; the maintained custom-node example is explicitly JAX.
 
 ## Interfaces and Dependencies
 
@@ -85,3 +85,5 @@ Prototypes are under `/Users/ale/Code/bearshape-implementation-2026-09-08/eviden
 Keep public `bearshape.optree.Tree` and `bearshape.jax.Tree` subscriptions unchanged. The static alias describes leaves and supported container behavior; runtime still uses _TreeFactory and the backend registry. Use standard typing/collections protocols and the existing checker harness. No new runtime or development dependency is required.
 
 Revision note — 2026-09-08: Recorded prototype counterexamples and focused Tree implementation plan before source changes.
+
+Revision note — 2026-09-08: Implemented and validated the shared static model, corrected the prototype for named tuples and existing aliases, and documented the actual registry boundary.
