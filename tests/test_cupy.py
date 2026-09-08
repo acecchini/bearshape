@@ -533,9 +533,8 @@ class TestCuPyConverterContract:
     [
       np.array(["text"]),
       np.array([object()], dtype=object),
-      np.zeros(2, dtype=[("value", np.float32)]),
     ],
-    ids=["string", "object", "structured"],
+    ids=["string", "object"],
   )
   def test_unsupported_host_dtypes_fail_conversion_and_validation(
     self, value: np.ndarray
@@ -545,6 +544,16 @@ class TestCuPyConverterContract:
     with pytest.raises((TypeError, ValueError)):
       cp.asarray(value)
     assert not is_bearable(value, ShapedLike[...])
+
+  def test_structured_host_dtype_follows_cupy_conversion(self) -> None:
+    from bearshape.cupy import ShapedLike
+
+    host = np.zeros(2, dtype=[("value", np.float32)])
+    converted = cp.asarray(host)
+    assert converted.dtype == host.dtype
+    assert is_bearable(host, ShapedLike[...])
+    assert is_bearable(converted, Shaped[...])
+    np.testing.assert_array_equal(cp.asnumpy(converted), host)
 
   def test_validation_preserves_original_host_argument(self) -> None:
     @beartype
