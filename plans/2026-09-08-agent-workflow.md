@@ -25,10 +25,10 @@ This changes release acceptance, not the installed dependency by guesswork.
 - [x] (2026-09-08) Opened draft PR #31 against `codex/action-runtimes` before implementation.
 - [x] (2026-09-08) Reconciled current agent instructions, contributor commands, plan policy,
   tooling guidance and accepted release decisions.
-- [ ] Validate instructions and changed workflows; run hosted candidate checks.
-- [ ] Merge the approved history while preserving every focused PR head, verify
-  main CI and clean up merged branches/worktrees safely.
-- [ ] Record remaining upstream integration and administrative release work.
+- [x] (2026-09-08) Hooks/docs pass, 1,097 initial local tests pass with five skips; all 36 jobs pass in PR run 34229100275 and main run 34229683377.
+- [x] (2026-09-08) PR #31 merged at df81f00e2f62bda956244e680c980f87db1d4671; every reviewed head is preserved, main CI passed, and 20 clean merged worktrees/local branches were removed with evidence retained.
+- [x] (2026-09-08) Recorded accepted policies, actual merge/admin boundaries, and the same failing probe against unpublished upstream 0.23.0rc1 at a2729e0.
+- [x] (2026-09-08) Fixed actual hook stages and foreign Git environment leakage; all 23 release tests and real commit/pre-push hooks pass; PR #33 hosted run 34231187384 passed all required jobs.
 
 ## Surprises & Discoveries
 
@@ -58,9 +58,14 @@ validated; publication, settings changes and ownership transfer remain separate.
 ## Outcomes & Retrospective
 
 
-Implementation and merging are in progress. The original production goal is
-not complete until the native composite-union defect is resolved and the
-release/handoff acceptance is satisfied. Successful CPU/GPU evidence is retained.
+The approved production history and agent guidance are merged through PR #31,
+with every reviewed head retained and main validation successful. The lifecycle
+follow-up in PR #33 fixes two defects that manual `prek run -a` did not expose:
+commit-message routing and inherited Git repository variables. Real commits,
+pre-push checks, foreign-repository regressions and the hosted matrix now pass.
+Twenty merged worktrees are removed and their useful generated evidence is
+retained. The original production goal remains incomplete until native union
+integration and release/handoff prerequisites are satisfied.
 
 ## Context and Orientation
 
@@ -92,8 +97,8 @@ push. Update the changelog for the maintenance and deployment behavior.
 
 Bring any missing approved heads into this worktree with merge commits. Verify
 that the resulting package tree matches the tested candidate before the scoped
-maintenance edits. After local and hosted checks pass, merge this PR into #30,
-then use the validated aggregate history to merge all approved work to main.
+maintenance edits. After local and hosted checks pass, retarget #31 to main and merge the validated
+aggregate history in one update, as executed at df81f00.
 Retain all focused commits and verify each PR head is reachable before deleting
 its clean worktree and local/remote branch. Avoid intermediate main states that
 would publish docs automatically.
@@ -200,3 +205,20 @@ fixture subprocesses, retaining unrelated environment variables. Test fixture
 construction with an explicit foreign hook owner and verify its config and HEAD
 stay unchanged. The blocked pre-push prevents opening the follow-up PR until
 this focused correction passes; no verification hooks are bypassed.
+
+Revision note (2026-09-08): reconciled the actual main merge, cleanup and
+upstream-development probe. Real hook execution exposed two additional defects,
+which were fixed in PR #33 without bypassing verification. Two new foreign-Git
+identity cases failed before the isolation fix; all 23 release tests pass after
+it. Hosted run 34231187384 validates the corrected tool/workflow tree. Later
+bookkeeping edits preserve those runtime and tooling bytes. Final approval for
+this continuation remains the owner's existing merge authorization.
+
+Final evidence reconciliation (2026-09-08): all 20 original remote feature refs
+were deleted with expected-head leases after ancestry verification. The hook
+follow-up's actual installed consumers pass 1,105 tests per Python endpoint,
+with one absent-CuPy skip. Its wheel remains the exact GPU-tested c1806203 hash;
+sdist SHA256 is 19b7e7252f2c64e4ea014e92a14b7a25a8409db20612205da257c1d04df9e85b.
+Only the final documentation/plan record differs from tested source 0717df2.
+The remaining worktree belongs to PR #33 and is removed after its approved merge
+and main verification; there is no pending user merge decision for this scope.

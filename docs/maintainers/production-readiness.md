@@ -9,9 +9,11 @@ target until a supported replacement is implemented and validated.
 incorrect in one important composition case. The owner selected full composition
 through supported upstream integration and permits a later beartype candidate;
 explicitly limited native CuPy static support is accepted. The owner approved
-merging the reviewed production work on 8 September 2026. Repository/publication
-protections still require configuration, and publication or ownership transfer
-requires separate authorization.
+merging the reviewed production work on 8 September 2026. PR #31 integrated all
+reviewed heads into main at `df81f00e2f62bda956244e680c980f87db1d4671`; its
+post-merge CI passed all 36 jobs. Repository/publication protections still
+require configuration, and publication or ownership transfer requires separate
+authorization.
 
 ## Purpose and intended users
 
@@ -115,7 +117,7 @@ positive and negative evidence, not merely annotation declarations.
 | Optional imports and custom backend operation                       | `tests/test_coverage_edges.py`: `TestOptionalBackendImports`, `TestVersionExport`; `tools/smoke_minimal.py` from a minimal installed wheel                                                                                     |
 | Static consumers and expected failures                              | `tests/test_typecheck.py`, `tests/typing/check_*consumers.py`, `tests/typing_negative/invalid_*calls.py`                                                                                                                       |
 | Documentation and distributions                                     | `tests/test_examples.py`, `tools/check_docs.py`, `tools/check_notebook.py`, `tools/check_distribution.py`, `tools/check_installed.py`                                                                                          |
-| Publication identity and bypass rejection                           | `tests/test_release.py`: 19 cases using disposable real Git histories and event files                                                                                                                                          |
+| Publication identity and bypass rejection                           | `tests/test_release.py`: 23 cases using disposable Git histories, events and foreign hook environments                                                                                                                         |
 
 <!-- markdownlint-enable MD013 -->
 
@@ -151,6 +153,31 @@ that preserve focused PR branches. Merge prerequisites and living decisions are
 recorded in each PR's ExecPlan and the roadmap in
 [#12](https://github.com/acecchini/bearshape/pull/12).
 
+The approved history is integrated through
+[#31](https://github.com/acecchini/bearshape/pull/31), preserving every reviewed
+head without squashing. GitHub marked main-based PRs merged automatically;
+dependent PRs were closed with an integration record after ancestor
+verification. Twenty clean worktrees and their local branches were removed after
+preserving coverage/build evidence; the corresponding remote branches were
+deleted with expected-head checks. The original checkout remains on main.
+
+Actual hook installation then exposed two defects addressed in
+[#33](https://github.com/acecchini/bearshape/pull/33): file checks ran at the
+commit-message stage and rejected a worktree Git path, and inherited Git
+repository variables redirected disposable release-test commands. File hooks now
+default to pre-commit, the unused commit-message shim is removed, and Git
+commands explicitly targeting another repository clear Git's local environment
+variables. CI checks installed stage routing; four new cases cover foreign Git
+environments and ensure fixture construction preserves the hook owner's config
+and HEAD. Real commits and pre-push runtime/checker checks pass. Hosted run
+[34231187384](https://github.com/acecchini/bearshape/actions/runs/34231187384)
+passed the complete matrix at `0717df2f2194cdcb10bcf37ba291c09117c42238`.
+
+The main Pages run
+[34229683120](https://github.com/acecchini/bearshape/actions/runs/34229683120)
+built successfully and skipped deployment. Contributor instructions now require
+an explicit docs dispatch and explain removal of an old commit-message shim.
+
 ### Accepted native-union integration path
 
 This valid call is still rejected by the tested wheel with exact rc0:
@@ -178,7 +205,12 @@ The owner selected an upstream-supported whole-alternative integration boundary
 and permits a later beartype candidate. Preserve full composition. A warning,
 bytecode heuristic, monkeypatch or restricted annotation contract does not close
 this defect. On 8 September 2026, PyPI offered only `0.23.0rc0` in the 0.23
-series; the approval is a direction, not evidence of an available fix.
+series; the approval is a direction, not evidence of an available fix. An
+isolated normal install of upstream development commit
+[`a2729e0`](https://github.com/beartype/beartype/commit/a2729e0e358bf963ee6f177e300ae08a622d05d6)
+identifies itself as `0.23.0rc1` and still rejects the same valid call. That
+unpublished revision is evidence of the remaining defect, not a supported new
+compatibility floor.
 
 Run `uv run --locked python tools/probe_union.py` from the repository root to
 reproduce the current failure with version information. Its nonzero exit is
@@ -205,6 +237,17 @@ method inference or parity with NumPy/JAX/Torch. Any future stronger typing
 claim needs actual installed-CuPy positive, negative and inference consumers.
 
 ## Validated artifact identity
+
+The hook follow-up run
+[34231187384](https://github.com/acecchini/bearshape/actions/runs/34231187384)
+validated source `0717df2f2194cdcb10bcf37ba291c09117c42238`. Both Python
+endpoint consumers passed **1,105 tests**, with one explicit absent-CuPy skip
+each. Its wheel SHA256 remains
+`c1806203da013c9eaf2482a309c686a984c0a7031a495efbd100a824536b57d2`, identical to
+the GPU-tested artifact. Its updated sdist SHA256 is
+`19b7e7252f2c64e4ea014e92a14b7a25a8409db20612205da257c1d04df9e85b`. The earlier
+release-specific runs below remain evidence of publication gating; no
+publication was triggered by these merges.
 
 The actual
 [validation-only release run](https://github.com/acecchini/bearshape/actions/runs/34221337124)
@@ -329,9 +372,9 @@ apply the following concrete settings:
     maintainers. Coordinate GitHub Pages hosting, its deployment environment,
     redirects and repository/package metadata. Update public URLs only after
     the transfer is real, then verify them.
-1. Complete the selected upstream union integration and approved merges. Run the
-    final immutable candidate validation, inspect hashes and GPU evidence, then
-    separately authorize the prerelease publication and ownership operations.
+1. Complete the selected upstream union integration. Run the final immutable
+    candidate validation, inspect hashes and GPU evidence, then separately
+    authorize the prerelease publication and ownership operations.
 
 The repository changes make these steps reviewable; they do not perform them.
 See the repository's `CONTRIBUTING.md` for validation-only, tag-based release
