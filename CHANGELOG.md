@@ -36,9 +36,13 @@ and this project follows
 
 ### Added
 
+- Add CUDA runtime evidence for CuPy conversion, native device/stream
+    preservation and optree containers on the corrected candidate.
+
 - A GitHub Actions workflow for trusted publishing to PyPI, with automatic
     release-based publishing and manual `workflow_dispatch` support for a chosen
     ref.
+
 - `typing_extensions>=4.6` as a runtime dependency, so the typing constructs
     used by the backend aliases resolve on every supported Python version.
 
