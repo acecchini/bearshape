@@ -18,7 +18,7 @@ The package users install must pass the same runtime and static consumer contrac
 - [x] (2026-09-08) Initial isolated wheel runs each passed all 1,074 tests with five documented platform/CuPy skips.
 - [x] (2026-09-08) Added required endpoint jobs consuming the same candidate-distributions artifact.
 - [x] (2026-09-08) Final archive-owned-lock runs passed 1,074 tests with five documented skips at both endpoints; full hooks and actionlint pass.
-- [ ] Observe final hosted jobs.
+- [x] (2026-09-08) Every required hosted job passed at 73b3ec9; PR #25 is ready for user review.
 - [ ] Record hashes, origins and results; obtain user validation before merge.
 
 ## Surprises & Discoveries
@@ -84,3 +84,5 @@ Evidence goes under `/Users/ale/Code/bearshape-implementation-2026-09-08/evidenc
 No public runtime API or dependency change is planned. The pytest option is for downstream artifact validation. Use the existing locked backend/checker/test groups and standard-library archive/process tools for orchestration.
 
 Revision note — 2026-09-08: Validated the final driver using the archive's own lockfile and required both installed-consumer jobs in CI.
+
+Revision note — 2026-09-08: Recorded the completed hosted validation and retained user merge approval as the only remaining review action for this focused scope. Program-level release decisions remain in the roadmap and handoff report.
