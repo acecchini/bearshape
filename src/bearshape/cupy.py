@@ -107,8 +107,9 @@ from .numpy import U64ScalarLike as U64ScalarLike
 from .numpy import UIntScalarLike as UIntScalarLike
 from .numpy import make_scalar_like_type as make_scalar_like_type
 
-# CuPy does not support float128, complex256, void, string, bytes, object,
-# datetime64, or timedelta64 dtypes.  Those types are NumPy-only (see numpy.py).
+# Extended-precision, structured, string, object and temporal aliases are
+# exposed by numpy.py. CuPy's converter determines which additional dtypes
+# its generic Shaped/Like annotations accept.
 # CuPy does not support bfloat16 natively, so BF16 is omitted (same as NumPy).
 __all__ = [
   # Array types

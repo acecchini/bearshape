@@ -12,7 +12,7 @@ CuPy users need evidence from actual GPU arrays. Prove strict shape/dtype valida
 
 
 - [x] (2026-09-08) Created codex/cupy-runtime and matching worktree from b2a1df0.
-- [ ] Open draft PR and add focused conversion/device/tree cases.
+- [x] (2026-09-08) Opened draft PR #26 and added 12 conversion/device/tree cases.
 - [ ] Publish public test/source commits and build their source-derived wheel.
 - [ ] Run baseline and new GPU cases on Python 3.10 and 3.14; record artifacts and versions.
 - [ ] Validate hooks/hosted checks and obtain user validation before merge.
@@ -20,7 +20,7 @@ CuPy users need evidence from actual GPU arrays. Prove strict shape/dtype valida
 ## Surprises & Discoveries
 
 
-The baseline already passed 83 CuPy tests on H200 with CuPy 14.2.0 and both Python endpoints. That artifact predates the lifetime/conversion corrections, so it is insufficient evidence for the combined candidate. Native CuPy 14.2.0 has no py.typed marker or ndarray stubs; the static support decision remains separate and pending.
+The baseline already passed 83 CuPy tests on H200 with CuPy 14.2.0 and both Python endpoints. That artifact predates the lifetime/conversion corrections, so it is insufficient evidence for the combined candidate. The first corrected-candidate run passed 94 tests and exposed one incorrect new test assumption: CuPy 14.2.0 accepts structured host arrays. Verified dtype preservation and generic Shaped/Like acceptance, then corrected the test and stale module comment. Native CuPy 14.2.0 has no py.typed marker or ndarray stubs; the static support decision remains separate and pending.
 
 ## Decision Log
 
@@ -44,7 +44,7 @@ The isolated remote Python 3.14 environment is /tmp/bearshape-production-2026-09
 ## Plan of Work
 
 
-Add observable cases comparing Like acceptance with cp.asarray for valid noncontiguous/endian host arrays and unsupported string/object/structured arrays. Test that validation leaves a native device array's identity, device and allocation unchanged, including nondefault CUDA streams. Exercise nested optree containers, inconsistent leaf shapes/dtypes, structure binding and failed-check recovery on device arrays.
+Add observable cases comparing Like acceptance with cp.asarray for valid noncontiguous/endian host arrays and unsupported string/object arrays and supported structured arrays. Test that validation leaves a native device array's identity, device and allocation unchanged, including nondefault CUDA streams. Exercise nested optree containers, inconsistent leaf shapes/dtypes, structure binding and failed-check recovery on device arrays.
 
 Build a source archive and wheel from that archive. Normally install the wheel with exact beartype rc0 in each isolated endpoint environment, then run copied tests outside source checkouts. Require real CuPy/optree imports and an available GPU before pytest; an importorskip-only exit is not proof. Record source commit, artifact SHA256, installed origin, versions, GPU and CUDA data.
 
