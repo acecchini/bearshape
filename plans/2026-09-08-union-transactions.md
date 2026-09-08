@@ -22,8 +22,8 @@ The user requested resolving this defect after approving the earlier implementat
 - [x] (2026-09-08) Normally installed packages passed 1,124 tests plus five existing CPU skip records on each of Python 3.10.20 and 3.14.5, including all four checkers. Upstream serial unit tests passed 426/439 with 20/7 pre-existing skips. Upstream pyright passed.
 - [x] (2026-09-08) Hooks and docs passed. Final sdist-extracted consumers outside the checkout passed 1,124 tests with five existing CPU skip records on each endpoint. Minimal wheel environments passed with no optional backends. Final normal-install benchmarks and artifact hashes are recorded below.
 - [x] (2026-09-08) Prepared the concrete upstream patch and submission text locally and updated the handoff and agent/tool guidance.
-- [ ] (2026-09-08) Profile and reduce the local proposal overhead before any maintainer contact, as requested by the owner. Preserve rollback, diagnostics, lazy aliases, sampling and state lifetime.
-- [ ] Revalidate optimized normal installations, record reproducible comparisons and prepare a concise local Zulip discussion note for the owner.
+- [x] (2026-09-08) Profiled and reduced the local proposal overhead before maintainer contact, preserving rollback, diagnostics, lazy aliases, sampling and state lifetime.
+- [x] (2026-09-08) Validated optimized normal installations and archive consumers on both endpoints, recorded matched comparisons, and prepared a local Zulip draft without sending it.
 - [ ] Upstream acceptance/publication and a later supported dependency migration remain external steps, not a completed release fix.
 
 ## Surprises & Discoveries
@@ -45,7 +45,7 @@ Decision: Prepare any upstream proposal locally before seeking permission to sub
 ## Outcomes & Retrospective
 
 
-A working local fix now passes the original example and all 22 expanded integration cases on both Python endpoints. The small bearshape adapter uses a proposed upstream snapshot hook; the source extension owns branch boundaries, exception cleanup, diagnostic replay and lazy-reference registration. Published rc0 still fails because it does not implement this hook. Final archives, normal-install consumers, minimal environments, hooks and docs have been validated. Upstream submission approval, acceptance/publication and dependency migration remain outstanding. PR #34 is intentionally a draft, and no new feature merge or publication was performed.
+The optimized local proposal retains the original rollback contract and reduces added strict-check overhead by 61% on Python 3.10 and 71% on Python 3.14. It uses the smaller state-object adapter and an upstream checker compiled once at decoration. Draft PR #35 isolates the independent frame filter. Normally installed combined artifacts passed 1,125 tests on each endpoint, including all four checkers and 22 integration cases, with five existing CPU skip records. Upstream's final source passed 432/445 unit tests, including 20 protocol tests with 600 independent-reference cases, and pyright. Remaining nested ordinary-reference overhead is disclosed below. No upstream contact, merge into main, publication or transfer occurred. Upstream acceptance, publication and coordinated dependency adoption remain release prerequisites.
 
 ## Context and Orientation
 
@@ -233,3 +233,68 @@ without weakening composition or exception cleanup. Date/author: 2026-09-08, Cod
 Revision note — 2026-09-08: Recorded the optimized interface, rejected redundant
 work, independent PR #35 and the distinction between exploratory and final
 performance evidence.
+
+
+## Optimized delivery and final comparison
+
+
+The final upstream head is `42b5c9dc28639622c362ce30e724da1f20983e08`, against
+`a2729e0e358bf963ee6f177e300ae08a622d05d6`. The independent frame filter is
+`344d390c4099685cc3ea6519f5bb8b5bde0fb13e`. Local validation commit
+`c53d14f99d71fd4884282642b98e8bd63bd7b871` combines both bearshape changes.
+Its normally installed wheel and sdist are recorded under
+`evidence/union-transactions/optimization/` outside these worktrees. The
+benchmark script at `46e7f4d657b5272cc0be8543848e794fefb45f41` adds a
+measurement-only nested-reference case after that package build; package code
+and runtime tests are unchanged. The PR branches remain independent.
+
+Matched medians pool 14 samples per correct case: 20,000 calls per sample, seven
+repeats in each of two process runs, reversing scenario order in the second run.
+Python 3.10.20 uses NumPy 2.2.6; Python 3.14.5 uses NumPy 2.4.6. Both use
+optree 0.19.1 and typing_extensions 4.15.0. Runtime imports and decoration are
+not timed. The manifest preserves exact commands, script hash and versions.
+
+For strict parameter/return checks, original bearshape with rc0 measured
+19.546/18.262 microseconds on 3.10/3.14, and the first working proposal measured
+31.720/31.630. Optimized bearshape with rc0 measured 16.955/13.358, and the
+optimized working combination measured 21.726/17.198. Thus added transaction
+overhead fell from 12.174/13.368 to 4.771/3.840 microseconds, a 61%/71% reduction
+after accounting separately for the frame filter. The filter alone improves the
+rc0 strict baseline by about 13%/27%.
+
+Correct second-alternative calls fell from 53.269/54.433 to 33.722/25.769
+microseconds. Explicit-scope fallback calls fell from 41.545/46.739 to
+21.459/15.331, and nested union calls from 26.554/24.103 to 15.066/12.087.
+An unselected ordinary reference is back at the rc0 baseline. Nested ordinary
+references still add about 0.74/0.41 microseconds over rc0, approximately
+1.9x/1.8x their small baseline; this remains a maintainer discussion point.
+Ordinary root references retain a smaller hook lookup cost. No zero-overhead
+or portable latency guarantee is claimed.
+
+The final archive consumers, with no source directory available, passed 1,125
+tests on each endpoint. There were four unavailable platform precision cases
+and one skipped CuPy module; this provides no new CUDA evidence. Minimal
+normal installations passed with no optional backends. Distribution integrity,
+hooks and documentation passed. Upstream passed 432 tests with 20 existing
+skips on 3.10 and 445 with seven on 3.14; pyright checked 477 source files with
+zero errors and warnings for each interpreter target. Its 20 protocol tests
+include 600 deterministic comparisons of nested acceptance and final bindings
+against an independent reference.
+
+The combined bearshape wheel SHA256 is
+`a0cb17c0b4a67b49f6e6cc10ee76e0f911ad9441877e994cdd6f495366325851`; the sdist is
+`ac4cf3b1b87c700fece1fbdb35f5b7503b90b199606e4367b4dbdb2193a5c2f0`. The optimized
+beartype wheel is
+`c0032af54fdf5748d837333a60f18320d3442d4e5de5fef925fc1dc2f5d0d784`; its sdist is
+`4217e77fef25037122764349457c89d5edf24742c051105547bdf8a59350289c`.
+
+`OPTIMIZATION.md` contains the full report, `RESULTS.json` the source/artifact
+record, `benchmark-summary.json` the samples, and `benchmark-manifest.json` the
+commands, all under the optimization evidence directory. `ZULIP-DRAFT.md` is
+prepared for the owner; it has not been sent. Normal hosted CI still uses rc0
+and does not prove this unpublished upstream integration. Final PR-head CI
+results are recorded in the external results file when available.
+
+Revision note — 2026-09-08: Closed the requested local optimization milestone
+with matched measurements, immutable artifacts and expanded correctness proof;
+kept upstream acceptance and release adoption explicitly outstanding.

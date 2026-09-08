@@ -243,6 +243,17 @@ optimization before contacting the maintainer through Zulip. The focused plan
 records optimized source identities, validation and matched timing evidence;
 these must be read separately from the original artifacts.
 
+The optimized upstream head is `42b5c9dc28639622c362ce30e724da1f20983e08`. The
+combined normally installed artifacts passed 1,125 tests per endpoint, including
+all four checkers and 22 union cases, with five existing CPU skip records.
+Upstream passed 432/445 unit tests and pyright on Python 3.10/3.14. Its 20
+protocol tests include 600 deterministic independent-reference cases. Added
+strict-check overhead fell by 61%/71%, after separating PR #35's frame filter
+improvement. Correct fallback-union calls fell from about 53/54 to 34/26
+microseconds. Nested ordinary references still add about 0.74/0.41 microseconds
+over rc0; this remaining cost is explicit. See the focused plan for matched
+baselines, artifact hashes and the complete timing methodology.
+
 This demonstrates a working local fix, not compatibility provided by published
 rc0. The dependency metadata and lock are unchanged, and the new integration
 suite under `tools/upstream/` is explicitly invoked rather than silently skipped
