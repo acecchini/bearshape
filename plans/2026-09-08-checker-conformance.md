@@ -89,3 +89,5 @@ Revision note — 2026-09-08: Added focused checker-conformance plan before impl
 Revision note — 2026-09-08: Implemented the four-engine consumer harness, explicit pyrefly default configuration, and all Python/floor validation. Native Tree, broader Like, and CuPy typing remain separate work.
 
 Revision note — 2026-09-08: Hosted lint caught an annotation-only import in the new negative fixture; moved it into TYPE_CHECKING and reran conformance. Stage new files before the all-files hook run so they are included.
+
+Revision note — 2026-09-08: Removed pyrefly's unrecognized required-version configuration key after inspecting stderr from the pinned 1.2.0 binary. The static dependency group and exact tox lane already enforce the tested tool baseline. Upstream current documentation described a newer configuration capability.
