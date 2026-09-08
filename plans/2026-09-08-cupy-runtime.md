@@ -13,9 +13,10 @@ CuPy users need evidence from actual GPU arrays. Prove strict shape/dtype valida
 
 - [x] (2026-09-08) Created codex/cupy-runtime and matching worktree from b2a1df0.
 - [x] (2026-09-08) Opened draft PR #26 and added 12 conversion/device/tree cases.
-- [ ] Publish public test/source commits and build their source-derived wheel.
-- [ ] Run baseline and new GPU cases on Python 3.10 and 3.14; record artifacts and versions.
-- [ ] Validate hooks/hosted checks and obtain user validation before merge.
+- [x] (2026-09-08) Published 51aa332 and verified all 18 package files plus tests against the public commit before transfer.
+- [x] (2026-09-08) All 95 GPU cases passed without skips on Python 3.10.20 and 3.14.3 with exact rc0, CuPy 14.2.0 and optree on H200/CUDA 12.9.
+- [x] (2026-09-08) Hooks and applicable hosted checks pass.
+- [ ] Obtain user validation before merge.
 
 ## Surprises & Discoveries
 
@@ -32,7 +33,7 @@ Decision: Use the configured h200 host, its isolated /tmp/bearshape-production-2
 ## Outcomes & Retrospective
 
 
-Implementation pending. A04 native union rollback and CuPy static support remain separate release decisions; successful GPU tests cannot close them.
+The normally installed corrected wheel passes all 95 CuPy tests at both Python endpoints. Native device/stream identity, host conversion, generic structured dtype acceptance and nested optree validation are proven on H200 with CuPy 14.2.0. Multi-GPU transfer behavior and other CUDA/CuPy combinations are not established. A04 native union rollback and CuPy static support remain separate release decisions; successful GPU tests cannot close them.
 
 ## Context and Orientation
 
@@ -74,3 +75,5 @@ Save evidence under /Users/ale/Code/bearshape-implementation-2026-09-08/evidence
 
 
 No public API changes. Tests use NumPy, CuPy, optree, beartype and pytest. CuPy remains outside CPU dependency groups. The configured GPU environment has CuPy 14.2.0; explicit optree installation is required for the additional container cases.
+
+Revision note — 2026-09-08: Completed CUDA endpoint validation. Wheel SHA256 7328836ecc1d0f8dbba93d6bd213517a97d9ad39e1407b6519bd6f740eeff04c; public source 51aa3327ea59a82f19fce616d7d9d7cb6bf657a6. Logs cupy-candidate-final-3.10.log and cupy-candidate-final-3.14.log record installed origins, CUDA configuration and 95 passing tests each.
