@@ -18,7 +18,7 @@ The owner requested substantially lower overhead before contacting the upstream 
 - [x] (2026-09-08) Opened draft PR #35 before implementation.
 - [x] (2026-09-08) Added the candidate filter and regression proving unrelated frames do not materialize locals. Existing real decorated/DOOR behavior remains covered.
 - [x] (2026-09-08) Targeted tests passed; full CPU runtime tests passed 1,094 with five existing skips; all eight four-checker harness cases passed; hooks passed.
-- [ ] Benchmark identical inputs with and without this change, using both rc0 and the local upstream proposal. Record the two effects separately.
+- [x] (2026-09-08) Matched installed comparisons show the rc0 strict-check baseline improving by about 13% on 3.10 and 27% on 3.14. Combined upstream effects are recorded separately.
 - [ ] Present the focused change for review; merge remains pending user validation.
 
 ## Surprises & Discoveries
@@ -34,7 +34,7 @@ Decision: Change only candidate rejection in frame discovery, and keep scope par
 ## Outcomes & Retrospective
 
 
-The focused filter passes existing real-frame behavior, lifetime, CPU and static consumer tests, plus a regression that forbids reading unrelated-frame locals. Matched performance measurements and combination with the upstream proposal remain pending. No new cache or lifetime mechanism was introduced.
+The focused filter passes existing real-frame behavior, lifetime, CPU and static consumer tests, plus a regression that forbids reading unrelated-frame locals. Matched measurements and normally installed combination tests have passed; both PRs remain unmerged for review. No new cache or lifetime mechanism was introduced.
 
 ## Context and Orientation
 
@@ -85,3 +85,39 @@ This is a dependent investigation within the union optimization work, but the co
 No new dependencies or API. `_is_beartype_wrapper_frame(frame: types.FrameType) -> bool` keeps its signature and final recognition rules. The optional fast rejection uses code metadata only; it does not infer validation outcomes or union boundaries.
 
 Revision note — 2026-09-08: Created the plan before implementation to isolate the independent frame-search improvement.
+
+
+## Final evidence
+
+
+Implementation commit `344d390c4099685cc3ea6519f5bb8b5bde0fb13e` is isolated in
+draft PR #35. Local integration commit
+`c53d14f99d71fd4884282642b98e8bd63bd7b871` combines it with PR #34 solely for
+validation. Main and both PR branches were not merged together.
+
+On published beartype rc0, the strict parameter/return baseline changed from
+19.546 to 16.955 microseconds on Python 3.10.20 and from 18.262 to 13.358 on
+3.14.5: approximately 13% and 27% lower total latency. Each value is the median
+of 14 samples of 20,000 calls, across two process runs in reversed scenario
+order. This is a host measurement with no timing gate or portable guarantee.
+The optimized adapter's proposed hook is ignored by rc0 on both sides, so the
+measured runtime change is the frame filter.
+
+The independent branch passed 1,094 CPU runtime tests, all eight four-checker
+harness cases and hooks, with five existing CPU skip records. The combined
+normally installed artifacts passed 1,125 tests from sdist-extracted consumers
+outside the source checkout on each Python endpoint, including the 22 upstream
+integration cases. Minimal environments passed with no optional backends.
+No new CUDA coverage is claimed.
+
+Detailed measurements, commands, hashes and final hosted CI states are retained
+under `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/union-transactions/optimization/`.
+The combined wheel SHA256 is
+`a0cb17c0b4a67b49f6e6cc10ee76e0f911ad9441877e994cdd6f495366325851`.
+The source archive SHA256 is
+`ac4cf3b1b87c700fece1fbdb35f5b7503b90b199606e4367b4dbdb2193a5c2f0`.
+Merge approval remains pending for this independent change.
+
+Revision note — 2026-09-08: Added matched baseline timings and installed
+combination evidence, keeping this change separate from upstream integration
+and release acceptance.
