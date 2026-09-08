@@ -298,39 +298,89 @@ else:
   Shaped = make_array_type(JaxArray, SHAPED)
 
 # ---------------------------------------------------------------------------
-# Like types — runtime: scalar | array | nested sequences; static: JaxArray
+# Like types — runtime: scalar | array | nested sequences; static: convertible numeric inputs
 # ---------------------------------------------------------------------------
 
 if tp.TYPE_CHECKING:
-  BF16Like = TypeAliasType("BF16Like", JaxArray, type_params=(_Dims,))
-  BoolLike = TypeAliasType("BoolLike", JaxArray, type_params=(_Dims,))
+  from ._typing import BackendLike, IntegerDtype, NumericDtype, RealDtype, UnsignedDtype
 
-  I8Like = TypeAliasType("I8Like", JaxArray, type_params=(_Dims,))
-  I16Like = TypeAliasType("I16Like", JaxArray, type_params=(_Dims,))
-  I32Like = TypeAliasType("I32Like", JaxArray, type_params=(_Dims,))
-  I64Like = TypeAliasType("I64Like", JaxArray, type_params=(_Dims,))
+  BF16Like = TypeAliasType(
+    "BF16Like", BackendLike[JaxArray, float, RealDtype], type_params=(_Dims,)
+  )
+  BoolLike = TypeAliasType(
+    "BoolLike", BackendLike[JaxArray, bool, np.bool_], type_params=(_Dims,)
+  )
 
-  U8Like = TypeAliasType("U8Like", JaxArray, type_params=(_Dims,))
-  U16Like = TypeAliasType("U16Like", JaxArray, type_params=(_Dims,))
-  U32Like = TypeAliasType("U32Like", JaxArray, type_params=(_Dims,))
-  U64Like = TypeAliasType("U64Like", JaxArray, type_params=(_Dims,))
+  I8Like = TypeAliasType(
+    "I8Like", BackendLike[JaxArray, int, IntegerDtype], type_params=(_Dims,)
+  )
+  I16Like = TypeAliasType(
+    "I16Like", BackendLike[JaxArray, int, IntegerDtype], type_params=(_Dims,)
+  )
+  I32Like = TypeAliasType(
+    "I32Like", BackendLike[JaxArray, int, IntegerDtype], type_params=(_Dims,)
+  )
+  I64Like = TypeAliasType(
+    "I64Like", BackendLike[JaxArray, int, IntegerDtype], type_params=(_Dims,)
+  )
 
-  F16Like = TypeAliasType("F16Like", JaxArray, type_params=(_Dims,))
-  F32Like = TypeAliasType("F32Like", JaxArray, type_params=(_Dims,))
-  F64Like = TypeAliasType("F64Like", JaxArray, type_params=(_Dims,))
+  U8Like = TypeAliasType(
+    "U8Like", BackendLike[JaxArray, int, UnsignedDtype], type_params=(_Dims,)
+  )
+  U16Like = TypeAliasType(
+    "U16Like", BackendLike[JaxArray, int, UnsignedDtype], type_params=(_Dims,)
+  )
+  U32Like = TypeAliasType(
+    "U32Like", BackendLike[JaxArray, int, UnsignedDtype], type_params=(_Dims,)
+  )
+  U64Like = TypeAliasType(
+    "U64Like", BackendLike[JaxArray, int, UnsignedDtype], type_params=(_Dims,)
+  )
 
-  C64Like = TypeAliasType("C64Like", JaxArray, type_params=(_Dims,))
-  C128Like = TypeAliasType("C128Like", JaxArray, type_params=(_Dims,))
+  F16Like = TypeAliasType(
+    "F16Like", BackendLike[JaxArray, float, RealDtype], type_params=(_Dims,)
+  )
+  F32Like = TypeAliasType(
+    "F32Like", BackendLike[JaxArray, float, RealDtype], type_params=(_Dims,)
+  )
+  F64Like = TypeAliasType(
+    "F64Like", BackendLike[JaxArray, float, RealDtype], type_params=(_Dims,)
+  )
 
-  IntLike = TypeAliasType("IntLike", JaxArray, type_params=(_Dims,))
-  UIntLike = TypeAliasType("UIntLike", JaxArray, type_params=(_Dims,))
-  IntegerLike = TypeAliasType("IntegerLike", JaxArray, type_params=(_Dims,))
-  FloatLike = TypeAliasType("FloatLike", JaxArray, type_params=(_Dims,))
-  RealLike = TypeAliasType("RealLike", JaxArray, type_params=(_Dims,))
-  ComplexLike = TypeAliasType("ComplexLike", JaxArray, type_params=(_Dims,))
-  InexactLike = TypeAliasType("InexactLike", JaxArray, type_params=(_Dims,))
-  NumLike = TypeAliasType("NumLike", JaxArray, type_params=(_Dims,))
-  ShapedLike = TypeAliasType("ShapedLike", JaxArray, type_params=(_Dims,))
+  C64Like = TypeAliasType(
+    "C64Like", BackendLike[JaxArray, complex, NumericDtype], type_params=(_Dims,)
+  )
+  C128Like = TypeAliasType(
+    "C128Like", BackendLike[JaxArray, complex, NumericDtype], type_params=(_Dims,)
+  )
+
+  IntLike = TypeAliasType(
+    "IntLike", BackendLike[JaxArray, int, IntegerDtype], type_params=(_Dims,)
+  )
+  UIntLike = TypeAliasType(
+    "UIntLike", BackendLike[JaxArray, int, UnsignedDtype], type_params=(_Dims,)
+  )
+  IntegerLike = TypeAliasType(
+    "IntegerLike", BackendLike[JaxArray, int, IntegerDtype], type_params=(_Dims,)
+  )
+  FloatLike = TypeAliasType(
+    "FloatLike", BackendLike[JaxArray, float, RealDtype], type_params=(_Dims,)
+  )
+  RealLike = TypeAliasType(
+    "RealLike", BackendLike[JaxArray, float, RealDtype], type_params=(_Dims,)
+  )
+  ComplexLike = TypeAliasType(
+    "ComplexLike", BackendLike[JaxArray, complex, NumericDtype], type_params=(_Dims,)
+  )
+  InexactLike = TypeAliasType(
+    "InexactLike", BackendLike[JaxArray, complex, NumericDtype], type_params=(_Dims,)
+  )
+  NumLike = TypeAliasType(
+    "NumLike", BackendLike[JaxArray, complex, NumericDtype], type_params=(_Dims,)
+  )
+  ShapedLike = TypeAliasType(
+    "ShapedLike", BackendLike[JaxArray, complex, NumericDtype], type_params=(_Dims,)
+  )
 
 else:
   BF16Like = make_array_like_type(BFLOAT16, name="BF16Like")

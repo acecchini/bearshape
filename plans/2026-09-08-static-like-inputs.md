@@ -12,11 +12,11 @@ Users should be able to pass float64 NumPy arrays to F32Like and ordinary numeri
 
 
 - [x] (2026-09-08) Created isolated branch/worktree and inspected the current aliases and converter contract.
-- [ ] Open draft PR and add failing real consumer fixtures.
-- [ ] Align NumPy casting families and broad Shaped dtype typing.
-- [ ] Model JAX/Torch numeric scalar, array, and nested-sequence inputs.
-- [ ] Run positive/negative/inference checks on four engines and runtime controls.
-- [ ] Update docs, changelog and validation evidence.
+- [x] (2026-09-08) Opened PR #19; all four checker positive batches failed before the alias corrections.
+- [x] (2026-09-08) Corrected NumPy casting families and Shaped/ ShapedLike dtype models.
+- [x] (2026-09-08) Added shared static-only numeric input models for native/NumPy arrays, scalars and nested sequences.
+- [x] (2026-09-08) Four-engine consumer checks and runtime example pass on Python 3.10–3.14; floor lanes pass; exact rc0 runtime consumers pass on both endpoints.
+- [x] (2026-09-08) Updated docs/changelog. Locked dev tox: 1,043 passed, five expected platform/backend skips, 90.97% coverage; hooks pass.
 
 ## Surprises & Discoveries
 
@@ -33,7 +33,7 @@ Decision: Use concrete native/NumPy array types for JAX/Torch inputs and numeric
 ## Outcomes & Retrospective
 
 
-Implementation pending. Native Tree and CuPy static models remain independent work. Like return types describe original convertible values; callers must explicitly convert before using backend-only methods. Do not suppress such meaningful errors in old fixtures.
+Implemented the ordinary NumPy/JAX/Torch input families and broader NumPy Shaped typing. Native Tree and CuPy static models remain independent work. Like return types describe original convertible values; callers must explicitly convert before using backend-only methods. Do not suppress such meaningful errors in old fixtures.
 
 ## Context and Orientation
 
@@ -45,9 +45,9 @@ Worktree `/Users/ale/Code/bearshape-worktrees/static-like-inputs`, branch `codex
 
 Create positive calls using already-typed float64/int32 arrays, numeric scalars, tuples, lists and nested lists. Include NumPy Shaped inputs with string/object/datetime/structured dtypes and useful backend result inference. Add intended errors for nonnumeric strings, dictionaries and incompatible numeric kinds where the backend's static dtype information supports rejection. Save the initial four-checker failures.
 
-Change only TYPE_CHECKING alias definitions for NumPy Like families: bool inputs remain boolean, unsigned integer inputs admit booleans/unsigned integers, signed integer inputs admit booleans/integers, real inputs admit booleans/integers/floats, and complex inputs admit all numeric kinds. Destination precision and actual casting remain runtime checks. Shaped permits every NumPy generic dtype. Use private reusable aliases only where they remove repeated real family definitions.
+Change only TYPE_CHECKING alias definitions for NumPy Like families: bool inputs remain boolean, unsigned integer inputs admit booleans/unsigned integers, signed integer inputs admit booleans/integers, real inputs admit booleans/integers/floats, and complex inputs admit all numeric kinds. Destination precision and actual casting remain runtime checks. Shaped permits every NumPy generic dtype. Use `src/bearshape/_typing.py` for numeric dtype families shared by NumPy/JAX/Torch and the convertible-input template shared by JAX/Torch. Import it only inside backend TYPE_CHECKING branches, so it adds no runtime import dependency.
 
-For JAX/Torch, include native arrays, NumPy numeric arrays/scalars and numeric nested sequences in their Like aliases. Preserve meaningful scalar numeric families where feasible, while native backend dtype is not statically parameterized. Check the nested-sequence model across all four engines before promotion. Correct existing fixtures that use backend-only methods on unconverted Like inputs by converting explicitly. Add runtime controls for newly statically accepted typical calls and update concise static/Like docs.
+For JAX/Torch, include native arrays, NumPy numeric arrays/scalars and numeric nested sequences in their Like aliases. Preserve meaningful scalar numeric families where feasible, while native backend dtype is not statically parameterized. Check the nested-sequence model across all four engines before promotion. Correct existing fixtures that use backend-only methods on unconverted Like inputs by converting explicitly. Decorate the positive consumer functions with beartype and execute the fixture in `tests/test_examples.py` to maintain runtime controls for the newly statically accepted typical calls and update concise static/Like docs.
 
 ## Concrete Steps
 
@@ -75,7 +75,7 @@ Keep source changes isolated from the runtime-conversion branch until integratio
 ## Artifacts and Notes
 
 
-Use `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/static-like-*.log` for initial failures and final checks. Record the actual supported family boundary and any backend-stub limitation discovered during implementation.
+Evidence is `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/static-like-*.log`: `before` records failures in all four positive checker batches; `first` records all eight batches passing; `python-3.11` through `python-3.14` include all four checkers and the executable consumer; `tox` records all floor lanes; `dev-final` reports 1,043 passed, five skips and 90.97% coverage; `rc0-py310` and `rc0-py314` prove the decorated consumer against the exact candidate; `hooks-final` is clean. The runtime example contains 31 ordinary calls and assert_type checks; the negative fixture adds nine intended invalid input sites per checker.
 
 ## Interfaces and Dependencies
 
@@ -83,3 +83,5 @@ Use `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/static-like-*.
 Retain the public NumPy ArrayLike template and named strict/Like aliases. Use existing NumPy typing helpers and typing_extensions.TypeAliasType for Python 3.10 syntax compatibility. Add no runtime dependency or root import. Keep backend-specific static input aliases private.
 
 Revision note — 2026-09-08: Added focused Like/Shaped typing plan before implementation.
+
+Revision note — 2026-09-08: Implemented static-only shared input families, executable typed consumers and deliberate error fixtures. Recorded all Python, floor, exact-rc0 consumer and hook evidence.

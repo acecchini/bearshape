@@ -206,11 +206,33 @@ F32Unsafe = make_array_like_type(FLOAT32, casting="unsafe", name="F32Unsafe")
 typing combinations:
 
 ```python
+from typing import TypeAlias
+
 import numpy as np
 from bearshape.numpy import ArrayLike
 
-type MyInputType = ArrayLike[float, np.float32]
+MyInputType: TypeAlias = ArrayLike[float, np.float32]
 ```
 
 That template is most useful when you want your own checker-friendly alias but
 still follow bearshape's "scalar or nested sequence or array" model.
+
+## Static input types
+
+Like annotations describe the input value. They do not replace it with an array;
+convert explicitly before using backend-specific methods. NumPy numeric Like
+aliases admit the input dtype families allowed by `same_kind` casting: booleans
+for BoolLike; booleans and unsigned integers for unsigned Like types; booleans
+and integers for signed integer Like types; those plus floating values for real
+Like types; and all numeric kinds for complex Like types. Input precision may
+differ from the target precision. Casting can lose precision.
+
+JAX and Torch Like annotations accept native arrays, numeric NumPy
+arrays/scalars, and ordinary numeric nested sequences. Their native array types
+do not encode dtype statically, so runtime checks still decide casting, shape,
+device, byte order and actual converter support. A NumPy `__array__` method
+alone is not a static guarantee of Torch conversion.
+
+NumPy Shaped accepts every NumPy generic dtype, including string, object,
+datetime and structured arrays. ShapedLike also admits ordinary string/bytes
+sequences. Shape relationships remain runtime checks in every checker.

@@ -1,17 +1,17 @@
 ---
-description: How bearshape annotations map onto pyright, mypy, and ty.
+description: How bearshape annotations map onto pyright, mypy, ty, and pyrefly.
 ---
 
 # Static Typing
 
-bearshape supports **pyright**, **mypy**, and **ty**. The repository runs all
-three against the typing fixtures in `tests/typing/` via
+bearshape supports **pyright**, **mypy**, **ty**, and **pyrefly**. The
+repository runs all four against the typing fixtures in `tests/typing/` via
 `tests/test_typecheck.py`.
 
 At a high level:
 
 - under `TYPE_CHECKING`, backend array aliases resolve to real static array
-    types such as `numpy.typing.ANDArray`, `jax.Array`, `torch.Tensor`, or
+    types such as `numpy.typing.NDArray`, `jax.Array`, `torch.Tensor`, or
     `cupy.ndarray`
 - pre-defined dimensions such as `N`, `C`, and `Scalar` are represented in a
     checker-friendly way
@@ -156,7 +156,7 @@ Notes:
 ## Custom dimensions
 
 Custom dimensions are runtime objects. To make them usable in annotations across
-all three checkers, define a checker-only alias:
+all four checkers, define a checker-only alias:
 
 ```python
 import typing as tp
@@ -199,17 +199,19 @@ def structure_checked(x: Tree[F32[N], T]) -> Tree[F32[N]]:  # type: ignore[valid
   return x
 ```
 
-## Backend notes
+## Convertible input and native result types
 
-The typing model differs slightly from runtime behavior:
+NumPy Like annotations describe convertible numeric families, including other
+precisions accepted by same-kind casting. JAX/Torch Like annotations include
+numeric scalars, NumPy arrays and nested sequences as well as native arrays.
+Convert the value explicitly to obtain a native array result. Like validation
+does not convert the function argument for you.
 
-- `bearshape.jax.F32Like[...]` and `bearshape.torch.F32Like[...]` accept scalars
-    and nested sequences at runtime, but static checkers see them as `jax.Array`
-    and `torch.Tensor`
-- `Shaped[...]` and `ShapedLike[...]` accept any dtype at runtime, while their
-    static aliases are approximations
-- backend `ScalarLike` aliases validate Python and NumPy scalar values, not
-    backend-native 0-D arrays
+The consumer fixtures test these calls, inferred results and expected errors
+with pyright, mypy, ty and pyrefly. NumPy Shaped retains ndarray methods while
+allowing nonnumeric dtypes. Runtime validates dimension relationships and
+value/device-dependent conversion constraints.
 
-For backend-native scalar arrays, annotate the input as a `Like` type with
-`Scalar`, for example `F32Like[Scalar]`.
+Backend ScalarLike aliases describe Python and NumPy scalar values. For a
+backend-native scalar array, use a shaped alias with Scalar, such as
+`F32Like[Scalar]`.
