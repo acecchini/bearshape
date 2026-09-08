@@ -33,6 +33,7 @@ _NUMPY_INSTALL_HINT = (
 )
 
 if tp.TYPE_CHECKING:
+  import numpy as np
   from torch import Tensor
 else:
   Tensor = tp.cast(

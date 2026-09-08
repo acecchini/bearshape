@@ -33,6 +33,7 @@ _NUMPY_INSTALL_HINT = (
 )
 
 if tp.TYPE_CHECKING:
+  import numpy as np
   from jax import Array as JaxArray
 else:
   JaxArray = tp.cast(
@@ -420,12 +421,7 @@ def _get_jax_tree_util() -> tp.Any:
 
 
 if tp.TYPE_CHECKING:
-  _T = tp.TypeVar("_T")
-
-  class Tree(tp.Generic[_T]):
-    """Static type stub — ``Tree[LeafType]`` for type checkers."""
-
-    def __class_getitem__(cls, item: object) -> type: ...
+  from ._tree import _StaticTree as Tree
 
 else:
   Tree = _TreeFactory(_get_jax_tree_util, name="Tree")

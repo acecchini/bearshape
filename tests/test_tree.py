@@ -1473,3 +1473,28 @@ class TestOptreeBackend:
     from bearshape.optree import Tree as OptreeTree
 
     assert repr(OptreeTree) == "Tree"
+
+
+def test_typed_tree_consumer_examples() -> None:
+  """Run the same real container/custom-node calls checked by every engine."""
+  import subprocess
+  import sys
+  from pathlib import Path
+
+  pytest.importorskip("jax")
+  subprocess.run(
+    [sys.executable, "-m", "tests.typing.check_tree_consumers"],
+    check=True,
+    cwd=Path(__file__).resolve().parents[1],
+    capture_output=True,
+    text=True,
+    timeout=60,
+  )
+
+
+def test_custom_jax_node_leaf_dtype_is_checked() -> None:
+  pytest.importorskip("jax")
+  from tests.typing.check_tree_consumers import Batch, custom_node
+
+  with pytest.raises(BeartypeCallHintParamViolation):
+    custom_node(Batch(np.ones(3, dtype=np.int32)))

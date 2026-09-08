@@ -16,8 +16,9 @@ Requires ``optree`` or ``jax`` for tree traversal. Install with
    Structure arguments (``T``, ``S``, ``...``) are **runtime-only**.
    Type checkers see ``Tree`` as ``Tree[LeafType]`` (one type parameter)
    and cannot validate multi-arg structure syntax like ``Tree[F32[N], T]``.
-   Leaf-only annotations such as ``Tree[F32[N, C]]`` are fully supported
-   by all type checkers.
+   Leaf-only annotations such as ``Tree[F32[N, C]]`` model ordinary
+   leaves, lists, tuples and dictionaries. Custom node registration is a
+   runtime property; use the concrete node type in a checker-only alias.
 
 Import ``Tree`` from an explicit backend module::
 
@@ -65,6 +66,36 @@ from ._runtime_hints import (
   hint_label,
   make_runtime_hint,
 )
+
+if tp.TYPE_CHECKING:
+  from collections.abc import ValuesView
+
+  from typing_extensions import TypeAliasType
+
+  _Leaf_co = tp.TypeVar("_Leaf_co", covariant=True)
+
+  # These members describe containers; validation never invokes them. In
+  # particular, self-iterating strings must not satisfy the recursive model.
+  class _TreeList(tp.Protocol[_Leaf_co]):
+    def pop(self, index: int = -1, /) -> _StaticTree[_Leaf_co]: ...
+
+  class _TreeTuple(tp.Protocol[_Leaf_co]):
+    def __getitem__(self, index: int, /) -> _StaticTree[_Leaf_co]: ...
+    def __add__(self, value: tuple[object, ...], /) -> tuple[object, ...]: ...
+
+  class _TreeMapping(tp.Protocol[_Leaf_co]):
+    def values(self) -> ValuesView[_StaticTree[_Leaf_co]]: ...
+
+  _StaticTree = TypeAliasType(
+    "_StaticTree",
+    _Leaf_co
+    | _TreeList[_Leaf_co]
+    | _TreeTuple[_Leaf_co]
+    | _TreeMapping[_Leaf_co]
+    | None,
+    type_params=(_Leaf_co,),
+  )
+
 
 __all__ = ["S", "Structure", "T"]
 

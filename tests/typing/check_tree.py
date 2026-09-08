@@ -15,7 +15,7 @@ from bearshape.optree import Tree
 # Import validation
 # ---------------------------------------------------------------------------
 
-_pt = Tree  # Tree should be importable
+_pt = Tree[int]  # Tree should be importable and subscriptable
 _st = Structure  # Structure should be importable
 
 # ---------------------------------------------------------------------------

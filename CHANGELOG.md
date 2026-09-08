@@ -13,6 +13,9 @@ and this project follows
     Preserve native result types after explicit conversion.
 
 - Allow nonnumeric NumPy dtypes in static Shaped and ShapedLike annotations.
+- Replace nominal static Tree stubs with a shared model for ordinary typed
+    leaves, lists, tuples and dictionaries, preserving expected leaf errors.
+    Document the concrete-type alias pattern for custom JAX nodes.
 
 - Verify real consumer calls, inferred types, and expected errors with pyright,
     mypy, ty, and pyrefly; require selected tools instead of silently skipping
