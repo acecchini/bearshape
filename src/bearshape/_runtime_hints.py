@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import typing as tp
-from collections.abc import Callable
 from dataclasses import dataclass
+
+from ._memo import get_memo
 
 __all__ = [
   "ValidationFailure",
@@ -56,21 +57,8 @@ def hint_label(hint: object) -> str:
   return repr(hint)
 
 
-def _snapshot_check_state() -> Callable[[], None]:
-  """Return a rollback callback for the live checking scope."""
-  from ._memo import get_memo
-
-  memo = get_memo()
-  snapshot = memo.snapshot()
-
-  def restore() -> None:
-    memo.restore(snapshot)
-
-  return restore
-
-
 class _RuntimeHintMeta(type):
-  __beartype_snapshot__ = staticmethod(_snapshot_check_state)
+  __beartype_state__ = staticmethod(get_memo)
 
   def __instancecheck__(cls, obj: object) -> bool:
     validator = _require_runtime_validator(cls)

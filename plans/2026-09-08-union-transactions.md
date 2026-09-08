@@ -178,3 +178,58 @@ Then validate focused regressions and upstream tests, followed by normal install
 Decision: Optimize this tested local proposal before any upstream contact. Rationale: the current extra cost is material for a runtime checker; a smaller design with measurements will make the owner's maintainer discussion more useful. The user's Zulip contact does not authorize sending a message. Date/author: 2026-09-08, Codex.
 
 Revision note — 2026-09-08: Reopened the local optimization milestone at the owner's request; existing completed evidence remains historical baseline, not proof of the next revision.
+
+
+## Optimization design and current evidence
+
+
+The current proposal supersedes the original `__beartype_snapshot__` callback
+with `__beartype_state__()`, returning a library-owned object with `snapshot()`
+and `restore(token)` methods. A token is an opaque saved-state value. Bearshape
+now exposes its existing `get_memo` function directly; no new memo wrapper or
+per-snapshot closure is needed. Locate known state once per checking expression
+and reuse it across alternatives. Validate newly discovered domains before use.
+
+The upstream generator compiles one checking function at decoration. It retains
+one scope for assignment expressions and receives the original sampled random
+integer. Compact restore/token lists replace per-checkpoint ExitStacks; general
+unwinding is retained on the exceptional path when a restore method fails. A
+root union uses its alternatives' complete boundaries without another duplicate
+checkpoint. Leading stateless native alternatives are checked once before state
+setup. Root forward references delegate to the resolved hint, while nested lazy
+references still enrol domains in active checks before mutation.
+
+The original prototype's published-rc0 compatibility status has not changed.
+The initial patch and artifacts remain historical evidence. No upstream message
+has been sent. The independent frame filter lives in draft PR #35, branch
+`codex/memo-discovery-performance`; validate its combination on a separate local
+integration branch before any merge approval. It filters code metadata before
+reading unrelated frame locals and introduces no state cache.
+
+Initial profiling attributed a material part of the cost to repeated frame
+inspection. A bookkeeping-only prototype reduced a 54-microsecond corrected
+second-alternative case to about 45; reusing state then reduced it to about 39.
+These are exploratory measurements, not the final matched artifact comparison.
+The maintained `tools/upstream/benchmark_transactions.py` reports incorrect rc0
+cases explicitly and covers native checks, resolved/unselected references,
+synthetic plugin checks, automatic/explicit array checks and nested/rejected
+unions. Final comparisons must use the same script and package versions.
+
+Discovery: compiling a fresh helper for a root forward reference changed the
+upstream uncached-expression equality contract. Delegating such roots directly
+to the existing resolver both preserved that contract and removed unnecessary
+transaction setup for ordinary references. The upstream tests remain intact.
+A transient missing import and an unsupported pytest override were corrected;
+final validation uses the project's supported options and explicit Python
+interpreter/version arguments for pyright.
+
+Decision: Prefer a state object over per-snapshot callbacks. Rationale: this
+reuses the library's existing snapshot/restore interface, avoids repeated scope
+lookups and closure creation, and keeps state ownership with the library.
+Decision: Preserve complete boundaries but eliminate redundant checkpoints and
+stateless setup. Rationale: equivalent outcomes can be proved by regressions
+without weakening composition or exception cleanup. Date/author: 2026-09-08, Codex.
+
+Revision note — 2026-09-08: Recorded the optimized interface, rejected redundant
+work, independent PR #35 and the distinction between exploratory and final
+performance evidence.

@@ -225,27 +225,23 @@ submitted on the owner's behalf.
 
 ### Tested local union fix, pending upstream review
 
-The follow-up implementation in PR #34 exposes a shared snapshot callback from
-bearshape runtime hints and pairs it with a local beartype source extension.
-Upstream patch commit `4aef992d1cd0a6d09fe5c3784523c44e0874b178`, based on
-`a2729e0e358bf963ee6f177e300ae08a622d05d6`, adds complete-alternative
-transactions, exception cleanup and isolated diagnostic replay. Lazy forward
-references join active transactions before mutating state, while unselected
-references remain unresolved. There is no runtime monkeypatch or replacement
-type checker.
+PR #34 exposes the active `ShapeMemo` through the proposed `__beartype_state__`
+hook. The optimized local upstream extension locates each state domain once,
+compiles the checking function at decoration, uses compact rollback records and
+avoids duplicate root snapshots and stateless-path setup. It preserves
+complete-alternative rollback, exception cleanup, diagnostic replay, lazy
+references, ordering and sampling. PR #35 independently reduces frame-discovery
+work; combined timings must identify both changes.
 
-The original probe and all 22 explicit integration cases pass with the patch.
-Normally installed packages passed 1,124 combined runtime, static-checker and
-integration tests on both Python 3.10.20 and 3.14.5, with five existing CPU skip
-records per interpreter (CuPy plus four platform precision cases). Upstream's
-own serial unit suite passed 426 tests on Python 3.10 and 439 on Python 3.14,
-with 20 and seven pre-existing skip records respectively. Upstream pyright
-reports no errors. The focused plan records final artifact identities and
-performance measurements. Final archive-extracted consumers independently passed
-the same 1,124 tests per endpoint, and minimal installs passed without optional
-backends. A matched benchmark measured strict small-array calls at about 19
-microseconds with rc0 and 31 with the patch; this overhead is an explicit
-upstream review tradeoff.
+The original callback proposal at upstream commit
+`4aef992d1cd0a6d09fe5c3784523c44e0874b178`, based on
+`a2729e0e358bf963ee6f177e300ae08a622d05d6`, passed 22 integration cases and
+1,124 combined tests per Python endpoint. Its strict small-array benchmark
+measured about 19 microseconds with rc0 and 31 with that initial patch. Those
+results are historical comparison evidence. The owner requested further
+optimization before contacting the maintainer through Zulip. The focused plan
+records optimized source identities, validation and matched timing evidence;
+these must be read separately from the original artifacts.
 
 This demonstrates a working local fix, not compatibility provided by published
 rc0. The dependency metadata and lock are unchanged, and the new integration

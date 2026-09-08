@@ -178,6 +178,11 @@ parametrize-names-type = "csv"
   "ARG001", "INP001", "RUF029", "S101",
 ]
 
+"tools/upstream/benchmark_transactions.py" = [
+  # Standalone benchmark script, not an importable package.
+  "INP001",
+]
+
 [format]
 docstring-code-format = true
 docstring-code-line-length = 100

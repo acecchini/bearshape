@@ -8,6 +8,9 @@ and this project follows
 
 ## [Unreleased]
 
+- Refine the local union-integration proposal to reuse active state and measure
+    transaction overhead; the upstream hook remains unpublished.
+
 - Require runtime and four-checker consumer tests from normally installed
     sdist-derived wheels outside the checkout on Python 3.10 and 3.14.
 
