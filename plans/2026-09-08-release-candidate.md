@@ -12,8 +12,8 @@ The focused CI, documentation, installation and GPU changes must work together o
 
 
 - [x] (2026-09-08) Created codex/release-candidate from documentation PR #24.
-- [ ] Open the aggregate draft PR against #22.
-- [ ] Combine installed-consumer PR #25 and CuPy PR #26, preserving every contract and test.
+- [x] (2026-09-08) Opened aggregate draft PR #27 against #22.
+- [x] (2026-09-08) Combined #25 and #26, preserving all tests and requiring both notebook and installed-consumer jobs.
 - [ ] Run hooks and observe the complete hosted candidate matrix.
 - [ ] Record results and keep user merge approval pending.
 
@@ -32,7 +32,7 @@ Decision: Resolve additive workflow/changelog overlaps without changing runtime 
 ## Outcomes & Retrospective
 
 
-Integration pending. A04 whole native-union rollback and CuPy static release policy remain open. Green integration checks cannot establish production readiness while those decisions remain unresolved.
+The combined checkout passes the full hooks. Hosted matrix validation is pending. A04 whole native-union rollback and CuPy static release policy remain open. Green integration checks cannot establish production readiness while those decisions remain unresolved.
 
 ## Context and Orientation
 
