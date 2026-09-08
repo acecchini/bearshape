@@ -58,6 +58,11 @@ def unselected(value: int | NeverResolved) -> object:  # noqa: F821
   return value
 
 
+@beartype
+def nested_forward(value: list[LaterNative]) -> object:
+  return value
+
+
 class LaterNative:
   pass
 
@@ -156,10 +161,12 @@ def main() -> None:
   if args.calls < 1 or args.repeats < 1:
     parser.error("calls and repeats must be positive")
   later = LaterNative()
+  later_list = [later]
   cases: dict[str, Callable[[], object]] = {
     "native": lambda: native(1),
     "forward-resolved-stateless": lambda: forward(later),
     "forward-unselected": lambda: unselected(1),
+    "forward-nested-stateless": lambda: nested_forward(later_list),
     "plugin-leaf": lambda: plugin_leaf([1]),
     "plugin-union-second": plugin_second,
     "strict": lambda: strict(_array2),
