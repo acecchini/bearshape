@@ -301,3 +301,24 @@ class TestIndependentCheckLifetime:
 
     with ThreadPoolExecutor(max_workers=2) as pool:
       assert all(pool.map(worker, (2, 7)))
+
+
+class TestStateProtocol:
+  def test_shared_getter_restores_the_active_context(self) -> None:
+    from bearshape import check_context
+
+    getter = F32[N].__beartype_state__
+    assert getter is F32[C].__beartype_state__
+    with check_context():
+      memo = get_memo()
+      memo.single["earlier"] = 7
+      state = getter()
+      assert state is memo
+      snapshot = state.snapshot()
+      assert isinstance(np.ones(2, dtype=np.float32), F32[N])
+      memo.variadic["axes"] = (False, (2, 3))
+      memo.structures["tree"] = ("leaf",)
+      state.restore(snapshot)
+      assert memo.single == {"earlier": 7}
+      assert memo.variadic == {}
+      assert memo.structures == {}

@@ -6,14 +6,15 @@ candidate is independently versioned from beartype and requires
 target until a supported replacement is implemented and validated.
 
 **Release readiness is withheld.** Native composite-union rollback remains
-incorrect in one important composition case. The owner selected full composition
-through supported upstream integration and permits a later beartype candidate;
-explicitly limited native CuPy static support is accepted. The owner approved
-merging the reviewed production work on 8 September 2026. PR #31 integrated all
-reviewed heads into main at `df81f00e2f62bda956244e680c980f87db1d4671`; its
-post-merge CI passed all 36 jobs. Repository/publication protections still
-require configuration, and publication or ownership transfer requires separate
-authorization.
+incorrect with published rc0. A tested local upstream patch is now prepared; its
+availability and validation are recorded below. The owner selected full
+composition through supported upstream integration and permits a later beartype
+candidate; explicitly limited native CuPy static support is accepted. The owner
+approved merging the reviewed production work on 8 September 2026. PR #31
+integrated all reviewed heads into main at
+`df81f00e2f62bda956244e680c980f87db1d4671`; its post-merge CI passed all 36
+jobs. Repository/publication protections still require configuration, and
+publication or ownership transfer requires separate authorization.
 
 ## Purpose and intended users
 
@@ -221,6 +222,52 @@ exceptions. Cover nested unions, return checks, explicit/automatic scopes, async
 paths and object lifetime before changing the compatibility floor and rerunning
 the complete normal-install matrix. No upstream message or patch has been
 submitted on the owner's behalf.
+
+### Tested local union fix, pending upstream review
+
+PR #34 exposes the active `ShapeMemo` through the proposed `__beartype_state__`
+hook. The optimized local upstream extension locates each state domain once,
+compiles the checking function at decoration, uses compact rollback records and
+avoids duplicate root snapshots and stateless-path setup. It preserves
+complete-alternative rollback, exception cleanup, diagnostic replay, lazy
+references, ordering and sampling. PR #35 independently reduces frame-discovery
+work; combined timings must identify both changes.
+
+The original callback proposal at upstream commit
+`4aef992d1cd0a6d09fe5c3784523c44e0874b178`, based on
+`a2729e0e358bf963ee6f177e300ae08a622d05d6`, passed 22 integration cases and
+1,124 combined tests per Python endpoint. Its strict small-array benchmark
+measured about 19 microseconds with rc0 and 31 with that initial patch. Those
+results are historical comparison evidence. The owner requested further
+optimization before contacting the maintainer through Zulip. The focused plan
+records optimized source identities, validation and matched timing evidence;
+these must be read separately from the original artifacts.
+
+The optimized upstream head is `76e27706fb137c6a676ee7b79a66d8b3092b52ad`. The
+combined normally installed artifacts passed 1,125 tests per endpoint, including
+all four checkers and 22 union cases, with five existing CPU skip records.
+Upstream passed 434/447 unit tests and pyright on Python 3.10/3.14. Its 22
+protocol tests include 600 deterministic independent-reference cases and two
+copied-context regressions. Completed transactions release their state
+references and are ignored by later checks using a copied context. The protocol
+tests also passed against normally installed wheels outside the upstream
+checkout. Added strict-check overhead fell by 57%/74%, after separating PR #35's
+frame filter improvement. Correct fallback-union calls fell from about 51/53 to
+33/25 microseconds. Nested ordinary references still add about 0.74/0.42
+microseconds over rc0; this remaining cost is explicit. All measurements include
+the final lifetime correction. See the focused plan for matched baselines,
+artifact hashes and the complete timing methodology.
+
+This demonstrates a working local fix, not compatibility provided by published
+rc0. The dependency metadata and lock are unchanged, and the new integration
+suite under `tools/upstream/` is explicitly invoked rather than silently skipped
+or marked xfail. Normal rc0 CI can remain green while that separate suite fails
+on rc0. After upstream acceptance and release, adopt the concrete dependency
+across metadata, lock, preflight and CI, move the cases into the required suite,
+and rerun candidate validation including CUDA. The patch has not been submitted
+upstream, and no package has been published or ownership transferred.
+
+See `tools/upstream/README.md` in the repository for commands.
 
 ### CuPy static boundary
 

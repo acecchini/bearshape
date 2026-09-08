@@ -87,6 +87,9 @@ uv run --locked python tools/probe_union.py
 uv run --locked python tools/benchmark_runtime.py --calls 10000 --repeats 5
 ```
 
+`tools/upstream/README.md` describes the tested local upstream proposal and its
+explicit integration suite. It is not part of the published rc0 contract.
+
 `probe_union.py` is a standalone release-blocker reproducer. With current rc0 it
 prints versions and fails on a valid native composite-union call: a failed
 alternative leaves a dimension binding behind. This failure is expected evidence

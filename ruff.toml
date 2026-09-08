@@ -173,6 +173,16 @@ parametrize-names-type = "csv"
   "N801",
 ]
 
+"tools/upstream/test_*.py" = [
+  # Explicit upstream integration regressions follow the same test conventions.
+  "ARG001", "INP001", "RUF029", "S101",
+]
+
+"tools/upstream/benchmark_transactions.py" = [
+  # Standalone benchmark script, not an importable package.
+  "INP001",
+]
+
 [format]
 docstring-code-format = true
 docstring-code-line-length = 100
