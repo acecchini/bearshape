@@ -25,12 +25,15 @@ SOURCE_INPUTS = {
   "ty.toml",
   "ruff.toml",
   "tools/check_distribution.py",
+  "tools/check_installed.py",
+  "tools/validate_runtime.py",
   "tools/validate_tox_env.py",
   "tests/conftest.py",
   "tests/test_numpy.py",
   "tests/test_tree.py",
   "tests/test_typecheck.py",
   "tests/typing/check_imports.py",
+  "tests/typing_negative/invalid_calls.py",
 }
 
 

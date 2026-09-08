@@ -12,11 +12,13 @@ The package users install must pass the same runtime and static consumer contrac
 
 
 - [x] (2026-09-08) Created isolated branch/worktree from the combined CI candidate.
-- [ ] Open early draft PR and inspect archive/test configuration.
-- [ ] Add explicit installed-package mode for consumer checker tests.
-- [ ] Maintain isolated sdist-derived consumer validation with normal wheel installation.
-- [ ] Run runtime, positive/negative/inference checks on Python 3.10 and 3.14.
-- [ ] Require artifact consumer validation in shared CI and preserve the same built artifact.
+- [x] (2026-09-08) Opened draft PR #25 and inspected archive/test configuration.
+- [x] (2026-09-08) Added explicit --installed-package mode; normal source targets remain unchanged.
+- [x] (2026-09-08) Added normal wheel installation driver with copied archive fixtures, dependency lock and site-packages origin checks.
+- [x] (2026-09-08) Initial isolated wheel runs each passed all 1,074 tests with five documented platform/CuPy skips.
+- [x] (2026-09-08) Added required endpoint jobs consuming the same candidate-distributions artifact.
+- [x] (2026-09-08) Final archive-owned-lock runs passed 1,074 tests with five documented skips at both endpoints; full hooks and actionlint pass.
+- [ ] Observe final hosted jobs.
 - [ ] Record hashes, origins and results; obtain user validation before merge.
 
 ## Surprises & Discoveries
@@ -36,12 +38,12 @@ Decision: Reuse the candidate-distributions artifact from the shared build job. 
 ## Outcomes & Retrospective
 
 
-Implementation pending. Existing minimal-wheel and archive-content checks prove useful subsets; this milestone establishes combined runtime and checker behavior from the installed artifact.
+The final normally installed wheel passes all 1,074 runtime/checker tests on Python 3.10.20 and 3.14.5. Both environments import bearshape from site-packages with exact beartype 0.23.0rc0, no editable project and no copied src directory. Five skips are CuPy absence and platform long-double distinctions. Hosted validation and user merge review remain.
 
 ## Context and Orientation
 
 
-Worktree `/Users/ale/Code/bearshape-worktrees/installed-consumers`, branch `codex/installed-consumers`, base CI `f396e72`. `tools/check_distribution.py` checks license, metadata, package bytes and source-test inclusion. `tests/test_typecheck.py` runs four positive/negative batches. `tests/conftest.py` owns pytest filtering; `pytest.toml` configures importlib mode. The shared workflow builds one sdist-derived wheel and makes it available as candidate-distributions.
+Worktree `/Users/ale/Code/bearshape-worktrees/installed-consumers`, branch `codex/installed-consumers`, base CI `f396e72`. `tools/check_distribution.py` checks license, metadata, package bytes and source-test inclusion. `tests/test_typecheck.py` runs four positive/negative batches. `tests/conftest.py` owns pytest filtering; `pytest.toml` configures the shared runner defaults. The shared workflow builds one sdist-derived wheel and makes it available as candidate-distributions.
 
 ## Plan of Work
 
@@ -74,9 +76,11 @@ Use disposable directories and local virtual environments only. Do not modify sy
 ## Artifacts and Notes
 
 
-Evidence goes under `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/installed-*`. Store the checked wheel/sdist hashes and copied-consumer logs. These results complement, but do not replace, exact GPU runtime tests or the unresolved native-union contract decision.
+Evidence goes under `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/installed-*`. The final local wheel SHA256 is ef8d38266da7150efa80191589b7ba0310007a6ae2dbb82d30d4bfe4e0ed49cf; source archive SHA256 is e738d7ab34d74d7ea221f1db3aef291e37baf7ad38c5c9dfa7276735dc93c23a. Consumer logs are installed-final-3.10.log and installed-final-3.14.log; each reports its temporary site-packages origin. Hosted builds record their own hashes because each archive is tied to its source state. These results complement, but do not replace, exact GPU runtime tests or the unresolved native-union contract decision.
 
 ## Interfaces and Dependencies
 
 
 No public runtime API or dependency change is planned. The pytest option is for downstream artifact validation. Use the existing locked backend/checker/test groups and standard-library archive/process tools for orchestration.
+
+Revision note — 2026-09-08: Validated the final driver using the archive's own lockfile and required both installed-consumer jobs in CI.

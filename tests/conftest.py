@@ -31,6 +31,14 @@ _BACKEND_TESTS: dict[str, set[str]] = {
 }
 
 
+def pytest_addoption(parser: pytest.Parser) -> None:
+  parser.addoption(
+    "--installed-package",
+    action="store_true",
+    help="Check copied consumers against an installed wheel without source targets",
+  )
+
+
 def pytest_collection_modifyitems(
   config: pytest.Config, items: list[pytest.Item]
 ) -> None:
