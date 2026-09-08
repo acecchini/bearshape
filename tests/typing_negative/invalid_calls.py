@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
-from numpy.typing import NDArray
 
 from bearshape import N, check
 from bearshape.numpy import F32
+
+if TYPE_CHECKING:
+  from numpy.typing import NDArray
 
 
 def needs_float32(value: F32[N]) -> F32[N]:

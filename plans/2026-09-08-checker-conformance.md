@@ -87,3 +87,5 @@ Keep ParamSpec-based decorator signature preservation and the existing public an
 Revision note — 2026-09-08: Added focused checker-conformance plan before implementation.
 
 Revision note — 2026-09-08: Implemented the four-engine consumer harness, explicit pyrefly default configuration, and all Python/floor validation. Native Tree, broader Like, and CuPy typing remain separate work.
+
+Revision note — 2026-09-08: Hosted lint caught an annotation-only import in the new negative fixture; moved it into TYPE_CHECKING and reran conformance. Stage new files before the all-files hook run so they are included.
