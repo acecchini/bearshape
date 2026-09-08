@@ -22,7 +22,9 @@ The user requested resolving this defect after approving the earlier implementat
 - [x] (2026-09-08) Normally installed packages passed 1,124 tests plus five existing CPU skip records on each of Python 3.10.20 and 3.14.5, including all four checkers. Upstream serial unit tests passed 426/439 with 20/7 pre-existing skips. Upstream pyright passed.
 - [x] (2026-09-08) Hooks and docs passed. Final sdist-extracted consumers outside the checkout passed 1,124 tests with five existing CPU skip records on each endpoint. Minimal wheel environments passed with no optional backends. Final normal-install benchmarks and artifact hashes are recorded below.
 - [x] (2026-09-08) Prepared the concrete upstream patch and submission text locally and updated the handoff and agent/tool guidance.
-- [ ] Obtain authorization to submit the upstream proposal; acceptance/publication and a later supported dependency migration remain external steps, not a completed release fix.
+- [ ] (2026-09-08) Profile and reduce the local proposal overhead before any maintainer contact, as requested by the owner. Preserve rollback, diagnostics, lazy aliases, sampling and state lifetime.
+- [ ] Revalidate optimized normal installations, record reproducible comparisons and prepare a concise local Zulip discussion note for the owner.
+- [ ] Upstream acceptance/publication and a later supported dependency migration remain external steps, not a completed release fix.
 
 ## Surprises & Discoveries
 
@@ -160,3 +162,19 @@ Matched normal-install benchmarks used the same Python 3.10.20, NumPy 2.2.6, opt
 Hosted rc0 CI run 34239118985 passed for implementation head `983f7dc0983378662acd0b22924c09489389db87`. That does not test the unpublished upstream extension. The final fixture/report follow-up will receive its own normal CI run; local patched-wheel evidence is tracked independently.
 
 Revision note — 2026-09-08: Recorded final installed-archive verification, fixture correction, hashes, minimal imports, performance tradeoff and the remaining upstream approval/release boundary.
+
+
+## Performance follow-up authorized by the owner
+
+
+The owner requested a deeper investigation and substantially lower overhead before contacting the beartype maintainer. The owner has a direct Zulip contact; prepare discussion material locally, but do not send it or submit upstream. Continue the existing draft PR and matching worktrees because this refines the same unmerged integration. Preserve the initial committed patch and immutable wheel evidence for comparison.
+
+Profile the initial normally installed proposal against published rc0 before editing. Extend measurement to successful first and later union alternatives, rejection, nested unions, explicit scopes, multiple domains and stateless forward references. Time setup separately from repeated checking; compare equal interpreters, packages and inputs. A faster incorrect rc0 result is not a correctness equivalent.
+
+First replace avoidable per-call bookkeeping if profiling confirms it is material. Consider a direct path for a single known state provider without internal union boundaries, compact callback storage, and avoiding repeated state lookup. Keep the public callback interface small; any interface change must be justified by measured improvement and equivalent semantics. Do not make unselected references eager, drop exception cleanup, weaken negative tests or remove runtime composition. Record rejected approaches as well as measured improvements.
+
+Then validate focused regressions and upstream tests, followed by normal installed packages on Python 3.10 and 3.14, CPU backends, four checkers, archive/minimal consumers, hooks and docs as affected. Add behavioral regressions for newly discovered risks. Preserve the original package artifacts and record optimized hashes separately under evidence/union-transactions/optimization/. Report both total latency and the change in added overhead, including remaining costs. Do not impose unstable wall-clock CI thresholds.
+
+Decision: Optimize this tested local proposal before any upstream contact. Rationale: the current extra cost is material for a runtime checker; a smaller design with measurements will make the owner's maintainer discussion more useful. The user's Zulip contact does not authorize sending a message. Date/author: 2026-09-08, Codex.
+
+Revision note — 2026-09-08: Reopened the local optimization milestone at the owner's request; existing completed evidence remains historical baseline, not proof of the next revision.
