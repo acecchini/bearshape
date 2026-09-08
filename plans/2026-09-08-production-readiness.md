@@ -21,15 +21,15 @@ The recommended release policy is to make `0.23.0rc0` the minimum beartype versi
 
 - [x] (2026-09-08) Completed the production audit and preserved its evidence outside the repository.
 - [x] (2026-09-08) Prepared this implementation proposal without changing the repository.
-- [x] (2026-09-08) M0: Accepted independent `0.1.0rc0` versioning, active goal, and focused branches/worktrees/PRs #12–#18.
+- [x] (2026-09-08) M0: Accepted independent `0.1.0rc0` versioning, active goal, and focused branches/worktrees/PRs #12–#22.
 - [x] (2026-09-08) M1: PR #13 makes exact rc0 normally installable; locked suite and exact-candidate CPU endpoint suites pass. Subsequent PRs preserve failing-before regressions.
 - [ ] M2: Import-hook repair is implemented in PR #14. Native composite-alternative rollback is not feasible through the inspected rc0 leaf callbacks; user decision on upstream integration versus an enforceable restricted contract is pending.
 - [ ] M3: Invocation-owned state and diagnostic replay removal are implemented in PR #15 (1,043 runtime tests on exact rc0 endpoints; 91.31% dev coverage). Whole-alternative rollback remains a release blocker.
 - [x] (2026-09-08) M4: PR #16 fixes seven converter false positives; thirteen oracle cases and 1,047 runtime tests pass on exact rc0 endpoints. CuPy GPU proof remains open under M6.
-- [ ] M5: PR #17 implements four-engine positive/negative/inference conformance on Python 3.10–3.14. Broader Like, Shaped, Tree and native CuPy static models remain.
-- [ ] M6: Complete runtime feature, framework-integration, import-boundary, and performance validation.
+- [ ] M5: PR #17 implements four-engine positive/negative/inference conformance on Python 3.10–3.14. PR #19 corrects Like/Shaped inputs and PR #20 replaces nominal Tree stubs; all four checkers pass real positive/negative/inference fixtures on Python 3.10–3.14. Native CuPy stub limitations await a support-contract decision.
+- [ ] M6: PR #21 proves six JAX/Torch transformations and normally installed minimal custom-array operation at both Python endpoints. CuPy baseline passes 83 tests on H200 with Python 3.10.20 and 3.14.3. Corrected combined GPU, remaining feature map and performance evidence remain.
 - [ ] M7: Align hooks, dependencies, tox, and CI with the tested support contract.
-- [ ] M8: PR #18 implements license/source inclusion and archive inspection; isolated wheel validation is in progress. Rendered contract docs and examples remain.
+- [ ] M8: PR #18 implements license/source inclusion and archive inspection; isolated normally installed wheel validation passes 652 tests (seven documented platform/backend skips). Rendered contract docs and examples remain.
 - [ ] M9: Enforce release validation, prepare the ownership handoff, and obtain final user review before merge.
 
 ## Surprises & Discoveries
@@ -350,3 +350,5 @@ The roadmap PR owns this living program. Planned independent changes are rc0 com
 Revision note — 2026-09-08 implementation start: User selected `0.1.0rc0`, independent versioning, and separate PRs. These decisions supersede the original single-PR proposal. Goal created; implementation work is beginning.
 
 Revision note — 2026-09-08: Recorded implemented PRs and validation evidence, with the unresolved native-union design decision and remaining typing/artifact/docs work stated explicitly.
+
+Revision note — 2026-09-08: Recorded PRs #19–#22, combined runtime/checker validation, minimal installation and actual H200 baseline evidence. CuPy native creation/reshape returns Any or Unknown under all four installed checkers because the backend lacks ndarray stubs; no full static-support claim was added. GPU transfer was initially blocked, then approved after proving the payload matched the public repository commit.
