@@ -97,7 +97,7 @@ commands = [["pytest", "tests/", "-n", "auto", { replace = "posargs", default = 
 commands_pre = [
   ["python", "tools/validate_tox_env.py", "{env_name}"],
   ["python", "-c", "import beartype; print('beartype', beartype.__version__); assert beartype.__version__ == '0.23.0rc0'"],
-  { replace = "if", condition = "factor.cpu", then = ["python", "-c", "import numpy, jax, torch, optree; print([(m.__name__, m.__version__) for m in (numpy, jax, torch, optree)])"] },
+  { replace = "if", condition = "factor.cpu", then = [["python", "-c", "import numpy, jax, torch, optree; print([(m.__name__, m.__version__) for m in (numpy, jax, torch, optree)])"]], else = [], extend = true },
 ]
 
 # ---------------------------------------------------------------------------
