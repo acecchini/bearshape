@@ -1,7 +1,7 @@
 # Repair rendered documentation and executable examples
 
 
-Maintain this ExecPlan according to `PLANS.md`. This focused documentation PR is stacked on integration draft #22 and implements the documentation portion of M8. Artifact installation and publication gating remain separate work.
+Maintain this ExecPlan according to `PLANS.md`. This focused documentation PR is stacked on CI PR #23 (which uses integration draft #22) and implements the documentation portion of M8. Artifact installation and publication gating remain separate work.
 
 ## Purpose / Big Picture
 
@@ -12,11 +12,13 @@ Users must be able to read rendered shape/casting tables, distinguish runtime ch
 
 
 - [x] (2026-09-08) Created isolated documentation branch/worktree.
-- [ ] Open draft PR and reproduce formatter behavior with valid syntax.
-- [ ] Repair malformed tables/admonitions and stale examples/support claims.
-- [ ] Execute representative docs examples and the example notebook.
-- [ ] Verify rendered HTML structures and inspect representative pages visually.
-- [ ] Prove formatting is stable, build docs and record evidence.
+- [x] (2026-09-08) Opened draft PR #24; reproduced table corruption with the pinned formatter and fixed it with explicit gfm 1.0.0.
+- [x] (2026-09-08) Restored ten tables/seven malformed admonitions, corrected typing/memo guidance, and replaced Python 3.12-only alias syntax.
+- [x] (2026-09-08) All 29 notebook cells execute on Python 3.10.20 and 3.14.5 with exact candidate dependencies; 92 doc snippets parse at the Python floor.
+- [x] (2026-09-08) Executed all five guide example blocks plus scalar dot on both Python endpoints, including valid results and expected violations.
+- [x] (2026-09-08) Maintained checker validates expected table rows, admonitions, favicon and snippet syntax; visually inspected the casting table and Boolean warning in the local browser.
+- [x] (2026-09-08) Hook formatting round trip and docs-only build pass; notebook outputs and formatter before/after evidence retained externally.
+- [ ] Verify newly wired hosted documentation/notebook jobs.
 - [ ] Obtain user validation before merge.
 
 ## Surprises & Discoveries
@@ -36,7 +38,7 @@ Decision: Preserve explicit runtime-only syntax and CuPy's observed typing limit
 ## Outcomes & Retrospective
 
 
-Implementation pending. Rendered document structure, executable behavior and formatter stability must all be checked; a build exit code alone is insufficient.
+The pinned formatter originally flattened a valid table. Explicit gfm support preserves it. Ten restored tables and eight rendered admonitions now pass semantic checks. The original notebook failed on Python 3.10 at its Python 3.12 alias syntax; the corrected notebook executes all 29 cells at both Python endpoints, including expected violations that now assert the precise exception. Fixed the broadcast token, native notebook await and previously hard-coded endian results. Cleared stale committed output and added a repeatable kernel runner.
 
 ## Context and Orientation
 
@@ -79,3 +81,5 @@ Evidence belongs under `/Users/ale/Code/bearshape-implementation-2026-09-08/evid
 
 
 Use the existing Zensical documentation system and public bearshape API. Add no runtime dependency. Any additional formatter or execution tooling belongs in the appropriate development group or an isolated validation environment and must have a demonstrated use.
+
+Revision note — 2026-09-08: Stacked on CI PR #23 to add semantic docs and endpoint notebook jobs to shared validation. Kept outputs per interpreter under build/ and enabled only the development notebook dependency group for execution.

@@ -10,6 +10,7 @@ and this project follows
 
 - Share candidate validation across PRs, pushes and nightly runs, with explicit
     CPU backends, four checkers, complete hooks and a required final gate.
+
 - Preserve Markdown tables through the formatting hook and restore rendered
     tables/admonitions. Align typing, memo and example guidance with the
     candidate.

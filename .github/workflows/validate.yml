@@ -120,6 +120,27 @@ jobs:
         with:
           version: "0.11.17"
       - run: uv run --locked --only-group docs zensical build --clean
+      - run: uv run --locked --only-group docs python tools/check_docs.py
+
+  notebook:
+    name: Tour notebook (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.14"]
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v7
+        with:
+          version: "0.11.17"
+          python-version: ${{ matrix.python }}
+          enable-cache: true
+      - run: uv sync --locked --no-default-groups --group optional --group notebook
+      - run: uv run --no-sync python tools/validate_runtime.py cpu
+      - run: uv run --no-sync python tools/check_notebook.py
 
   distributions:
     runs-on: ubuntu-latest
@@ -166,7 +187,16 @@ jobs:
     name: Required validation
     if: always()
     needs:
-      [quality, runtime, checkers, compatibility, docs, distributions, minimal]
+      [
+        quality,
+        runtime,
+        checkers,
+        compatibility,
+        docs,
+        notebook,
+        distributions,
+        minimal,
+      ]
     runs-on: ubuntu-latest
     steps:
       - name: Require every validation job to succeed

@@ -43,7 +43,8 @@ def main() -> None:
     finally:
       if manager.has_kernel:
         manager.shutdown_kernel(now=True)
-  output = ROOT / "build/bearshape_tour-executed.ipynb"
+  python = f"{sys.version_info.major}.{sys.version_info.minor}"
+  output = ROOT / f"build/bearshape_tour-{python}-executed.ipynb"
   output.parent.mkdir(exist_ok=True)
   nbformat.write(notebook, output)
   count = sum(cell.cell_type == "code" for cell in notebook.cells)
