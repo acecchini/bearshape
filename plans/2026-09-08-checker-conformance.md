@@ -1,5 +1,13 @@
 # Verify useful public typing with four checker engines
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to `PLANS.md`. This independent PR establishes the checker harness and tested tool baseline for audit A06. Tree and broader Like models remain separate implementation PRs.
 
@@ -91,3 +99,8 @@ Revision note — 2026-09-08: Implemented the four-engine consumer harness, expl
 Revision note — 2026-09-08: Hosted lint caught an annotation-only import in the new negative fixture; moved it into TYPE_CHECKING and reran conformance. Stage new files before the all-files hook run so they are included.
 
 Revision note — 2026-09-08: Removed pyrefly's unrecognized required-version configuration key after inspecting stderr from the pinned 1.2.0 binary. The static dependency group and exact tox lane already enforce the tested tool baseline. Upstream current documentation described a newer configuration capability.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

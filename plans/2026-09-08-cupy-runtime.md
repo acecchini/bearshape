@@ -1,5 +1,13 @@
 # Verify the corrected CuPy runtime on CUDA
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to `PLANS.md`. This independent validation PR is based on integration PR #22, which includes the lifetime and converter corrections.
 
@@ -16,7 +24,7 @@ CuPy users need evidence from actual GPU arrays. Prove strict shape/dtype valida
 - [x] (2026-09-08) Published 51aa332 and verified all 18 package files plus tests against the public commit before transfer.
 - [x] (2026-09-08) All 95 GPU cases passed without skips on Python 3.10.20 and 3.14.3 with exact rc0, CuPy 14.2.0 and optree on H200/CUDA 12.9.
 - [x] (2026-09-08) Hooks and applicable hosted checks pass.
-- [ ] Obtain user validation before merge.
+- [x] (2026-09-08) Obtain user validation before merge.
 
 ## Surprises & Discoveries
 
@@ -77,3 +85,8 @@ Save evidence under /Users/ale/Code/bearshape-implementation-2026-09-08/evidence
 No public API changes. Tests use NumPy, CuPy, optree, beartype and pytest. CuPy remains outside CPU dependency groups. The configured GPU environment has CuPy 14.2.0; explicit optree installation is required for the additional container cases.
 
 Revision note — 2026-09-08: Completed CUDA endpoint validation. Wheel SHA256 7328836ecc1d0f8dbba93d6bd213517a97d9ad39e1407b6519bd6f740eeff04c; public source 51aa3327ea59a82f19fce616d7d9d7cb6bf657a6. Logs cupy-candidate-final-3.10.log and cupy-candidate-final-3.14.log record installed origins, CUDA configuration and 95 passing tests each.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

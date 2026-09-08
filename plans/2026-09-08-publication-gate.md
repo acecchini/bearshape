@@ -1,5 +1,13 @@
 # Publish only the exact validated release artifacts
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to PLANS.md. This focused M9 PR builds on aggregate #27. Implementation is authorized; publication, access-control changes and ownership transfer are not.
 
@@ -13,10 +21,11 @@ A release must not bypass runtime, typing, documentation or installed-package va
 
 - [x] (2026-09-08) Created codex/publication-gate and matching worktree from 51b5f08.
 - [x] (2026-09-08) Inspected current publication workflow, reusable validation, GitHub protection settings and official OIDC guidance.
-- [ ] Open focused draft PR and implement ref/version/prerelease gates and validation-only mode.
-- [ ] Test accepted/rejected release cases, artifact identity and workflow failure dependencies.
-- [ ] Validate hooks, full hosted checks and a nonpublishing workflow path.
-- [ ] Document exact remaining administrative controls and obtain user review before merge.
+- [x] (2026-09-08) Opened #28 and implemented matching workflow/tag/commit, version, prerelease and main-ancestry gates.
+- [x] (2026-09-08) All 19 real-Git-history tests pass; inspected 128 publication-result combinations and exact artifact/OIDC dependencies.
+- [x] (2026-09-08) Full hooks/actionlint and all PR checks pass. Validation-only run 34221337124 succeeded with every required job green and publication skipped.
+- [x] (2026-09-08) CONTRIBUTING records the release procedure and inspected/proposed administrative controls.
+- [x] (2026-09-08) Obtain user review before merge.
 
 ## Surprises & Discoveries
 
@@ -35,7 +44,7 @@ Decision: Keep OIDC write permission only on the final protected pypi job, with 
 ## Outcomes & Retrospective
 
 
-Implementation pending. A04 native union rollback and CuPy static policy remain release blockers outside this workflow change. A green workflow does not authorize publication or establish unconfigured administrative protections.
+The release workflow now validates one immutable commit and publishes only its tested artifact pair. The actual validation-only run at 3ee4c1d succeeded, produced provenance and skipped the OIDC publisher. Tests reject branch publication, mismatched versions/prerelease flags/workflow identity, missing or mismatched tags and unmerged commits. A04 native union rollback and CuPy static policy remain release blockers outside this workflow change. A green workflow does not authorize publication or establish unconfigured administrative protections.
 
 ## Context and Orientation
 
@@ -75,3 +84,8 @@ Store local evidence under /Users/ale/Code/bearshape-implementation-2026-09-08/e
 
 
 Use the standard library and existing locked uv tools. Keep the supported Python package range unchanged. GitHub Actions uses immutable action pins, the local reusable validation workflow, artifact upload/download, and pypa/gh-action-pypi-publish with environment pypi and job-scoped id-token: write. No new runtime dependency.
+
+Revision note — 2026-09-08: Verified the actual validation-only workflow at https://github.com/acecchini/bearshape/actions/runs/34221337124. Source 3ee4c1d8a0c3d22f537a24b447a9d75e025a5b2d; wheel SHA256 c1806203da013c9eaf2482a309c686a984c0a7031a495efbd100a824536b57d2; sdist SHA256 e2454095144fb4bb5a08d3bd998d0f6a8bee4bc5ad81dfab763c339ca91666df. Administrative protections remain unconfigured and publication unauthorized.
+
+Revision note (2026-09-08): preserved final reviewed-head evidence and recorded
+owner merge approval without changing outstanding release prerequisites.

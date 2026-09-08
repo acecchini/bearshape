@@ -1,172 +1,127 @@
 # bearshape agents
 
-bearshape is a runtime shape and dtype checking library moving toward a
-production-ready release under the beartype organization. The package, docs,
-examples, and site use the lowercase public identity `bearshape` everywhere.
+bearshape checks runtime array shapes, dtypes and tree constraints through
+beartype. Scientific Python developers and library authors use its annotations
+at API boundaries alongside native backend types. Keep the public identity
+lowercase `bearshape`.
 
-This file is for Codex and Claude agents. Keep it short, directive, and free of
-AI slop. Humans should learn the project from `README.md` and `docs/`; agents
-should use this file to avoid damaging the codebase.
+This is the shared Codex/Claude instruction file. `CLAUDE.md` points here.
+Human setup and commands live in `CONTRIBUTING.md`; tool usage lives in
+`tools/README.md`. Read `docs/maintainers/production-readiness.md` and the
+current plan before changing a contract. Historical plans record their original
+evidence; current owner decisions take precedence.
 
-## Operating Rules
+## Working rules
 
-Think before coding.
+- State assumptions before changing behavior. Resolve routine implementation
+  choices within the approved scope; ask when a missing decision changes the
+  public contract or acceptance criteria.
+- Maintenance is now surgical by default. The rename is complete. No speculative
+  features, duplicate helpers, unused abstractions or broad cleanup unrelated to
+  the requested work.
+- Preserve public annotation syntax and useful errors. Use explicit names,
+  simple control flow and the existing 2-space Python indentation.
+- Keep runtime behavior and static consumer behavior aligned. Passing syntax
+  checks, skipped tests and inferred `Any` do not prove support.
+- Do not spawn other agents unless the user requests delegation.
 
-- State assumptions before changing behavior.
-- If intent is ambiguous, ask instead of guessing.
-- If several interpretations are plausible, name them and explain the tradeoff.
-- Push back on overcomplicated requests when a smaller design is enough.
-- Do not hide uncertainty behind confident prose.
+## Current release contract
 
-Write production code.
+- bearshape is independently versioned; the candidate is `0.1.0rc0`.
+- The current dependency and test target is beartype `0.23.0rc0`, with metadata
+  `>=0.23.0rc0,<0.24`. Full native composite-union rollback is still incorrect.
+  The owner chose full composition through supported upstream integration and
+  permits a later candidate. Keep rc0 validation until a concrete replacement is
+  implemented and tested; update metadata, lock, preflight and CI together.
+- Do not replace beartype, monkeypatch upstream internals, infer union boundaries
+  from bytecode, hide the defect with an xfail, or restrict composition to make
+  CI pass. `tools/probe_union.py` reproduces the open release blocker.
+- pyright, mypy, ty and pyrefly are supported through the consumer harness on
+  Python 3.10–3.14. New checkers, including zuban, need an explicit plan.
+- Native CuPy static typing is explicitly limited, as accepted by the owner.
+  Its protocol fallback does not prove native ndarray method inference. Actual
+  GPU runtime evidence is recorded separately in the handoff report.
+- Release readiness remains withheld until the union integration and release
+  prerequisites are satisfied. Merge approval does not authorize publication,
+  deployment, access changes, ownership transfer or messages to maintainers.
 
-- No speculative features.
-- No generic abstractions without repeated, real use.
-- No duplicate logic when one clear helper is better.
-- No unused modules, methods, parameters, tests, docs, or compatibility shims.
-- No broad error handling for impossible states.
-- No comments that merely restate the code.
-- Every changed line must serve the plan or the user's request.
+## Product boundaries
 
-Prefer clarity over cleverness.
+- Root imports must not load NumPy, JAX, Torch, CuPy or optree. Backend behavior
+  belongs in its explicit module; do not widen the root API for shorter examples.
+- Preserve named, anonymous, fixed, arithmetic and broadcastable dimensions,
+  `Scalar`, `Value(...)`, backend aliases, `Like[...]`, scalar-like types and
+  `Tree[...]`. Dimensions are runtime constraints, not static shape proofs.
+- NumPy owns the broadest dtype/scalar/Like surface. Other backends use their
+  own native arrays and selected converters. Like validation does not replace
+  the caller's argument or retry failed conversions through a different backend.
+- Bare `@check` manages memo scope. Combine it with `@beartype`, or use
+  `@check(conf=...)`, to perform type checking.
+- Keep runtime tree structure syntax distinct from checker-supported containers.
+  optree uses the default registry; there is no custom namespace API.
+- `Value` expressions are trusted developer contracts, not a security sandbox.
 
-- Use explicit names and simple control flow.
-- Keep error messages specific and useful.
-- Keep public syntax stable unless an approved plan says otherwise.
-- Preserve optional dependency boundaries.
-- Do not make root import depend on NumPy, JAX, Torch, CuPy, or optree.
+Memo ownership, frame discovery, failed-alternative rollback, async contexts,
+decorator metadata, dtype normalization and static aliases need focused positive
+and negative regressions. Preserve lifetime/weak-reference evidence when changing
+state ownership. Read the feature-to-test map in the handoff report.
 
-## Current Mission
+## Major-work workflow
 
-The repo is in cleanup and rename mode. Broad refactors are allowed at the
-beginning because the goal is to remove accumulated slop and regain control of
-the whole project. Once the architecture, tests, CI, packaging, docs, and release
-path are stable, switch back to surgical changes by default.
+For features, contract changes, packaging, CI, release work and substantial
+refactors: create a feature branch and matching worktree, commit an ExecPlan
+following `PLANS.md`, and open a PR before implementation. Keep independent
+changes in focused PRs and document any dependency on another PR. Use the
+existing task goal when one exists; do not start duplicate goals.
 
-The target state is lean production quality:
+Keep the plan current and validate each milestone. Present a concrete result
+before requesting merge approval. Reuse explicit approval already given in the
+conversation for that scope; do not ask again solely because work crossed a
+milestone or worktree. After approval and passing checks, merge, verify main and
+remove only clean merged branches/worktrees after preserving evidence.
 
-- package and public identity renamed to `bearshape`
-- runtime behavior correct for NumPy, JAX, PyTorch, CuPy, and tree containers
-- static typing behavior coherent across pyright, mypy, ty, and planned pyrefly
-- zuban considered only through an explicit plan
-- tests organized by feature and edge case, including expected failures
-- hooks, CI, tox, docs, packaging, and uv-based PyPI publishing rebuilt for release
-- `CHANGELOG.md` updated for every feature or major user-visible action
+For stacked PRs, merging a head into its actual base can mark the PR merged.
+Before approval, use a separate integration branch to validate combinations.
+After approval, preserve every reviewed head in the merged history, including
+conflict resolutions; verify reachability before cleanup. Never force main or
+delete another contributor's changes. Small, explicitly requested low-risk edits
+may skip the major-work workflow.
 
-Do not advertise support that tests, typing fixtures, and docs do not prove.
+## Validation
 
-## Workflow For Major Work
+Use the locked uv toolchain. Start with `uv sync --locked`; install hooks with
+`uv run --locked prek install`. Use these routes from the repository root:
 
-Major work means any feature, public API change, rename step, packaging change,
-CI change, docs contract change, large refactor, or release task.
+- Runtime changes: `uv run --locked pytest tests/ --ignore=tests/test_typecheck.py -n auto`.
+- Typing changes: `uv run --locked pytest tests/test_typecheck.py -q`; this runs
+  all four engines, source checks and real positive/negative/inference consumers
+  with interpreter-matched settings. Direct checker commands are debugging aids.
+- Normal hooks: `uv run --locked prek run -a`.
+- Workflows: `uv run --locked prek run actionlint -a --stage manual`.
+- Select relevant tox, docs/notebook, minimal and installed-archive checks from
+  `CONTRIBUTING.md` and `tools/README.md`; do not invent environment factors.
 
-For major work:
+Run a failing regression first when practical. Broaden validation when inputs or
+unresolved risks justify it, not by repeatedly rerunning unchanged expensive
+suites. Do not lower coverage, suppress diagnostics or remove negative fixtures
+to obtain green checks. Stage new files before running hooks; review formatting
+changes before committing.
 
-1. Create a feature branch.
-2. Create a matching worktree so parallel work stays isolated.
-3. Open a PR early.
-4. Write an ExecPlan following `PLANS.md` before implementation.
-5. Ask clarifying questions while writing the plan if the goal or acceptance is
-   unclear.
-6. Start a /goal for the plan and execute it milestone by milestone.
-7. Keep the ExecPlan updated as a living document.
-8. Validate thoroughly.
-9. Ask the user for validation before merge.
-10. After explicit approval, merge, delete the branch, and delete the worktree.
+CI, nightly and candidate validation share `.github/workflows/validate.yml`.
+Required lanes include CPU backends, four checkers, compatibility floors, docs,
+notebook and normal installed-wheel consumers. Minimal environments require an
+exact sync or a fresh venv; `uv run --only-group` can retain earlier packages.
+CuPy needs real CUDA hardware. CPU skips are not GPU evidence, and historical
+GPU results do not validate a changed package automatically.
 
-Small local fixes may skip the branch/worktree/PR/ExecPlan workflow only when the
-user clearly asks for a narrow edit and the risk is low.
+## Docs and handoff
 
-## Product Contract
+Keep README concise and examples test-backed. Build and inspect changed rendered
+structures; execute changed runnable examples and notebook cells. Document
+runtime-only syntax and backend/checker limits explicitly. Update CHANGELOG for
+features and major user-visible changes.
 
-bearshape provides runtime shape and dtype checking powered by beartype.
-Annotations such as named dimensions, anonymous dimensions, fixed integer
-dimensions, arithmetic dimensions, broadcastable dimensions, `Scalar`,
-`Value(...)`, backend array aliases, `Like[...]`, scalar-like aliases, and
-`Tree[...]` are product surface.
-
-The two maintained surfaces are equal:
-
-- Runtime behavior: validators, decorators, import boundaries, conversion rules,
-  tree handling, and error messages.
-- Static behavior: annotation syntax accepted by supported type checkers.
-
-If code, tests, docs, examples, and typing fixtures disagree, resolve the
-contract explicitly. Do not leave drift in place.
-
-## Boundaries To Preserve
-
-Root module:
-
-- Keep root import lightweight.
-- Keep backend-specific behavior out of the root unless an approved plan changes
-  the public API.
-- Do not widen the root API just to make examples shorter.
-
-Backend modules:
-
-- NumPy owns the broadest surface: strict arrays, Like types, scalar-like types,
-  structured dtypes, and related factories.
-- JAX, Torch, and CuPy keep backend-specific arrays and conversion behavior.
-- Tree support remains explicit and tested; do not blur runtime-only structure
-  syntax with checker-supported syntax.
-
-High-risk areas:
-
-- memo discovery and lifetime
-- decorator behavior, including async paths and metadata preservation
-- shape token parsing and `Value(...)` expression evaluation
-- dtype normalization, byte order, structured dtype, datetime, and timedelta
-- tree validation and structure binding
-- `TYPE_CHECKING` scaffolding and typing fixtures
-
-Touch these areas only with focused tests and clear validation.
-
-## Testing And Validation
-
-Use `uv`. Run targeted checks while developing; use broader checks before asking
-for review.
-
-Common commands:
-
-- `uv sync`
-- `uv run pytest -n auto tests/...`
-- `uv run pytest -n auto tests/test_typecheck.py`
-- `uv run pyright src tests/typing`
-- `uv run mypy src tests/typing`
-- `uv run ty check src tests/typing`
-- `uv run prek run -a`
-
-`tox` is primarily for CI and release confidence. Run relevant tox environments
-when changing the matrix, dependencies, packaging, or release workflow.
-
-NumPy, JAX, Torch, and optree tests should run locally on CPU. CuPy needs a
-CUDA-capable GPU and is deferred until an appropriate environment exists. Do not
-treat CuPy coverage as proven by local CPU runs; mark it explicitly in plans,
-tests, and CI work.
-
-Validation must prove behavior, not just absence of syntax errors. For bugs,
-write the failing regression first when practical. For features, cover normal
-use, edge cases, and expected failures. For typing changes, update fixtures and
-run every supported checker.
-
-## Docs And Examples
-
-Docs are contract artifacts, but they should be concise.
-
-- Build docs from actual code behavior.
-- Keep `README.md` short: identity, purpose, install, minimal examples, links.
-- Keep examples accurate and test-backed when practical.
-- Document runtime-only syntax explicitly.
-- Update `CHANGELOG.md` for every feature and major user-visible change.
-- Do not use docs to promise future behavior.
-
-## Style
-
-Use the existing style unless a cleanup plan changes it. This repository uses
-2-space indentation in Python. Keep edits small inside a milestone even when the
-overall refactor is large. Remove slop when it is in scope: dead code, duplicate
-paths, pointless wrappers, stale tests, stale docs, and fake generality.
-
-Before finishing, ask: would this diff make the library easier to trust? If not,
-simplify or explain why the complexity is necessary.
+Record source commits, versions, artifact hashes, commands and meaningful
+results in the plan or handoff report. Distinguish implementation completion,
+merge state and release readiness. Keep public repository/PyPI/Pages identities
+unchanged until the corresponding ownership operation has actually happened.

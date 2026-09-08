@@ -1,5 +1,13 @@
 # Prove the normally installed candidate artifact
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to `PLANS.md`. This focused artifact-consumer PR is stacked on CI PR #23 and implements the remaining installation proof in M8.
 
@@ -19,7 +27,7 @@ The package users install must pass the same runtime and static consumer contrac
 - [x] (2026-09-08) Added required endpoint jobs consuming the same candidate-distributions artifact.
 - [x] (2026-09-08) Final archive-owned-lock runs passed 1,074 tests with five documented skips at both endpoints; full hooks and actionlint pass.
 - [x] (2026-09-08) Every required hosted job passed at 73b3ec9; PR #25 is ready for user review.
-- [ ] Record hashes, origins and results; obtain user validation before merge.
+- [x] (2026-09-08) Record hashes, origins and results; obtain user validation before merge.
 
 ## Surprises & Discoveries
 
@@ -86,3 +94,8 @@ No public runtime API or dependency change is planned. The pytest option is for 
 Revision note — 2026-09-08: Validated the final driver using the archive's own lockfile and required both installed-consumer jobs in CI.
 
 Revision note — 2026-09-08: Recorded the completed hosted validation and retained user merge approval as the only remaining review action for this focused scope. Program-level release decisions remain in the roadmap and handoff report.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

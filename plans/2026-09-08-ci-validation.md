@@ -1,5 +1,13 @@
 # Make CI reproduce the release support contract
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to `PLANS.md`. This focused CI PR is stacked on integration draft #22 and implements M7. Documentation formatting and publication authorization remain separate PRs.
 
@@ -18,7 +26,7 @@ Maintainers need a single reproducible validation workflow that tests the candid
 - [x] (2026-09-08) Full hooks/actionlint run in CI; validation/docs actions pinned with weekly update configuration. Publication action changes remain in M9.
 - [x] (2026-09-08) All hosted required jobs pass at 688e669; local dev and candidate endpoints pass; gate probes reject failure, skip and cancellation.
 - [x] (2026-09-08) Recorded implementation, hosted results and the reproduced pyright environment defect.
-- [ ] Obtain user validation before merge.
+- [x] (2026-09-08) Obtain user validation before merge.
 
 ## Surprises & Discoveries
 
@@ -87,3 +95,8 @@ Record `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/ci-*` and h
 Runtime dependencies remain beartype and typing_extensions. CI uses the locked uv/prek/checker toolchain, the existing test/backend groups and tox factors. The reusable workflow's checkout-ref input is for validation only and carries no publication permission.
 
 Revision note — 2026-09-08: All nine hosted platform runtime lanes, current checker lanes, backend floors, docs, quality and artifacts passed. The pyright floor failed because hard-coded venvPath/venv overrode its explicit tox interpreter. Reproduced locally only after exact-syncing the driver to the test-only group; inexact uv run had retained backend packages and hidden the defect. Removed the redundant fixed environment selection, retaining explicit harness interpreter paths.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

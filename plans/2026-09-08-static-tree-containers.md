@@ -1,5 +1,13 @@
 # Give ordinary Tree consumers a useful static type
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to `PLANS.md`. This independent PR addresses the Tree portion of audit A06 and is stacked on checker harness PR #17. Runtime tree traversal and structure binding remain unchanged.
 
@@ -87,3 +95,8 @@ Keep public `bearshape.optree.Tree` and `bearshape.jax.Tree` subscriptions uncha
 Revision note — 2026-09-08: Recorded prototype counterexamples and focused Tree implementation plan before source changes.
 
 Revision note — 2026-09-08: Implemented and validated the shared static model, corrected the prototype for named tuples and existing aliases, and documented the actual registry boundary.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

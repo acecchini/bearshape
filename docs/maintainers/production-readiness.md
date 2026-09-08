@@ -2,15 +2,16 @@
 
 This is the 8 September 2026 review record for **bearshape 0.1.0rc0**. The
 candidate is independently versioned from beartype and requires
-`beartype>=0.23.0rc0,<0.24`. Exact `0.23.0rc0` is the required integration
-target.
+`beartype>=0.23.0rc0,<0.24`. Exact `0.23.0rc0` remains the current required test
+target until a supported replacement is implemented and validated.
 
 **Release readiness is withheld.** Native composite-union rollback remains
-incorrect in one important composition case, and the release policy for CuPy's
-limited upstream static typing awaits an explicit decision. Repository and
-publication protections also require configuration. The implementation PRs are
-unmerged; successful validation does not authorize publication or ownership
-transfer.
+incorrect in one important composition case. The owner selected full composition
+through supported upstream integration and permits a later beartype candidate;
+explicitly limited native CuPy static support is accepted. The owner approved
+merging the reviewed production work on 8 September 2026. Repository/publication
+protections still require configuration, and publication or ownership transfer
+requires separate authorization.
 
 ## Purpose and intended users
 
@@ -128,18 +129,18 @@ rather than being hidden behind an expected-failure marker.
 
 <!-- markdownlint-disable MD013 -->
 
-| Finding                                | Change and closing evidence                                                                                                                                                                                                | Status                                          |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| A01: exact rc0 installation            | [#13](https://github.com/acecchini/bearshape/pull/13), [#25](https://github.com/acecchini/bearshape/pull/25): normal resolver installs and endpoint artifact consumers                                                     | Implemented and validated                       |
-| A02: caller-package import hook        | [#14](https://github.com/acecchini/bearshape/pull/14): direct alias and real package import violations                                                                                                                     | Implemented and validated                       |
-| A03: stale state and retained failures | [#15](https://github.com/acecchini/bearshape/pull/15): live-frame ownership, independent failures, mutation, weak references and threads                                                                                   | Implemented and validated                       |
-| A04: composite alternative rollback    | Exact hosted wheel still rejects the valid example below                                                                                                                                                                   | **Release blocker; decision pending**           |
-| A05: converter fallback and trust      | [#16](https://github.com/acecchini/bearshape/pull/16), [#26](https://github.com/acecchini/bearshape/pull/26): actual backend converter oracles and GPU cases                                                               | Implemented and validated                       |
-| A06: consumer typing                   | [#17](https://github.com/acecchini/bearshape/pull/17), [#19](https://github.com/acecchini/bearshape/pull/19), [#20](https://github.com/acecchini/bearshape/pull/20): four engines, Like inputs and structural Tree callers | CPU surfaces validated; CuPy policy pending     |
-| A07: incomplete distributions          | [#18](https://github.com/acecchini/bearshape/pull/18), [#25](https://github.com/acecchini/bearshape/pull/25): license, typing marker, source inputs and installed consumers                                                | Implemented and validated                       |
-| A08: publication without validation    | [#28](https://github.com/acecchini/bearshape/pull/28): immutable workflow/package identity, full gate and same artifacts                                                                                                   | Code validated; administrative controls pending |
-| A09: documentation drift               | [#24](https://github.com/acecchini/bearshape/pull/24): formatter round trip, rendered structures, executed snippets/notebook                                                                                               | Implemented and validated                       |
-| A10: hooks/CI/dependency drift         | [#23](https://github.com/acecchini/bearshape/pull/23): locked reusable matrix, CPU resolution, four-checker pre-push and strict aggregate gate                                                                             | Implemented and validated                       |
+| Finding                                | Change and closing evidence                                                                                                                                                                                                | Status                                               |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| A01: exact rc0 installation            | [#13](https://github.com/acecchini/bearshape/pull/13), [#25](https://github.com/acecchini/bearshape/pull/25): normal resolver installs and endpoint artifact consumers                                                     | Implemented and validated                            |
+| A02: caller-package import hook        | [#14](https://github.com/acecchini/bearshape/pull/14): direct alias and real package import violations                                                                                                                     | Implemented and validated                            |
+| A03: stale state and retained failures | [#15](https://github.com/acecchini/bearshape/pull/15): live-frame ownership, independent failures, mutation, weak references and threads                                                                                   | Implemented and validated                            |
+| A04: composite alternative rollback    | Exact hosted wheel still rejects the valid example below                                                                                                                                                                   | **Release blocker; upstream path selected**          |
+| A05: converter fallback and trust      | [#16](https://github.com/acecchini/bearshape/pull/16), [#26](https://github.com/acecchini/bearshape/pull/26): actual backend converter oracles and GPU cases                                                               | Implemented and validated                            |
+| A06: consumer typing                   | [#17](https://github.com/acecchini/bearshape/pull/17), [#19](https://github.com/acecchini/bearshape/pull/19), [#20](https://github.com/acecchini/bearshape/pull/20): four engines, Like inputs and structural Tree callers | CPU surfaces validated; limited CuPy policy accepted |
+| A07: incomplete distributions          | [#18](https://github.com/acecchini/bearshape/pull/18), [#25](https://github.com/acecchini/bearshape/pull/25): license, typing marker, source inputs and installed consumers                                                | Implemented and validated                            |
+| A08: publication without validation    | [#28](https://github.com/acecchini/bearshape/pull/28): immutable workflow/package identity, full gate and same artifacts                                                                                                   | Code validated; administrative controls pending      |
+| A09: documentation drift               | [#24](https://github.com/acecchini/bearshape/pull/24): formatter round trip, rendered structures, executed snippets/notebook                                                                                               | Implemented and validated                            |
+| A10: hooks/CI/dependency drift         | [#23](https://github.com/acecchini/bearshape/pull/23): locked reusable matrix, CPU resolution, four-checker pre-push and strict aggregate gate                                                                             | Implemented and validated                            |
 
 <!-- markdownlint-enable MD013 -->
 
@@ -150,7 +151,7 @@ that preserve focused PR branches. Merge prerequisites and living decisions are
 recorded in each PR's ExecPlan and the roadmap in
 [#12](https://github.com/acecchini/bearshape/pull/12).
 
-### Remaining native-union decision
+### Accepted native-union integration path
 
 This valid call is still rejected by the tested wheel with exact rc0:
 
@@ -173,11 +174,21 @@ The first alternative binds `N=2`, then fails its `str` check. The second
 alternative succeeds and should bind only `C=2`. `y` should then establish
 `N=3`, but the failed alternative's binding survives and rejects it.
 
-The pending choice is an upstream-supported whole-alternative integration
-boundary, potentially requiring a later beartype candidate, or an explicitly
-accepted and enforced restriction on composition while retaining exact rc0. A
-warning alone would leave silent incorrect behavior. No restriction or upstream
-modification has been adopted without that decision.
+The owner selected an upstream-supported whole-alternative integration boundary
+and permits a later beartype candidate. Preserve full composition. A warning,
+bytecode heuristic, monkeypatch or restricted annotation contract does not close
+this defect. On 8 September 2026, PyPI offered only `0.23.0rc0` in the 0.23
+series; the approval is a direction, not evidence of an available fix.
+
+Run `uv run --locked python tools/probe_union.py` from the repository root to
+reproduce the current failure with version information. Its nonzero exit is
+explicit blocker evidence. A later candidate must preserve bindings from earlier
+successful parameters, discard a whole failed alternative's shape/tree state,
+commit successful alternatives, isolate diagnostic checks and restore state on
+exceptions. Cover nested unions, return checks, explicit/automatic scopes, async
+paths and object lifetime before changing the compatibility floor and rerunning
+the complete normal-install matrix. No upstream message or patch has been
+submitted on the owner's behalf.
 
 ### CuPy static boundary
 
@@ -187,10 +198,11 @@ strict pyright/mypy report missing typing information, while ty/pyrefly can
 accept the code with Unknown. The protocol fallback proves only its small
 structural surface; it does not establish native method inference.
 
-The pending release decision is to accept an explicit limited static CuPy
-support statement alongside verified GPU runtime behavior, or require complete
-upstream native typing before release. The evidence does not establish parity
-with NumPy/JAX/Torch.
+The owner accepted explicitly limited static CuPy support alongside the verified
+GPU runtime behavior. This is no longer an open release-policy decision. Keep
+the limitation visible in typing docs and release notes; do not claim native
+method inference or parity with NumPy/JAX/Torch. Any future stronger typing
+claim needs actual installed-CuPy positive, negative and inference consumers.
 
 ## Validated artifact identity
 
@@ -317,11 +329,12 @@ apply the following concrete settings:
     maintainers. Coordinate GitHub Pages hosting, its deployment environment,
     redirects and repository/package metadata. Update public URLs only after
     the transfer is real, then verify them.
-1. Resolve the two contract decisions above, review the focused PRs and complete
-    their approved merge order. Run the final immutable candidate validation,
-    inspect hashes and GPU evidence, then separately authorize the prerelease
-    publication and ownership operations.
+1. Complete the selected upstream union integration and approved merges. Run the
+    final immutable candidate validation, inspect hashes and GPU evidence, then
+    separately authorize the prerelease publication and ownership operations.
 
 The repository changes make these steps reviewable; they do not perform them.
-See the repository's `CONTRIBUTING.md` for the validation-only and tag-based
-release procedure.
+See the repository's `CONTRIBUTING.md` for validation-only, tag-based release
+and explicitly dispatched Pages deployment procedures. `AGENTS.md` and the
+`CLAUDE.md` symlink share current agent guidance; `tools/README.md` documents
+the existing validators. PR #31 aligns those files with the accepted decisions.

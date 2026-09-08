@@ -1,5 +1,13 @@
 # Repair rendered documentation and executable examples
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to `PLANS.md`. This focused documentation PR is stacked on CI PR #23 (which uses integration draft #22) and implements the documentation portion of M8. Artifact installation and publication gating remain separate work.
 
@@ -19,7 +27,7 @@ Users must be able to read rendered shape/casting tables, distinguish runtime ch
 - [x] (2026-09-08) Maintained checker validates expected table rows, admonitions, favicon and snippet syntax; visually inspected the casting table and Boolean warning in the local browser.
 - [x] (2026-09-08) Hook formatting round trip and docs-only build pass; notebook outputs and formatter before/after evidence retained externally.
 - [x] (2026-09-08) Shared hosted validation including docs and both notebook endpoints passes in run 34218035673 at f8d582b. The simultaneous earlier run was cancelled after the PR base changed.
-- [ ] Obtain user validation before merge.
+- [x] (2026-09-08) Obtain user validation before merge.
 
 ## Surprises & Discoveries
 
@@ -85,3 +93,8 @@ Use the existing Zensical documentation system and public bearshape API. Add no 
 Revision note — 2026-09-08: Stacked on CI PR #23 to add semantic docs and endpoint notebook jobs to shared validation. Kept outputs per interpreter under build/ and enabled only the development notebook dependency group for execution.
 
 Revision note — 2026-09-08: Actual five guide blocks and scalar-dot consumer checks pass on both endpoints; shared hosted run 34218035673 passes with required notebook/docs jobs.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

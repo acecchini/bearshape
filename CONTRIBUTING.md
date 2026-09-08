@@ -3,63 +3,57 @@
 ## Local Development
 
 ```bash
-uv sync
-uv run prek install
-uv run prek run -a
-uv run pytest -n auto tests/
-uv run pytest -n auto tests/test_typecheck.py
-uv run pyright src tests/typing
-uv run mypy src tests/typing
-uv run ty check src tests/typing
+uv sync --locked
+uv run --locked prek install
+uv run --locked prek run -a
+uv run --locked pytest tests/ --ignore=tests/test_typecheck.py -n auto
+uv run --locked pytest tests/test_typecheck.py -q
 ```
 
-Use `-n auto` by default. Use `-n0` only when debugging a narrow failure that
-needs serial execution.
+The checker harness runs pyright, mypy, ty and pyrefly against source and real
+positive/negative/inference consumers, with interpreter-matched settings. Direct
+checker commands are useful for debugging but do not replace that harness. Use
+`-n auto` for runtime tests; use `-n0` for narrow serial debugging.
 
-CuPy runtime tests require CUDA and are deferred on CPU-only machines.
+The default groups include CPU NumPy/JAX/Torch/optree, all four checkers, tests,
+docs, notebook and development tools. Use exact
+`uv sync --locked --only-group <group>` or a fresh venv when proving dependency
+isolation: `uv run --only-group` can retain packages from earlier runs. CuPy
+runtime validation needs real CUDA hardware. The
+[handoff report](docs/maintainers/production-readiness.md) records GPU evidence
+and the accepted limits of native CuPy static typing.
 
-## Tox Environments
+Agent instructions are shared by `AGENTS.md` and the `CLAUDE.md` symlink.
+`PLANS.md` describes major-work plans; [tools/README.md](tools/README.md)
+describes the validation scripts, their inputs and what their results prove.
 
-Runtime environments use:
+## Tox environments and CI
 
-```text
-{python}-{beartype}-{backend}
-```
-
-Examples:
+Runtime factors use `{python}-{beartype}-{backend}`; checker factors use
+`{python}-{beartype}-type-{checker}`. For example:
 
 ```bash
-uv run tox run -e py310-bt022-numpy22
-uv run tox run -e py313-bt022-numpy24
-uv run tox run -e py313-bt022-jax09
+uv run --locked tox list
+uv run --locked tox run -e py310-bt023rc0-cpu
+uv run --locked tox run -e py314-bt023rc0-cpu
+uv run --locked tox run -e py310-bt023rc0-numpy22
+uv run --locked tox run -e py313-bt023rc0-type-pyright1408
+uv run --locked tox run -e py313-bt023rc0-type-mypy119
+uv run --locked tox run -e py313-bt023rc0-type-ty
+uv run --locked tox run -e py313-bt023rc0-type-pyrefly
 ```
 
-Type-checking environments use:
+Type environments install all CPU backends. CuPy is not part of those lanes.
+`dev` uses the current lock; explicit backend/checker factors exercise the
+configured compatibility ranges. Every candidate lane requires exact beartype
+0.23.0rc0 today. The owner permits a later candidate for supported native-union
+integration; the current rc0 defect remains a release blocker.
 
-```text
-{python}-{beartype}-type-{checker}
-```
-
-Examples:
-
-```bash
-uv run tox run -e py313-bt022-type-pyright1408
-uv run tox run -e py313-bt022-type-mypy119
-uv run tox run -e py313-bt022-type-ty
-```
-
-The `type` factor installs all supported backends so public typing fixtures can
-resolve imports.
-
-## CI Tiers
-
-- Pull requests run installable Python/backend floor and ceiling jobs plus the
-    current type-checker contract.
-- Pushes to `main` broaden runtime and checker coverage.
-- Nightly jobs cover the wider compatibility matrix.
-
-When adding a backend version, update `tox.toml`, `tools/validate_tox_env.py`,
-and the GitHub workflow matrix together.
+Pull requests, main pushes, nightly and candidate validation use the same
+required matrix in `.github/workflows/validate.yml`. When adding a version,
+update `tox.toml`, `tools/validate_tox_env.py`, the runtime preflight, lockfile
+and shared workflow as applicable. The dependency range alone does not prove
+compatibility with a new version.
 
 ## Check release archives
 
@@ -138,3 +132,17 @@ create these controls. The 2026-09-08 inspection found unprotected `main`, no
 repository rulesets and no `pypi` approval reviewers; PyPI configuration remains
 unverified. Ownership transfer requires rechecking publisher identity and docs
 hosting before changing public URLs.
+
+## Documentation validation and deployment
+
+```bash
+uv run --locked --only-group docs zensical build --clean
+uv run --locked --only-group docs python tools/check_docs.py
+uv run --locked python tools/check_notebook.py
+```
+
+CI validates rendered structures, snippets and notebook execution. Main/docs
+pushes build Pages artifacts but do not deploy them. After explicit deployment
+approval, dispatch `docs.yml` from the reviewed `main` or `docs` branch. Only
+its deployment job receives Pages/OIDC write permissions and enters the
+`github-pages` environment. Merging code does not authorize deployment.

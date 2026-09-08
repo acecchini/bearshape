@@ -1,5 +1,13 @@
 # Make static Like inputs reflect ordinary backend conversion
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to `PLANS.md`. This PR addresses the Like/Shaped part of audit A06 and depends on the checker harness in PR #17. Its base is `codex/checker-conformance`; runtime conversion correctness remains separate PR #16.
 
@@ -85,3 +93,8 @@ Retain the public NumPy ArrayLike template and named strict/Like aliases. Use ex
 Revision note — 2026-09-08: Added focused Like/Shaped typing plan before implementation.
 
 Revision note — 2026-09-08: Implemented static-only shared input families, executable typed consumers and deliberate error fixtures. Recorded all Python, floor, exact-rc0 consumer and hook evidence.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

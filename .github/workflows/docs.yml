@@ -1,4 +1,4 @@
-name: Deploy docs
+name: Validate or deploy docs
 
 on:
   push:
@@ -7,8 +7,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: "pages"
@@ -31,7 +29,11 @@ jobs:
           path: site
 
   deploy:
+    if: github.event_name == 'workflow_dispatch'
     needs: build
+    permissions:
+      pages: write
+      id-token: write
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true

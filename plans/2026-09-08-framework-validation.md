@@ -1,5 +1,13 @@
 # Prove framework transformations and minimal runtime imports
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to `PLANS.md`. This independent validation PR covers the framework/import-boundary portion of M6 and is stacked on exact-candidate compatibility PR #13.
 
@@ -17,7 +25,7 @@ ML users need to know when validation occurs around JAX transformations and Torc
 - [x] (2026-09-08) Normally installed candidate wheel passes minimal custom-array checks on Python 3.10.20 and 3.14.5.
 - [x] (2026-09-08) Current suite, JAX/Torch floors, exact-candidate endpoint probes, hooks and docs build pass.
 - [x] (2026-09-08) Added framework placement guide and recorded validation evidence.
-- [ ] Obtain hosted CI results and user validation before merge.
+- [x] (2026-09-08) Obtain hosted CI results and user validation before merge.
 
 ## Surprises & Discoveries
 
@@ -91,3 +99,8 @@ Use existing beartype/bearshape public annotations and JAX/Torch APIs already in
 Revision note — 2026-09-08: Added focused framework/import validation plan before implementation.
 
 Revision note — 2026-09-08: Recorded implemented transformation and minimal-install contracts, endpoint/floor results and existing JAX warning scope.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

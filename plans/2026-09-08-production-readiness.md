@@ -23,14 +23,14 @@ The recommended release policy is to make `0.23.0rc0` the minimum beartype versi
 - [x] (2026-09-08) Prepared this implementation proposal without changing the repository.
 - [x] (2026-09-08) M0: Accepted independent `0.1.0rc0` versioning, active goal, and focused branches/worktrees/PRs #12–#30.
 - [x] (2026-09-08) M1: PR #13 makes exact rc0 normally installable; locked suite and exact-candidate CPU endpoint suites pass. Subsequent PRs preserve failing-before regressions.
-- [ ] M2: Import-hook repair is implemented in PR #14. Native composite-alternative rollback is not feasible through the inspected rc0 leaf callbacks; user decision on upstream integration versus an enforceable restricted contract is pending.
+- [ ] M2: Import-hook repair is implemented in PR #14. Native composite-alternative rollback is not feasible through the inspected rc0 leaf callbacks; the owner selected supported upstream integration with a later candidate allowed. Full composition remains required.
 - [ ] M3: Invocation-owned state and diagnostic replay removal are implemented in PR #15 (1,043 runtime tests on exact rc0 endpoints; 91.31% dev coverage). Whole-alternative rollback remains a release blocker.
 - [x] (2026-09-08) M4: PR #16 fixes seven converter false positives; thirteen oracle cases and 1,047 runtime tests pass on exact rc0 endpoints. CuPy GPU proof is now supplied by PR #26 and the exact hosted artifact runs under M6.
-- [ ] M5: PR #17 implements four-engine positive/negative/inference conformance on Python 3.10–3.14. PR #19 corrects Like/Shaped inputs and PR #20 replaces nominal Tree stubs; all four checkers pass real positive/negative/inference fixtures on Python 3.10–3.14. Native CuPy stub limitations await a support-contract decision.
+- [x] M5: PR #17 implements four-engine positive/negative/inference conformance on Python 3.10–3.14. PR #19 corrects Like/Shaped inputs and PR #20 replaces nominal Tree stubs; all four checkers pass real positive/negative/inference fixtures on Python 3.10–3.14. The owner accepted explicitly limited native CuPy static support alongside verified GPU runtime.
 - [x] (2026-09-08) M6: #21 proves framework/minimal behavior; #26 passes 95 real CUDA tests at both endpoints, including the exact hosted artifact. #29 supplies 17 feature/test families, four default/wrapped-signature cases at both endpoints, and matched performance/profile evidence with no material regression.
 - [x] (2026-09-08) M7: #23 implements locked reusable validation across nine platform runtime lanes, five four-checker lanes and twelve compatibility factors, strict preflight/required gates, CPU resolution and aligned hooks. All hosted checks pass; #30 updates the artifact/Pages actions to Node 24 and passes the final validation-only run.
 - [x] (2026-09-08) M8: #18/#25 prove distribution contents and normal installs. The hosted release artifact passes 1,097 installed-consumer tests per endpoint (one absent-CuPy skip). #24 fixes Markdown rendering and executes all 29 notebook code cells at both endpoints; #29 adds the rendered handoff report.
-- [ ] M9: #28 gates immutable workflow/tag/package identity, validates the complete candidate and reuses its exact artifacts. Actual validation-only run 34221337124 completed 38 jobs successfully and skipped publication. #29 prepares the full handoff/admin proposal. Remaining: native-union/CuPy policy decisions, administrative controls and user merge review.
+- [ ] M9: #28 gates immutable workflow/tag/package identity, validates the complete candidate and reuses its exact artifacts. Actual validation-only run 34221337124 completed 38 jobs successfully and skipped publication. #29 prepares the full handoff/admin proposal. Remaining: supported native-union integration, administrative controls and execution of the approved merges.
 
 ## Surprises & Discoveries
 
@@ -45,9 +45,19 @@ The repository layout is already reasonable: about 5,114 source lines across 16 
 
 Build and workflow success also hid release defects. LICENSE is absent from both archives. The publication workflow builds an arbitrary selected ref without a test gate. The audited GitHub response reported main unprotected; organization rulesets, environment approval rules, and PyPI publisher configuration were not inspected. Documentation built successfully with malformed rendered tables and admonitions. CPU Torch compatibility jobs installed CUDA-related dependencies despite the root project's CPU index configuration.
 
-Implementation discovery (2026-09-08): a failed native union alternative can bind a dimension in a bearshape leaf and then fail in an ordinary `str` check. rc0's generated boolean union expression has no bearshape-visible whole-alternative entry/exit boundary. Frame-owned memo state fixes independent-call leakage and diagnostic object retention, but does not solve this separate compositional failure. No bytecode heuristic, upstream monkeypatch, hidden expected failure, or reduced contract was introduced. The concrete integration decision is pending user input.
+Implementation discovery (2026-09-08): a failed native union alternative can bind a dimension in a bearshape leaf and then fail in an ordinary `str` check. rc0's generated boolean union expression has no bearshape-visible whole-alternative entry/exit boundary. Frame-owned memo state fixes independent-call leakage and diagnostic object retention, but does not solve this separate compositional failure. No bytecode heuristic, upstream monkeypatch, hidden expected failure, or reduced contract was introduced. The owner now selected supported upstream integration, permitting a later candidate and retaining full composition.
 
 ## Decision Log
+
+Decision (2026-09-08, owner): “First option. Merge approved.” Preserve full
+native union composition through supported upstream integration, allowing a
+later beartype candidate; accept explicit limited CuPy native static support.
+This supersedes prior pending-choice statements. Exact rc0 remains the current
+validation baseline until a concrete replacement passes the integration matrix.
+The owner also requested shared agent-file and tool guidance updates. Merge
+approval persists for that scope; publication, settings changes, ownership
+transfer and upstream communications remain separately authorized operations.
+
 
 
 Decision: Preserve the package boundaries and primary product direction. Rationale: the defects concern contracts, integration, and validation; the audit found no justification for a broad file-layout rewrite. Date/author: 2026-09-08, Codex proposal.
@@ -60,14 +70,14 @@ Decision: Put a bounded architecture feasibility milestone before a large memo r
 
 Decision: Treat checker support as positive calls, expected rejection, and useful inferred types. Rationale: accepted declarations alone passed the existing tests while hiding practical incompatibilities. Proposed tested versions begin with pyright 1.1.411, mypy 2.3.1, ty 0.0.79, and pyrefly 1.2.0, with existing pyright/mypy floor lanes retained where they satisfy the stronger suite. These are observed starting points, not claims that every earlier version fails or every later version works. Date/author: 2026-09-08, Codex proposal.
 
-Decision: Use separate feature branches, matching worktrees, and early draft PRs for independent changes. Rationale: the user explicitly requested independent review units on 2026-09-08. Keep prerequisites visible for dependent PRs, and validate the combined result in an integration worktree before release. Maintain this roadmap on its own PR; do not merge without user validation. Date/author: 2026-09-08, user decision.
+Decision: Use separate feature branches, matching worktrees, and early draft PRs for independent changes. Rationale: the user explicitly requested independent review units on 2026-09-08. Keep prerequisites visible for dependent PRs, and validate the combined result in an integration worktree before release. Maintain this roadmap on its own PR; user merge validation was granted on 2026-09-08. Date/author: 2026-09-08, user decision.
 
 Decision: Separate code readiness, publication, and administrative transfer. Rationale: a green PR is not authorization to publish a package or change ownership/access. Prepare concrete review material first and perform those external actions only with the corresponding authorization. Date/author: 2026-09-08, Codex proposal.
 
 ## Outcomes & Retrospective
 
 
-Implementation outcome: sixteen focused implementation/evidence PRs and separate roadmap/validation aggregates preserve independent review. Normal exact-rc0 installation, caller-sensitive claw behavior, invocation lifetime, selected backend conversion, four-checker consumers, Like and Tree static inputs, framework/GPU behavior, locked CI, rendered/executed docs, archives and publication gates are implemented and validated. Main remains untouched and every PR remains unmerged pending user validation. The exact hosted wheel passes CPU/checker consumers and real CUDA tests; the release dry run never enters publication. Native whole-alternative union rollback remains incorrect because rc0 exposes no reliable whole-alternative boundary, and CuPy native typing lacks adequate upstream stubs. These decisions and administrative protections prevent a production-ready verdict. Do not trade them for green test counts.
+Implementation outcome: sixteen focused implementation/evidence PRs and separate roadmap/validation aggregates preserve independent review. Normal exact-rc0 installation, caller-sensitive claw behavior, invocation lifetime, selected backend conversion, four-checker consumers, Like and Tree static inputs, framework/GPU behavior, locked CI, rendered/executed docs, archives and publication gates are implemented and validated. The owner approved merging the reviewed work on 2026-09-08; PR #31 coordinates that integration and updates agent guidance. The exact hosted wheel passes CPU/checker consumers and real CUDA tests; the release dry run never enters publication. Native whole-alternative union rollback remains incorrect because rc0 exposes no reliable whole-alternative boundary, and CuPy native typing lacks adequate upstream stubs. The open union integration and administrative protections prevent a production-ready verdict. Do not trade them for green test counts.
 
 ## Context and Orientation
 
@@ -345,7 +355,7 @@ Revision note — 2026-09-08: Initial proposal derived from the completed audit.
 ## Implementation PR map
 
 
-The roadmap PR owns this living program. Planned independent changes are rc0 compatibility/release metadata; caller-package claw integration; validation lifetime and composite feasibility; backend conversion; consumer typing; CI/dependency enforcement; documentation; distribution contents; and publication gates. Runtime feature/performance evidence accompanies the relevant fixes. Where one change requires another, use an explicit dependent PR and record its base. All PRs remain unmerged pending user validation.
+The roadmap PR owns this living program. Planned independent changes are rc0 compatibility/release metadata; caller-package claw integration; validation lifetime and composite feasibility; backend conversion; consumer typing; CI/dependency enforcement; documentation; distribution contents; and publication gates. Runtime feature/performance evidence accompanies the relevant fixes. Where one change requires another, use an explicit dependent PR and record its base. Merge approval was granted on 2026-09-08; retain every reviewed head and verify the final main gate.
 
 Revision note — 2026-09-08 implementation start: User selected `0.1.0rc0`, independent versioning, and separate PRs. These decisions supersede the original single-PR proposal. Goal created; implementation work is beginning.
 
@@ -368,3 +378,9 @@ Read-only controls inspection found main unprotected, no repository rulesets, an
 Revision note — 2026-09-08: Updated M6–M9 and the outcome with the completed independent PRs, exact installed/GPU artifact evidence, actual release dry run, performance observations and remaining release decisions. #30 final hosted action validation is complete.
 
 Revision note — 2026-09-08: Final validation-only run https://github.com/acecchini/bearshape/actions/runs/34223582731 completed 38 required jobs and skipped publication. It passes 1,101 installed-consumer tests per endpoint (one absent-CuPy skip), validates Pages packaging without deployment, and retains the exact GPU-validated wheel SHA256 c1806203da013c9eaf2482a309c686a984c0a7031a495efbd100a824536b57d2. Source 6f40e4a484b70535c58e2c86a645a64ab1079143; sdist SHA256 38d89d4ce1b351601ff8602a9a27b4e9af46db056be3ac0eaf41a68ac56a3706. The former Node 20 runtime warning is gone; the current upstream downloader still emits a Buffer() deprecation notice, recorded without suppression. All independent implementation work is prepared for review; full production readiness still depends on the explicit contract decisions and owner validation.
+
+Revision note — 2026-09-08 owner approval: recorded accepted union/CuPy policies
+and merge authorization; PR #31 updates AGENTS/CLAUDE, PLANS, contributor/tool
+commands and Pages deployment semantics. A later dependency is allowed but no
+available fix is claimed. Historical exact-rc0 acceptance records remain proof
+of the tested baseline, not a restriction against the newly selected path.

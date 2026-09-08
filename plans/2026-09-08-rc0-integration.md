@@ -1,5 +1,13 @@
 # Validate the combined release candidate
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to `PLANS.md`. This branch combines the focused production-readiness PRs for integration evidence. Their individual PRs remain the review units; this draft is not authorization to merge them into main.
 
@@ -14,10 +22,10 @@ Prove that the runtime fixes, static aliases, packaging and framework checks wor
 - [x] (2026-09-08) Created isolated integration branch/worktree from main.
 - [x] (2026-09-08) Opened draft integration PR #22.
 - [x] (2026-09-08) Combined PRs #13–#21, preserving all tests, entries, four-checker rc0 lanes and corrected Tree/Like guides.
-- [ ] Run all four checkers, runtime tests, hooks and candidate Python endpoints together.
-- [ ] Build and normally install the combined sdist-derived wheel outside the checkout.
-- [ ] Validate corrected GPU behavior using a verified public candidate artifact.
-- [ ] Record evidence and remaining release blockers without implying merge approval.
+- [x] (2026-09-08) Run all four checkers, runtime tests, hooks and candidate Python endpoints together.
+- [x] (2026-09-08) Build and normally install the combined sdist-derived wheel outside the checkout.
+- [x] (2026-09-08) Validate corrected GPU behavior using a verified public candidate artifact.
+- [x] (2026-09-08) Record evidence and remaining release blockers without implying merge approval.
 
 ## Surprises & Discoveries
 
@@ -86,3 +94,8 @@ Evidence goes under `/Users/ale/Code/bearshape-implementation-2026-09-08/evidenc
 No new public API is introduced by integration. Preserve all optional imports, Python 3.10 syntax and the existing four-checker test harness. Changes needed to resolve integration must be documented here and, when substantive, returned to the owning feature PR.
 
 Revision note — 2026-09-08: Combined feature commits; restored NumPy imports inside TYPE_CHECKING in JAX/Torch after conversion cleanup removed their former runtime binding. Kept both framework and conversion test classes and both minimal/distribution jobs.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

@@ -2,6 +2,34 @@
 
 This document describes the requirements for an execution plan ("ExecPlan"), a design document that a coding agent can follow to deliver a working feature or system change. Treat the reader as a complete beginner to this repository: they have only the current working tree and the single ExecPlan file you provide. There is no memory of prior plans and no external context.
 
+## Repository execution policy
+
+The rename is complete; use focused maintenance plans. `AGENTS.md` owns the
+current product boundaries, `CONTRIBUTING.md` the command reference, and
+`tools/README.md` the existing validators. Read the current production roadmap
+and handoff report before changing release acceptance. Historical plans retain
+dated evidence; record later owner decisions explicitly rather than applying
+an old pending-approval statement over current authorization.
+
+Use one goal for the active program, with dependent feature plans where useful.
+Do not create a second goal for every worktree. Record the user's scope and
+approval in the Decision Log, and reuse it across milestones. Before merging,
+prove the reviewed heads and integration resolutions are preserved and checks
+pass. After merging, verify main and remove only clean, merged worktrees and
+branches. Keep artifact evidence outside temporary worktrees.
+
+Separate implementation completion, merge completion and release readiness in
+Progress and Outcomes. For an upstream blocker, preserve a runnable reproducer,
+name the missing supported integration boundary, and state what evidence closes
+it. Do not replace an unresolved defect with a support claim, silent xfail or
+repeated validation of unchanged inputs. A later dependency target must be
+concrete, normally installable and validated across all affected surfaces.
+
+Agent guidance is shared through `AGENTS.md` and the `CLAUDE.md` symlink. Update
+actual repository-owned tools or skills when their workflow changes; do not
+create duplicate skill/configuration files or alter personal agent settings to
+satisfy a repository task.
+
 ## How to use ExecPlans and PLANS.md
 
 When authoring an executable specification (ExecPlan), follow PLANS.md _to the letter_. If it is not in your context, refresh your memory by reading the entire PLANS.md file. Be thorough in reading (and re-reading) source material to produce an accurate specification. When creating a spec, start from the skeleton and flesh it out as you do your research.

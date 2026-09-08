@@ -22,8 +22,8 @@ This changes release acceptance, not the installed dependency by guesswork.
   and confirm applicable checks are green.
 - [x] (2026-09-08) Create `codex/agent-workflow` and a matching worktree from the
   tested `codex/action-runtimes` head.
-- [ ] Open the focused PR against `codex/action-runtimes` before implementation.
-- [ ] Reconcile current agent instructions, contributor commands, plan policy,
+- [x] (2026-09-08) Opened draft PR #31 against `codex/action-runtimes` before implementation.
+- [x] (2026-09-08) Reconciled current agent instructions, contributor commands, plan policy,
   tooling guidance and accepted release decisions.
 - [ ] Validate instructions and changed workflows; run hosted candidate checks.
 - [ ] Merge the approved history while preserving every focused PR head, verify
@@ -154,3 +154,9 @@ Markdown with the existing Claude symlink. No new skill runtime is needed.
 
 Revision note (2026-09-08): created before implementation to carry the owner's
 contract choices and merge authorization into the maintained repository.
+
+Revision note (2026-09-08): incorporated every reviewed PR head, resolving only
+CuPy plan progress text; verified src/tests/tools/dependency/workflow bytes were
+unchanged before maintenance. Added the standalone union reproducer and checked
+PyPI: rc0 is the only published 0.23 candidate. Current guidance records the
+owner's selected path without inventing a newer version or reducing support.

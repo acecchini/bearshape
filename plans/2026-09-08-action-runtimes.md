@@ -1,5 +1,13 @@
 # Use supported runtimes for artifact and Pages actions
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to PLANS.md. This focused CI maintenance PR follows #29 and addresses deprecation warnings observed during the actual release validation run.
 
@@ -16,7 +24,7 @@ The validated release pipeline should not depend on GitHub forcibly substituting
 - [x] (2026-09-08) Opened #30 and updated all four reviewed action pins; required docs validation now packages Pages without deployment.
 - [x] (2026-09-08) Hooks/actionlint and all PR checks pass. Validation-only run 34223582731 completed 38 jobs successfully and skipped publication; inspected action logs have no Node 20 warning.
 - [x] (2026-09-08) Recorded final hashes, 1,101 installed-consumer tests per endpoint, unchanged GPU-validated wheel and inspected 46-file Pages archive.
-- [ ] Obtain user validation before merge.
+- [x] (2026-09-08) Obtain user validation before merge.
 
 ## Surprises & Discoveries
 
@@ -79,3 +87,8 @@ Record logs under /Users/ale/Code/bearshape-implementation-2026-09-08/evidence/a
 No Python dependency or API changes. GitHub Actions pins and the required docs packaging check are the only implementation surface. Keep OIDC write permissions confined to the actual deployment jobs.
 
 Revision note — 2026-09-08: Final validation-only run https://github.com/acecchini/bearshape/actions/runs/34223582731 used source 6f40e4a484b70535c58e2c86a645a64ab1079143. Wheel SHA256 c1806203da013c9eaf2482a309c686a984c0a7031a495efbd100a824536b57d2; sdist SHA256 38d89d4ce1b351601ff8602a9a27b4e9af46db056be3ac0eaf41a68ac56a3706. Artifact identity and nondeployment were verified, with owner review still pending.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

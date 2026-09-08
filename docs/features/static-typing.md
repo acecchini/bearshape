@@ -238,3 +238,8 @@ Any or Unknown in the four tested checkers. bearshape's CuPy static model is a
 limited shape/dtype protocol. It does not provide the native-method and inferred
 result guarantees tested for NumPy, JAX and Torch. Runtime GPU tests and static
 annotation acceptance are separate evidence.
+
+The release policy accepts this explicit CuPy limitation alongside separately
+verified GPU runtime behavior. Native CuPy method inference is not part of the
+supported static contract. Stronger claims require actual installed-backend
+consumer fixtures, not only the fallback protocol.

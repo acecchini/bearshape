@@ -1,5 +1,13 @@
 # Instrument the actual caller package through bearshape.claw
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to `PLANS.md`. This independent PR closes audit finding A02 under the accepted `0.1.0rc0` production goal.
 
@@ -15,7 +23,7 @@ Calling `bearshape_this_package()` in a user's package initializer must instrume
 - [x] (2026-09-08) Opened PR #14; both real-package regressions failed before the fix.
 - [x] (2026-09-08) Replaced forwarding with a direct alias and updated docs/changelog.
 - [x] (2026-09-08) Passed baseline and exact-rc0 Python 3.10/3.14 integration tests, full CPU runtime suite, all three current checkers, and hooks.
-- [ ] Record evidence and request user validation before merge.
+- [x] (2026-09-08) Record evidence and request user validation before merge.
 
 ## Surprises & Discoveries
 
@@ -82,3 +90,8 @@ The public name stays `bearshape.claw.bearshape_this_package`, including upstrea
 Revision note — 2026-09-08: Added focused plan before implementing the caller-package fix.
 
 Validation evidence — 2026-09-08: `claw-before.log` shows two failures for unchecked caller parameters. `claw-after.log` shows 55 targeted passes; each `claw-rc0-py310.log`/`claw-rc0-py314.log` shows two passes. `claw-runtime.log` records 1,035 passes and the expected CuPy/platform-precision skips. `claw-checkers.log` and `claw-hooks.log` pass. No source changes were needed beyond replacing the wrapper and removing its obsolete mock.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

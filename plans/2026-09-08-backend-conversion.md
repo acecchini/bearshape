@@ -1,5 +1,13 @@
 # Validate Like inputs with the target backend's converter
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to `PLANS.md`. This independent PR addresses audit A05 for the accepted bearshape `0.1.0rc0` release.
 
@@ -82,3 +90,8 @@ Public backend Like names and make_array_like_type parameters remain available. 
 Revision note — 2026-09-08: Added focused conversion plan before implementation.
 
 Revision note — 2026-09-08: Implemented and validated target-backend conversion. Recorded CPU evidence and the remaining GPU gate.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

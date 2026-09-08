@@ -1,5 +1,13 @@
 # Validate the full independent PR set together
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this ExecPlan according to PLANS.md. This branch is a review and validation aggregate; it is not approval to merge any focused PR.
 
@@ -16,7 +24,7 @@ The focused CI, documentation, installation and GPU changes must work together o
 - [x] (2026-09-08) Combined #25 and #26, preserving all tests and requiring both notebook and installed-consumer jobs.
 - [x] (2026-09-08) Full hooks/actionlint and every required hosted job passed at e402dea.
 - [x] (2026-09-08) Recorded the complete combined result; original focused PRs remain open.
-- [ ] Obtain user merge approval.
+- [x] (2026-09-08) Obtain user merge approval.
 
 ## Surprises & Discoveries
 
@@ -73,3 +81,8 @@ Use /Users/ale/Code/bearshape-implementation-2026-09-08/evidence/release-candida
 No additional public API or dependency changes beyond the focused PRs. Keep the locked uv workflow and optional backend boundaries intact.
 
 Revision note — 2026-09-08: Recorded the completed hosted validation and retained user merge approval as the only remaining review action for this focused scope. Program-level release decisions remain in the roadmap and handoff report.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

@@ -1,5 +1,13 @@
 # Scope validation state to the check that owns it
 
+Owner update (2026-09-08): the reviewed implementation and recorded validation
+are approved for merge. This supersedes earlier pending-approval statements.
+Full native union composition remains required through supported upstream
+integration, with a later candidate allowed; limited CuPy native static support
+is accepted. Current merge execution and remaining release gates are tracked in
+`plans/2026-09-08-agent-workflow.md` and the production-readiness roadmap.
+
+
 
 Maintain this living ExecPlan according to `PLANS.md`. This PR implements the validation-lifetime portion of the accepted production goal and records the separate composite-union feasibility result.
 
@@ -16,7 +24,7 @@ A failed manual check must not poison the next independent check or retain its a
 - [x] (2026-09-08) External prototype passed existing runtime tests on exact rc0 at Python 3.10/3.14.
 - [x] (2026-09-08) Demonstrated that frame lifetime does not fix native union rollback; no branch transaction callback is exposed by the inspected rc0 union generator. A04 remains a release gate.
 - [x] (2026-09-08) Implemented live-frame memo ownership and removed global/cached replay state; runtime, checker, coverage and hook validation passed.
-- [ ] Record unresolved contract gates and obtain user validation before merge.
+- [x] (2026-09-08) Record unresolved contract gates and obtain user validation before merge.
 
 ## Surprises & Discoveries
 
@@ -94,3 +102,8 @@ The inspected exact-rc0 generator `beartype/_check/code/_pep/pep484/codepep48460
 The external prototype independently confirms the original audit example still rejects a valid length-three final argument after a length-two successful C alternative. A03 is therefore independently fixable; A04 needs an upstream composition boundary or a deliberately accepted/enforced alternative API/contract. No upstream code was modified, no unsupported workaround was added, and no failing union test was hidden as a passing regression. This remains a production-release blocker for the promised general native-composition semantics.
 
 Validation evidence — 2026-09-08: `lifetime-before.log` records eight failures and one existing-success control; `lifetime-after.log` records 187 targeted passes; runtime endpoint logs each record 1,043 passes/five expected skips. `lifetime-checkers.log`: 30 passed. `lifetime-coverage.log`: 1,073 passed/five skips, 91.31% coverage. `lifetime-mutation.log`: nine passes using supported ndarray.resize on NumPy 2.5. `lifetime-hooks.log`: passed. Source shrank by removing ReplayFailureState and thread-local frame bookkeeping.
+
+Revision note (2026-09-08): reconciled completed milestone/hosted evidence and
+explicit owner merge approval. The combined artifact, checker and GPU proofs
+are in `docs/maintainers/production-readiness.md`; this update does not mark
+the unresolved native-union integration or release administration complete.

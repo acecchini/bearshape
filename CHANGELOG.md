@@ -44,6 +44,16 @@ and this project follows
 - Verify a normally installed wheel and custom array factory without optional
     backend dependencies on Python 3.10 and 3.14.
 
+### Maintenance
+
+- Align shared Codex/Claude guidance, execution-plan policy, contributor
+    commands and tool documentation with the four-checker production validation
+    workflow.
+- Record the accepted full-union upstream integration path and limited native
+    CuPy static support; retain a runnable probe for the open union defect.
+- Build documentation on pushes while requiring explicit manual dispatch for
+    Pages deployment; scope Pages/OIDC write permissions to that job.
+
 ### Added
 
 - Add the production contract/test map, reproducible runtime measurements and
