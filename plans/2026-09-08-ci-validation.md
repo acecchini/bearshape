@@ -84,3 +84,5 @@ Record `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/ci-*` and h
 
 
 Runtime dependencies remain beartype and typing_extensions. CI uses the locked uv/prek/checker toolchain, the existing test/backend groups and tox factors. The reusable workflow's checkout-ref input is for validation only and carries no publication permission.
+
+Revision note — 2026-09-08: All nine hosted platform runtime lanes, current checker lanes, backend floors, docs, quality and artifacts passed. The pyright floor failed because hard-coded venvPath/venv overrode its explicit tox interpreter. Reproduced locally only after exact-syncing the driver to the test-only group; inexact uv run had retained backend packages and hidden the defect. Removed the redundant fixed environment selection, retaining explicit harness interpreter paths.

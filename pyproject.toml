@@ -110,8 +110,6 @@ reportUnusedImport = "warning"
 # Check the oldest supported Python, not the interpreter running the checker.
 pythonVersion = "3.10"
 pythonPlatform = "Linux"
-venvPath = "."
-venv = ".venv"
 
 [tool.pyrefly]
 preset = "default"
