@@ -241,7 +241,11 @@ records per interpreter (CuPy plus four platform precision cases). Upstream's
 own serial unit suite passed 426 tests on Python 3.10 and 439 on Python 3.14,
 with 20 and seven pre-existing skip records respectively. Upstream pyright
 reports no errors. The focused plan records final artifact identities and
-performance measurements.
+performance measurements. Final archive-extracted consumers independently passed
+the same 1,124 tests per endpoint, and minimal installs passed without optional
+backends. A matched benchmark measured strict small-array calls at about 19
+microseconds with rc0 and 31 with the patch; this overhead is an explicit
+upstream review tradeoff.
 
 This demonstrates a working local fix, not compatibility provided by published
 rc0. The dependency metadata and lock are unchanged, and the new integration

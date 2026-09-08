@@ -9,6 +9,7 @@ from __future__ import annotations
 import asyncio
 import gc
 import weakref
+from collections.abc import Callable
 
 import numpy as np
 import pytest
@@ -225,21 +226,30 @@ def test_sampled_union_value_is_evaluated_once() -> None:
     assert get_memo().single == {"C": 2}
 
 
+def _raise_value_error(_pair: object) -> bool:
+  message = "validator failed"
+  raise ValueError(message)
+
+
+def _raise_cancellation(_pair: object) -> bool:
+  raise asyncio.CancelledError
+
+
 @pytest.mark.parametrize(
-  "error", [ValueError("validator failed"), asyncio.CancelledError()]
+  "validator,exception_type",
+  [(_raise_value_error, ValueError), (_raise_cancellation, asyncio.CancelledError)],
 )
-def test_exception_after_shape_binding_restores_context(error: BaseException) -> None:
+def test_exception_after_shape_binding_restores_context(
+  validator: Callable[[object], bool], exception_type: type[BaseException]
+) -> None:
   from typing import Annotated
 
   from beartype.vale import Is
 
-  def fail(_pair: object) -> bool:
-    raise error
-
-  hint = Annotated[tuple[F32[N], int], Is[fail]] | tuple[F32[C], str]
+  hint = Annotated[tuple[F32[N], int], Is[validator]] | tuple[F32[C], str]
   with check_context():
     assert is_bearable(array(7), F32[C])
-    with pytest.raises(type(error)):
+    with pytest.raises(exception_type):
       is_bearable((array(2), 1), hint)
     assert get_memo().single == {"C": 7}
 

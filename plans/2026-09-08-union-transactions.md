@@ -20,8 +20,9 @@ The user requested resolving this defect after approving the earlier implementat
 - [x] (2026-09-08) Implemented the snapshot protocol in isolated upstream commit `4aef992d1cd0a6d09fe5c3784523c44e0874b178`, based on `a2729e0e358bf963ee6f177e300ae08a622d05d6`. No upstream message, fork push or PR submitted.
 - [x] (2026-09-08) Connected the shared runtime-hint metaclass to existing memo snapshots. All 22 integration cases pass, including late aliases, sampling, cancellation and thread isolation.
 - [x] (2026-09-08) Normally installed packages passed 1,124 tests plus five existing CPU skip records on each of Python 3.10.20 and 3.14.5, including all four checkers. Upstream serial unit tests passed 426/439 with 20/7 pre-existing skips. Upstream pyright passed.
-- [ ] Finish hooks, immutable archive consumers and final performance measurements.
-- [ ] Prepare a concrete upstream patch and submission text, update handoff evidence and distinguish local fix from availability in a released dependency.
+- [x] (2026-09-08) Hooks and docs passed. Final sdist-extracted consumers outside the checkout passed 1,124 tests with five existing CPU skip records on each endpoint. Minimal wheel environments passed with no optional backends. Final normal-install benchmarks and artifact hashes are recorded below.
+- [x] (2026-09-08) Prepared the concrete upstream patch and submission text locally and updated the handoff and agent/tool guidance.
+- [ ] Obtain authorization to submit the upstream proposal; acceptance/publication and a later supported dependency migration remain external steps, not a completed release fix.
 
 ## Surprises & Discoveries
 
@@ -42,7 +43,7 @@ Decision: Prepare any upstream proposal locally before seeking permission to sub
 ## Outcomes & Retrospective
 
 
-A working local fix now passes the original example and all 22 expanded integration cases on both Python endpoints. The small bearshape adapter uses a proposed upstream snapshot hook; the source extension owns branch boundaries, exception cleanup, diagnostic replay and lazy-reference registration. Published rc0 still fails because it does not implement this hook. Final archive/evidence preparation and upstream submission approval remain outstanding.
+A working local fix now passes the original example and all 22 expanded integration cases on both Python endpoints. The small bearshape adapter uses a proposed upstream snapshot hook; the source extension owns branch boundaries, exception cleanup, diagnostic replay and lazy-reference registration. Published rc0 still fails because it does not implement this hook. Final archives, normal-install consumers, minimal environments, hooks and docs have been validated. Upstream submission approval, acceptance/publication and dependency migration remain outstanding. PR #34 is intentionally a draft, and no new feature merge or publication was performed.
 
 ## Context and Orientation
 
@@ -131,3 +132,31 @@ The first benchmark observed a cost for stateful hints (strict small-array call 
 The local patch file is `/Users/ale/Code/bearshape-implementation-2026-09-08/evidence/union-transactions/beartype-stateful-hints.patch`. Apply it to a clean checkout of the recorded upstream base with `git apply --check` followed by `git apply`; normal-install both packages into an isolated interpreter as documented in `tools/upstream/README.md`. The patch must be accepted and published upstream before dependency metadata, lock and required CI are migrated. Do not turn this local result into a released-rc0 compatibility claim.
 
 Revision note — 2026-09-08: Recorded the working callback design, successful endpoint suites, upstream patch commit, discovered alias/diagnostic paths and remaining artifact/review steps.
+
+## Final local evidence
+
+
+The final 22-case suite passes serially on Python 3.10.20 and 3.14.5. With published rc0, the suite records 20 failures and two passes; the hook alone does not change that dependency's behavior. Initial archive validation exposed a pre-existing upstream cache collision between dynamically recreated `Is` validators sharing a qualified name. The ValueError and cancellation fixtures now use distinct module-level functions, so they reliably exercise both exception classes in one process. Runtime code did not change during this fixture correction.
+
+Normally installed immutable wheels, with tests and configuration extracted from the final bearshape source archive into `consumer-final310` and `consumer-final314` outside the checkout, passed 1,124 tests and five existing CPU skip records on each interpreter. These commands include `--installed-package`, all four checker consumers, and the explicitly named upstream integration suite. The five skips are CuPy and four unavailable macOS dtype-precision cases. The earlier broad suites also checked the bearshape source. New GPU evidence is deferred until candidate validation after the upstream dependency is available; old GPU artifacts do not validate this changed wheel.
+
+The built bearshape wheel is byte-identical before and after the fixture-only correction. SHA256 identities:
+
+    bearshape-0.1.0rc0-py3-none-any.whl
+      0393873fa2bf0e55cfa9b26fe718ad19759bbd314a5150a5bde1e21640d7b163
+    bearshape-0.1.0rc0.tar.gz
+      70624c97463c090c91e162e9332cf2af09339c9e63a348d485f5b72122e9f95c
+    beartype-0.23.0rc1-py3-none-any.whl
+      18b7179c8d45828f20b909e733b0999ac50906c0d064c57150c39efafc6819e5
+    beartype-0.23.0rc1.tar.gz
+      5904fbe8883b703269e202bc7ec1db0b23d8e857bbc2b7b251af8b4974b223a3
+    beartype-stateful-hints.patch
+      7784b95c8f338190ecf1b83e4a65ee3104c5c16d663c97077e67c27bc5621f2e
+
+All files are under the evidence root given above, in `bearshape-dist-final`, `beartype-dist`, and the top-level patch file. `distribution-check-final.json` verifies wheel/source consistency. `installed-final310.log` and `installed-final314.log` contain the archive-consumer results. `minimal310.log` and `minimal314.log` prove the optional-import boundary. `upstream-pyright-final.json` reports 477 analyzed source files with zero errors or warnings. `upstream-serial310.log` and `upstream-serial314.log` contain the complete upstream suite results; the final callback typing and context-token cleanup also passed its focused protocol tests.
+
+Matched normal-install benchmarks used the same Python 3.10.20, NumPy 2.2.6, optree 0.19.1 and bearshape wheel, changing only rc0 versus the patched beartype wheel. Each ordinary case ran 10,000 calls per repeat for five repeats. Median strict small-array calls changed from 18.974 to 31.272 microseconds, Like from 9.817 to 15.711, one-leaf Tree from 30.866 to 42.871, and diagnostics from 115.403 to 142.045 (diagnostics use the tool's 1,000-call cap). Native-only annotations remained below 0.2 microseconds in both runs; their generated expression has no transaction operations. These are host-specific observations. The roughly 12-microsecond strict-call cost is an explicit review tradeoff, not hidden behind correctness results.
+
+Hosted rc0 CI run 34239118985 passed for implementation head `983f7dc0983378662acd0b22924c09489389db87`. That does not test the unpublished upstream extension. The final fixture/report follow-up will receive its own normal CI run; local patched-wheel evidence is tracked independently.
+
+Revision note — 2026-09-08: Recorded final installed-archive verification, fixture correction, hashes, minimal imports, performance tradeoff and the remaining upstream approval/release boundary.
