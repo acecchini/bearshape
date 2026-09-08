@@ -14,8 +14,9 @@ The focused CI, documentation, installation and GPU changes must work together o
 - [x] (2026-09-08) Created codex/release-candidate from documentation PR #24.
 - [x] (2026-09-08) Opened aggregate draft PR #27 against #22.
 - [x] (2026-09-08) Combined #25 and #26, preserving all tests and requiring both notebook and installed-consumer jobs.
-- [ ] Run hooks and observe the complete hosted candidate matrix.
-- [ ] Record results and keep user merge approval pending.
+- [x] (2026-09-08) Full hooks/actionlint and every required hosted job passed at e402dea.
+- [x] (2026-09-08) Recorded the complete combined result; original focused PRs remain open.
+- [ ] Obtain user merge approval.
 
 ## Surprises & Discoveries
 
@@ -32,7 +33,7 @@ Decision: Resolve additive workflow/changelog overlaps without changing runtime 
 ## Outcomes & Retrospective
 
 
-The combined checkout passes the full hooks. Hosted matrix validation is pending. A04 whole native-union rollback and CuPy static release policy remain open. Green integration checks cannot establish production readiness while those decisions remain unresolved.
+The combined checkout passes the full hooks and all hosted runtime/checker/compatibility/docs/notebook/artifact/installed jobs. A04 whole native-union rollback and CuPy static release policy remain open. Green integration checks cannot establish production readiness while those decisions remain unresolved.
 
 ## Context and Orientation
 
@@ -70,3 +71,5 @@ Use /Users/ale/Code/bearshape-implementation-2026-09-08/evidence/release-candida
 
 
 No additional public API or dependency changes beyond the focused PRs. Keep the locked uv workflow and optional backend boundaries intact.
+
+Revision note — 2026-09-08: Recorded the completed hosted validation and retained user merge approval as the only remaining review action for this focused scope. Program-level release decisions remain in the roadmap and handoff report.
