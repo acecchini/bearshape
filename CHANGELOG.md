@@ -46,6 +46,11 @@ and this project follows
 
 ### Maintenance
 
+- Restore documentation under `beartype.github.io/bearshape` after the GitHub
+    ownership transfer. Update repository, guide, edit, notebook and package
+    metadata links to the beartype organization, and document publisher
+    migration.
+
 - Scope file hooks to pre-commit and remove the unused commit-message shim.
     Isolate release tooling and disposable Git tests from inherited hook
     repository variables; verify installed hook stages in CI.

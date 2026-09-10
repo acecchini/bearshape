@@ -2,6 +2,14 @@
 
 ## Local Development
 
+The repository is now
+[beartype/bearshape](https://github.com/beartype/bearshape). Update an existing
+checkout after the ownership transfer:
+
+```bash
+git remote set-url origin https://github.com/beartype/bearshape.git
+```
+
 ```bash
 uv sync --locked
 uv run --locked prek install
@@ -112,7 +120,8 @@ this consumer check; ordinary source validation continues to include `src`.
 Run a validation-only workflow before making a release decision:
 
 ```bash
-gh workflow run pypi.yml --ref main -f ref=<reviewed-commit> -F publish=false
+gh workflow run pypi.yml --repo beartype/bearshape --ref main \
+  -f ref=<reviewed-commit> -F publish=false
 ```
 
 This resolves one commit, runs the complete shared matrix, and produces
@@ -137,8 +146,18 @@ check on pull requests. Confirm the PyPI trusted publisher identifies the actual
 repository owner/name, `pypi.yml`, and environment `pypi`. The workflow does not
 create these controls. The 2026-09-08 inspection found unprotected `main`, no
 repository rulesets and no `pypi` approval reviewers; PyPI configuration remains
-unverified. Ownership transfer requires rechecking publisher identity and docs
-hosting before changing public URLs.
+unverified. The GitHub transfer to `beartype/bearshape` was verified on
+2026-09-10.
+
+Before the next release, a PyPI project owner must inspect
+[the publishing settings](https://pypi.org/manage/project/bearshape/settings/publishing/)
+and ensure the trusted publisher has repository owner `beartype`, repository
+name `bearshape`, workflow filename `pypi.yml`, and environment `pypi`. GitHub
+repository redirects do not update that external trust configuration. See
+[PyPI's publisher setup](https://docs.pypi.org/trusted-publishers/adding-a-publisher/).
+Keep OIDC; do not add an upload token. GitHub transfer does not establish PyPI
+ownership. Published version `0.0.1` still carries its original URL metadata;
+these repository edits update future distributions, not already published files.
 
 ## Documentation validation and deployment
 
@@ -153,3 +172,18 @@ pushes build Pages artifacts but do not deploy them. After explicit deployment
 approval, dispatch `docs.yml` from the reviewed `main` or `docs` branch. Only
 its deployment job receives Pages/OIDC write permissions and enters the
 `github-pages` environment. Merging code does not authorize deployment.
+
+The production site is <https://beartype.github.io/bearshape/>. After approval:
+
+```bash
+gh workflow run docs.yml --repo beartype/bearshape --ref main
+```
+
+Pages must use GitHub Actions as its build source, with `main` allowed by the
+`github-pages` environment. These settings and a successful deployment were
+verified after the transfer on 2026-09-10. Check the resulting workflow and open
+the home page, a nested guide, and the logo after deployment. GitHub redirects
+old repository links, but
+[does not redirect transferred Pages sites](https://docs.github.com/en/repositories/creating-and-managing-repositories/transferring-a-repository).
+Use the new website address for saved links. Do not recreate the old repository
+to add a redirect, because that would replace GitHub's repository redirect.

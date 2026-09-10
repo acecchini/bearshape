@@ -14,9 +14,10 @@ Restore the documentation at https://beartype.github.io/bearshape/ and make repo
 - [x] (2026-09-10) Confirmed repository transfer, administrator access, active Actions, workflow-based Pages, and existing main/docs deployment policy.
 - [x] (2026-09-10) Updated the local origin and created `codex/ownership-transfer` in `/private/tmp/bearshape-ownership-transfer` from main `795ec39`.
 - [x] (2026-09-10) Dispatched existing main Pages workflow to restore service while preparing corrected metadata.
-- [ ] Commit plan and open focused PR before implementation.
-- [ ] Correct active identity references and document external publishing implications.
-- [ ] Validate rendered docs, release archive metadata, hooks, and hosted CI.
+- [x] (2026-09-10) Committed plan at `951daae` and opened PR #36 before implementation.
+- [x] (2026-09-10) Corrected active links, package metadata and current maintainer guidance; preserved authorship and historical plans.
+- [x] (2026-09-10) Validated rendered docs, both archives' metadata, normal hooks and visual homepage preview; initial plan push also passed runtime and four-checker hooks.
+- [ ] Hosted CI on the final repair head.
 - [ ] Merge repair, deploy corrected main, verify live pages/assets and clean merged worktree.
 
 ## Surprises & Discoveries
@@ -37,7 +38,7 @@ GitHub reports the new Pages URL and workflow build mode, but no deployment stat
 ## Outcomes & Retrospective
 
 
-Investigation complete; implementation and deployment verification pending. The unrelated native union integration remains a release blocker.
+The initial main dispatch restored the new Pages site (HTTP 200); the old Pages address returns 404. Active documentation, repository/edit/notebook links, package metadata and local origin now identify beartype. Authorship and historical plans are unchanged. All local repair checks pass. Final hosted validation, merge and corrected-site deployment are the remaining execution steps; record their exact run URLs in PR #36. PyPI publisher trust remains external and unverified, and published 0.0.1 retains old URL metadata. The unrelated native union integration remains a release blocker.
 
 ## Context and Orientation
 
@@ -80,6 +81,10 @@ Use the existing Pages site and environment. Dispatch can be repeated safely. Co
 ## Artifacts and Notes
 
 
+Local validation used uv 0.11.17's locked environment. Zensical built cleanly; `check_docs.py` verified rendered tables, admonitions, favicon and 93 Python 3.10 snippets. Separate archive/render inspection verified 23 pages' canonical/repository URLs, 23 sitemap URLs, and all four Project-URL fields in both archives. The copied `site/overrides/main.html` is a template asset, not a generated documentation page. Browser inspection confirmed the homepage layout and new repository identity. Normal hooks pass after wrapping the longer release command.
+
+The validated local wheel SHA256 is `0922f70b0fa9c79236b044bef430e85f89715dfdde586cccb0de169f3b5695c4`; source archive SHA256 is `025ded7e59d1ba17ef2bc3bd7bfbf524e1c157cd66809d6f9a0c1b1d0c3f1495`. These are repair validation artifacts, not a publication or fresh GPU validation claim.
+
 Initial restoration workflow: https://github.com/beartype/bearshape/actions/runs/34451065635. Base main: `795ec39`. New repository homepage already matches https://beartype.github.io/bearshape/.
 
 ## Interfaces and Dependencies
@@ -88,3 +93,5 @@ Initial restoration workflow: https://github.com/beartype/bearshape/actions/runs
 Keep Zensical, locked uv, the existing artifact/Pages actions, GitHub Pages and PyPI OIDC. No runtime function signatures or dependencies change. PyPI trust must identify owner `beartype`, repository `bearshape`, workflow `pypi.yml`, environment `pypi`; no upload token is introduced.
 
 Revision note — 2026-09-10: Initial plan records verified transfer, restoration dispatch and the user's repair/deployment authorization.
+
+Revision note — 2026-09-10: Recorded PR #36, successful initial restoration, completed link/metadata edits, external PyPI limits and local validation evidence before final hosted validation and merge.

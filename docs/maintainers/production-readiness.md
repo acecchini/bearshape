@@ -12,8 +12,15 @@ explicitly limited native CuPy static support is accepted. The owner approved
 merging the reviewed production work on 8 September 2026. PR #31 integrated all
 reviewed heads into main at `df81f00e2f62bda956244e680c980f87db1d4671`; its
 post-merge CI passed all 36 jobs. Repository/publication protections still
-require configuration, and publication or ownership transfer requires separate
-authorization.
+require configuration, and publication requires separate authorization.
+
+**Ownership update, 10 September 2026:** the GitHub repository is now
+[beartype/bearshape](https://github.com/beartype/bearshape), and documentation
+is hosted at <https://beartype.github.io/bearshape/>. The existing Pages
+workflow was successfully redeployed after transfer. Repository links in this
+report now use the new owner; dated validation results and artifact identities
+remain unchanged. PyPI ownership and trusted-publisher configuration remain
+unverified.
 
 ## Purpose and intended users
 
@@ -131,30 +138,30 @@ rather than being hidden behind an expected-failure marker.
 
 <!-- markdownlint-disable MD013 -->
 
-| Finding                                | Change and closing evidence                                                                                                                                                                                                | Status                                               |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| A01: exact rc0 installation            | [#13](https://github.com/acecchini/bearshape/pull/13), [#25](https://github.com/acecchini/bearshape/pull/25): normal resolver installs and endpoint artifact consumers                                                     | Implemented and validated                            |
-| A02: caller-package import hook        | [#14](https://github.com/acecchini/bearshape/pull/14): direct alias and real package import violations                                                                                                                     | Implemented and validated                            |
-| A03: stale state and retained failures | [#15](https://github.com/acecchini/bearshape/pull/15): live-frame ownership, independent failures, mutation, weak references and threads                                                                                   | Implemented and validated                            |
-| A04: composite alternative rollback    | Exact hosted wheel still rejects the valid example below                                                                                                                                                                   | **Release blocker; upstream path selected**          |
-| A05: converter fallback and trust      | [#16](https://github.com/acecchini/bearshape/pull/16), [#26](https://github.com/acecchini/bearshape/pull/26): actual backend converter oracles and GPU cases                                                               | Implemented and validated                            |
-| A06: consumer typing                   | [#17](https://github.com/acecchini/bearshape/pull/17), [#19](https://github.com/acecchini/bearshape/pull/19), [#20](https://github.com/acecchini/bearshape/pull/20): four engines, Like inputs and structural Tree callers | CPU surfaces validated; limited CuPy policy accepted |
-| A07: incomplete distributions          | [#18](https://github.com/acecchini/bearshape/pull/18), [#25](https://github.com/acecchini/bearshape/pull/25): license, typing marker, source inputs and installed consumers                                                | Implemented and validated                            |
-| A08: publication without validation    | [#28](https://github.com/acecchini/bearshape/pull/28): immutable workflow/package identity, full gate and same artifacts                                                                                                   | Code validated; administrative controls pending      |
-| A09: documentation drift               | [#24](https://github.com/acecchini/bearshape/pull/24): formatter round trip, rendered structures, executed snippets/notebook                                                                                               | Implemented and validated                            |
-| A10: hooks/CI/dependency drift         | [#23](https://github.com/acecchini/bearshape/pull/23): locked reusable matrix, CPU resolution, four-checker pre-push and strict aggregate gate                                                                             | Implemented and validated                            |
+| Finding                                | Change and closing evidence                                                                                                                                                                                             | Status                                               |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| A01: exact rc0 installation            | [#13](https://github.com/beartype/bearshape/pull/13), [#25](https://github.com/beartype/bearshape/pull/25): normal resolver installs and endpoint artifact consumers                                                    | Implemented and validated                            |
+| A02: caller-package import hook        | [#14](https://github.com/beartype/bearshape/pull/14): direct alias and real package import violations                                                                                                                   | Implemented and validated                            |
+| A03: stale state and retained failures | [#15](https://github.com/beartype/bearshape/pull/15): live-frame ownership, independent failures, mutation, weak references and threads                                                                                 | Implemented and validated                            |
+| A04: composite alternative rollback    | Exact hosted wheel still rejects the valid example below                                                                                                                                                                | **Release blocker; upstream path selected**          |
+| A05: converter fallback and trust      | [#16](https://github.com/beartype/bearshape/pull/16), [#26](https://github.com/beartype/bearshape/pull/26): actual backend converter oracles and GPU cases                                                              | Implemented and validated                            |
+| A06: consumer typing                   | [#17](https://github.com/beartype/bearshape/pull/17), [#19](https://github.com/beartype/bearshape/pull/19), [#20](https://github.com/beartype/bearshape/pull/20): four engines, Like inputs and structural Tree callers | CPU surfaces validated; limited CuPy policy accepted |
+| A07: incomplete distributions          | [#18](https://github.com/beartype/bearshape/pull/18), [#25](https://github.com/beartype/bearshape/pull/25): license, typing marker, source inputs and installed consumers                                               | Implemented and validated                            |
+| A08: publication without validation    | [#28](https://github.com/beartype/bearshape/pull/28): immutable workflow/package identity, full gate and same artifacts                                                                                                 | Code validated; administrative controls pending      |
+| A09: documentation drift               | [#24](https://github.com/beartype/bearshape/pull/24): formatter round trip, rendered structures, executed snippets/notebook                                                                                             | Implemented and validated                            |
+| A10: hooks/CI/dependency drift         | [#23](https://github.com/beartype/bearshape/pull/23): locked reusable matrix, CPU resolution, four-checker pre-push and strict aggregate gate                                                                           | Implemented and validated                            |
 
 <!-- markdownlint-enable MD013 -->
 
-[#21](https://github.com/acecchini/bearshape/pull/21) supplies framework/minimal
-proofs. [#22](https://github.com/acecchini/bearshape/pull/22) and
-[#27](https://github.com/acecchini/bearshape/pull/27) are validation aggregates
+[#21](https://github.com/beartype/bearshape/pull/21) supplies framework/minimal
+proofs. [#22](https://github.com/beartype/bearshape/pull/22) and
+[#27](https://github.com/beartype/bearshape/pull/27) are validation aggregates
 that preserve focused PR branches. Merge prerequisites and living decisions are
 recorded in each PR's ExecPlan and the roadmap in
-[#12](https://github.com/acecchini/bearshape/pull/12).
+[#12](https://github.com/beartype/bearshape/pull/12).
 
 The approved history is integrated through
-[#31](https://github.com/acecchini/bearshape/pull/31), preserving every reviewed
+[#31](https://github.com/beartype/bearshape/pull/31), preserving every reviewed
 head without squashing. GitHub marked main-based PRs merged automatically;
 dependent PRs were closed with an integration record after ancestor
 verification. Twenty clean worktrees and their local branches were removed after
@@ -162,7 +169,7 @@ preserving coverage/build evidence; the corresponding remote branches were
 deleted with expected-head checks. The original checkout remains on main.
 
 Actual hook installation then exposed two defects addressed in
-[#33](https://github.com/acecchini/bearshape/pull/33): file checks ran at the
+[#33](https://github.com/beartype/bearshape/pull/33): file checks ran at the
 commit-message stage and rejected a worktree Git path, and inherited Git
 repository variables redirected disposable release-test commands. File hooks now
 default to pre-commit, the unused commit-message shim is removed, and Git
@@ -170,11 +177,11 @@ commands explicitly targeting another repository clear Git's local environment
 variables. CI checks installed stage routing; four new cases cover foreign Git
 environments and ensure fixture construction preserves the hook owner's config
 and HEAD. Real commits and pre-push runtime/checker checks pass. Hosted run
-[34231187384](https://github.com/acecchini/bearshape/actions/runs/34231187384)
+[34231187384](https://github.com/beartype/bearshape/actions/runs/34231187384)
 passed the complete matrix at `0717df2f2194cdcb10bcf37ba291c09117c42238`.
 
 The main Pages run
-[34229683120](https://github.com/acecchini/bearshape/actions/runs/34229683120)
+[34229683120](https://github.com/beartype/bearshape/actions/runs/34229683120)
 built successfully and skipped deployment. Contributor instructions now require
 an explicit docs dispatch and explain removal of an old commit-message shim.
 
@@ -239,7 +246,7 @@ claim needs actual installed-CuPy positive, negative and inference consumers.
 ## Validated artifact identity
 
 The hook follow-up run
-[34231187384](https://github.com/acecchini/bearshape/actions/runs/34231187384)
+[34231187384](https://github.com/beartype/bearshape/actions/runs/34231187384)
 validated source `0717df2f2194cdcb10bcf37ba291c09117c42238`. Both Python
 endpoint consumers passed **1,105 tests**, with one explicit absent-CuPy skip
 each. Its wheel SHA256 remains
@@ -250,7 +257,7 @@ release-specific runs below remain evidence of publication gating; no
 publication was triggered by these merges.
 
 The actual
-[validation-only release run](https://github.com/acecchini/bearshape/actions/runs/34221337124)
+[validation-only release run](https://github.com/beartype/bearshape/actions/runs/34221337124)
 completed with 38 successful jobs and its sole publishing job intentionally
 skipped. It ran all
 runtime/checker/floor/docs/notebook/archive/minimal/installed checks against
@@ -275,7 +282,7 @@ source changes produce their own source-archive hashes and require their
 applicable validation before publication.
 
 The subsequent
-[Node 24 validation run](https://github.com/acecchini/bearshape/actions/runs/34223582731)
+[Node 24 validation run](https://github.com/beartype/bearshape/actions/runs/34223582731)
 also completed 38 successful jobs and skipped publication. It includes the four
 additional call-boundary cases: 1,101 installed-consumer tests pass at each
 endpoint with one absent-CuPy skip. Its source is
@@ -286,7 +293,7 @@ GPU-validated wheel above. Its updated source archive has SHA256:
 38d89d4ce1b351601ff8602a9a27b4e9af46db056be3ac0eaf41a68ac56a3706
 ```
 
-[#30](https://github.com/acecchini/bearshape/pull/30) updates artifact/Pages
+[#30](https://github.com/beartype/bearshape/pull/30) updates artifact/Pages
 actions to reviewed Node 24 releases. Required docs validation successfully
 packaged the 46-file Pages archive, including this report and the logo. The
 inspected action logs no longer contain the Node 20 deprecation warning. Actual
@@ -351,8 +358,15 @@ bypass enabled. `github-pages` permits `docs`/`main` branches. These controls
 were not changed. PyPI publisher configuration and package ownership have not
 been verified through an authenticated package-owner interface.
 
-Before publication, the owner and receiving organization should approve and
-apply the following concrete settings:
+The 2026-09-10 transfer check confirmed Actions and all six workflows are
+active, Pages uses GitHub Actions, and `github-pages` still permits
+`main`/`docs`. The repository has no Actions secrets, Actions variables or
+webhooks to migrate. `main` remains unprotected with no repository rulesets; the
+`pypi` environment still has no required reviewers and permits `main` and `v*`
+tags. These are existing release prerequisites, not new transfer repairs.
+
+Before publication, the owner and organization should approve and apply the
+following concrete settings:
 
 1. Protect `main` with reviewed pull requests, stale-approval dismissal, blocked
     force-push/deletion, and the observed `validate / Required validation`
@@ -364,17 +378,21 @@ apply the following concrete settings:
 1. Require release-review approval on `pypi`, prevent self-review, disallow
     administrator bypass, and restrict deployments to approved version tags.
     The publish workflow must itself run from the matching tag and commit.
-1. Verify the PyPI trusted publisher's repository owner/name, workflow
-    `pypi.yml` and environment `pypi`. Reconfigure the identity for the
-    receiving organization during an explicitly authorized transfer; retain
-    OIDC rather than adding an upload token.
-1. Confirm GitHub/PyPI ownership and recovery access with the actual receiving
-    maintainers. Coordinate GitHub Pages hosting, its deployment environment,
-    redirects and repository/package metadata. Update public URLs only after
-    the transfer is real, then verify them.
+1. In
+    [PyPI publishing settings](https://pypi.org/manage/project/bearshape/settings/publishing/),
+    verify the trusted publisher uses owner `beartype`, repository
+    `bearshape`, workflow filename `pypi.yml` and environment `pypi`. A
+    publisher bound to the former owner does not match the new GitHub identity.
+    Retain OIDC rather than adding an upload token; see
+    [PyPI's setup instructions](https://docs.pypi.org/trusted-publishers/adding-a-publisher/).
+1. GitHub ownership and Pages restoration are confirmed. Separately verify PyPI
+    ownership and recovery access. Published `0.0.1` retains the old URL
+    metadata; updated source metadata applies to future distributions. The old
+    Pages address has no GitHub redirect; readers must use the new address.
 1. Complete the selected upstream union integration. Run the final immutable
     candidate validation, inspect hashes and GPU evidence, then separately
-    authorize the prerelease publication and ownership operations.
+    authorize prerelease publication and any remaining PyPI ownership
+    operations.
 
 The repository changes make these steps reviewable; they do not perform them.
 See the repository's `CONTRIBUTING.md` for validation-only, tag-based release

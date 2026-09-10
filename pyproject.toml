@@ -37,9 +37,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/acecchini/bearshape"
-Repository = "https://github.com/acecchini/bearshape"
-Issues = "https://github.com/acecchini/bearshape/issues"
+Homepage = "https://github.com/beartype/bearshape"
+Documentation = "https://beartype.github.io/bearshape/"
+Repository = "https://github.com/beartype/bearshape"
+Issues = "https://github.com/beartype/bearshape/issues"
 
 [build-system]
 requires = ["uv_build>=0.11.0,<0.12.0"]
