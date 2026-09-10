@@ -19,7 +19,7 @@ The tour notebook is still the broadest runnable walkthrough in the repository:
 - explicit memo helpers
 - tree annotations
 
-[:material-notebook: View on GitHub](https://github.com/acecchini/bearshape/blob/main/examples/bearshape_tour.ipynb){
+[:material-notebook: View on GitHub](https://github.com/beartype/bearshape/blob/main/examples/bearshape_tour.ipynb){
 .md-button .md-button--primary }
 
 ## Example 1: Plain `@beartype`

@@ -1,7 +1,7 @@
 # bearshape
 
 [![Python 3.10-3.14](docs/assets/images/python_versions_badge.svg)](https://www.python.org/)
-[![Docs](https://img.shields.io/badge/docs-live-526CFE?style=flat-square&logo=readthedocs&logoColor=white&labelColor=1F2937)](https://acecchini.github.io/bearshape/)
+[![Docs](https://img.shields.io/badge/docs-live-526CFE?style=flat-square&logo=readthedocs&logoColor=white&labelColor=1F2937)](https://beartype.github.io/bearshape/)
 
 Runtime shape and dtype checking for NumPy, JAX, PyTorch, CuPy, and
 tree-structured containers, powered by
@@ -75,5 +75,5 @@ uv run --locked pytest tests/ -n auto
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for checker, backend and artifact
 validation. CuPy runtime tests require CUDA hardware. The
-[static typing guide](https://acecchini.github.io/bearshape/features/static-typing/)
+[static typing guide](https://beartype.github.io/bearshape/features/static-typing/)
 distinguishes checker-supported annotations from runtime-only shape expressions.
