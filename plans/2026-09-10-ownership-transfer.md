@@ -81,7 +81,7 @@ Use the existing Pages site and environment. Dispatch can be repeated safely. Co
 ## Artifacts and Notes
 
 
-Local validation used uv 0.11.17's locked environment. Zensical built cleanly; `check_docs.py` verified rendered tables, admonitions, favicon and 93 Python 3.10 snippets. Separate archive/render inspection verified 23 pages' canonical/repository URLs, 23 sitemap URLs, and all four Project-URL fields in both archives. The copied `site/overrides/main.html` is a template asset, not a generated documentation page. Browser inspection confirmed the homepage layout and new repository identity. Normal hooks pass after wrapping the longer release command.
+Local validation used uv 0.11.15 with the locked environment; hosted workflows pin uv 0.11.17. Zensical built cleanly; `check_docs.py` verified rendered tables, admonitions, favicon and 93 Python 3.10 snippets. Separate archive/render inspection verified 23 pages' canonical/repository URLs, 23 sitemap URLs, and all four Project-URL fields in both archives. The copied `site/overrides/main.html` is a template asset, not a generated documentation page. Browser inspection confirmed the homepage layout and new repository identity. Normal hooks pass after wrapping the longer release command.
 
 The validated local wheel SHA256 is `0922f70b0fa9c79236b044bef430e85f89715dfdde586cccb0de169f3b5695c4`; source archive SHA256 is `025ded7e59d1ba17ef2bc3bd7bfbf524e1c157cd66809d6f9a0c1b1d0c3f1495`. These are repair validation artifacts, not a publication or fresh GPU validation claim.
 
