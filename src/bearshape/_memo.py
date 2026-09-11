@@ -145,6 +145,10 @@ def _iter_frames(_depth: int) -> tp.Iterator[types.FrameType]:
 
 
 def _is_beartype_wrapper_frame(frame: types.FrameType) -> bool:
+  code = frame.f_code
+  is_door_checker = code.co_name.startswith("__beartype_checker_")
+  if "__beartype_func" not in code.co_varnames and not is_door_checker:
+    return False
   locals_map = frame.f_locals
   fn = locals_map.get("__beartype_func")
   args = locals_map.get("args")
@@ -157,7 +161,7 @@ def _is_beartype_wrapper_frame(frame: types.FrameType) -> bool:
   # ``__beartype_pith_*`` locals. These frames are the right memo boundary for
   # standalone bearability checks; falling back past them to shared internals
   # can leak stale bindings across unrelated checks.
-  return frame.f_code.co_name.startswith("__beartype_checker_") and any(
+  return is_door_checker and any(
     name.startswith("__beartype_pith_") for name in locals_map
   )
 
